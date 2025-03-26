@@ -1,0 +1,22 @@
+.container {
+    margin-top: 4.5rem;
+}
+
+.bg-kimnho {
+    background-color: #78bb7b;
+}
+
+.map-container {
+    position: relative;
+    width: 100%; /* Chiếm hết chiều ngang */
+    max-width: 900px; /* Giới hạn max nếu cần */
+    height: 250px; /* Giữ nguyên chiều cao */
+    margin: auto;
+}
+
+
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}

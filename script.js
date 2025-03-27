@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelector(".btn-primary").addEventListener("click", function () {
-        let phanDau = document.querySelectorAll("textarea")[0].value;
-        let phanDuoi = document.querySelectorAll("textarea")[1].value;
+        let phanDau = document.querySelectorAll("textarea")[0].value.trim();
+        let phanDuoi = document.querySelectorAll("textarea")[1].value.trim();
 
         let center = document.querySelector("input[name='center']:checked").value;
 
@@ -22,13 +22,19 @@ document.addEventListener("DOMContentLoaded", function () {
             "M04\n" +
             "M30";
 
-        if (Number.isInteger(parseInt(milsXuong)) === false || Number.isInteger(parseInt(milsMoiLan)) === false) {
-            alert("Vui lòng nhập số Mils cần xuống và số Mils mỗi lần xuống.");
+        // Kiểm tra phần đầu và phần đuôi có dữ liệu không
+        if (phanDau === "" || phanDuoi === "") {
+            alert("Phần đầu hoặc phần đuôi không được để trống.");
             return;
         }
-
-        if (milsXuong < 0 || milsMoiLan < 0) {
-            alert("Vui lòng nhập số Mils cần xuống và số Mils mỗi lần xuống.");
+        // Kiểm tra xem số Mils cần xuống và số Mils mỗi lần xuống có dữ liệu không
+        if (milsXuong === "" || milsMoiLan === "") {
+            alert("Số Mils cần xuống hoặc số Mils mỗi lần xuống không được để trống.");
+            return;
+        }
+        // Kiểm tra xem số Mils cần xuống và số Mils mỗi lần xuống có phải là số nguyên duong không
+        if (!/^\d+$/.test(milsXuong) || !/^\d+$/.test(milsMoiLan)) {
+            alert("Số Mils cần xuống và số Mils mỗi lần xuống phải là số nguyên dương.");
             return;
         }
 

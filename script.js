@@ -2,12 +2,12 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector(".btn-primary").addEventListener("click", function () {
         let phanDau = document.querySelectorAll("textarea")[0].value;
         let phanDuoi = document.querySelectorAll("textarea")[1].value;
-        
+
         let center = document.querySelector("input[name='center']:checked").value;
-        
+
         let milsXuong = document.querySelectorAll("input[type='number']")[0].value;
         let milsMoiLan = document.querySelectorAll("input[type='number']")[1].value;
-        
+
         let start = document.querySelector("input[name='start']:checked").value;
         let end = document.querySelector("input[name='end']:checked").value;
 
@@ -21,12 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "G00 X0.000 Y0.000\n" +
             "M04\n" +
             "M30";
-        // Kiểm tra xem center có được chọn không
-        if (center === "yes") {
-            // Thêm G00 X0.000 Y0.000 vào phanDau nếu center được chọn
-            phanDau = "G00 X0.000 Y0.000\n" + phanDau;
-        }
-        
+
         if (Number.isInteger(parseInt(milsXuong)) === false || Number.isInteger(parseInt(milsMoiLan)) === false) {
             alert("Vui lòng nhập số Mils cần xuống và số Mils mỗi lần xuống.");
             return;
@@ -44,21 +39,37 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         while (current <= parseInt(milsXuong)) {
             let formattedValue = current / 1000; // Chia cho 1000 để có dạng 0.140 thay vì 0.0140
-            ketQua = ketQua + phanDau + "\n";
-            ketQua = ketQua + `G01 Z-${formattedValue.toFixed(3)}\n`; // Giữ 3 số thập phân
+            if (center === "yes") {
+                // Nếu tốc độ quay dòng đầu là G00 thì sửa lại tốc độ quay thành G01
+                if (phanDau.includes("G00")) {
+                    phanDau = phanDau.replace(/G00/g, "G01");
+                }
+
+                // Thêm G00 X0.000 Y0.000 vào phanDau nếu center được chọn
+                ketQua +=
+                    "G00 X0.000 Y0.000\n" +
+                    `G01 Z-${formattedValue.toFixed(3)}\n`
+                    + phanDau + "\n"; // Giữ 3 số thập phân
+            } else {
+                ketQua = ketQua + phanDau + "\n";
+                ketQua = ketQua + `G01 Z-${formattedValue.toFixed(3)}\n`; // Giữ 3 số thập phân
+            }
             ketQua = ketQua + phanDuoi + "\n";
             ketQua = ketQua + "G01 Z0.050\n\n";
             current += parseInt(milsMoiLan);
         }
-        
+
         if (end === "yes") {
             ketQua += endText;
         }
-        
-        console.log(ketQua);
-        
-        // Đặt giá trị vào ô kết quả
-        document.querySelectorAll("textarea")[2].value = ketQua.trim();
+
+
+        let ketQuaTextarea = document.querySelector("#ketQua");
+        ketQuaTextarea.value = ketQua.trim();
+
+        // 🔥 **Cập nhật chiều cao tự động**
+        ketQuaTextarea.style.height = "auto";
+        ketQuaTextarea.style.height = ketQuaTextarea.scrollHeight + "px";
     });
 });
 
@@ -86,5 +97,7 @@ document.querySelector(".btn-outline-secondary").addEventListener("click", funct
 });
 
 document.querySelector(".btn-danger").addEventListener("click", function () {
-    document.getElementById("ketQua").value = ""; // Xoá nội dung trong ô kết quả
+    let ketQuaTextarea = document.getElementById("ketQua");
+    ketQuaTextarea.value = ""; // Xoá nội dung trong ô kết quả
+    ketQuaTextarea.style.height = "auto"; // Đặt lại chiều cao ban đầu
 });

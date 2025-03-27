@@ -107,3 +107,7 @@ document.querySelector(".btn-danger").addEventListener("click", function () {
     ketQuaTextarea.value = ""; // Xoá nội dung trong ô kết quả
     ketQuaTextarea.style.height = "auto"; // Đặt lại chiều cao ban đầu
 });
+
+document.getElementById("scrollTopBtn").addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});

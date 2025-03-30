@@ -7,11 +7,20 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Xóa các ký tự không cần thiết
-        template = template.replace(/ Z0\.1/g, "").replace(/ Z0\./g, "");;
-        
-        //Nếu dòng thứ 2 giống dòng đầu tiên thì bỏ dòng đầu tiên
+        // Xóa các ký tự không cần thiết (Z0., Z0.1)
+        template = template.replace(/ Z0\.1/g, "").replace(/ Z0\./g, "");
+        console.log(template);
+
+
+        // Tách mẫu thành các dòng
         let lines = template.split("\n");
+
+        // Nếu dòng đầu có G00 thì thay bằng G01
+        if (lines[0].trim().includes("G00")) {
+            lines[0] = lines[0].trim().replace(/G00/g, "G01");
+        }
+
+        // Nếu dòng đầu và dòng thứ hai giống nhau thì bỏ dòng đầu tiên
         if (lines[0].trim() === lines[1].trim()) {
             lines.shift(); // Bỏ dòng đầu tiên nếu nó giống dòng thứ hai
         }

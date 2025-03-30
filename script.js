@@ -2,6 +2,12 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector(".btn-primary").addEventListener("click", function () {
         let phanDau = document.querySelectorAll("textarea")[0].value.trim();
         let phanDuoi = document.querySelectorAll("textarea")[1].value.trim();
+        
+        phanDau = phanDau.replace(/ Z0\.1/g, "");
+        phanDau = phanDau.replace(/ Z0\./g, "");
+        phanDuoi = phanDuoi.replace(/ Z0\./g, "");
+
+
 
         let center = document.querySelector("input[name='center']:checked").value;
 
@@ -22,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "M04\n" +
             "M30";
 
+
         // Kiểm tra phần đầu và phần đuôi có dữ liệu không
         if (phanDau === "" || phanDuoi === "") {
             alert("Phần đầu hoặc phần đuôi không được để trống.");
@@ -38,18 +45,20 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+
         let current = parseInt(milsMoiLan);
         let ketQua = "";
         if (start === "yes") {
             ketQua += startText;
         }
-        while (current <= parseInt(milsXuong)) {
+        while (current < parseInt(milsXuong)) {
             let formattedValue = current / 1000; // Chia cho 1000 để có dạng 0.140 thay vì 0.0140
             if (center === "yes") {
                 // Nếu tốc độ quay dòng đầu là G00 thì sửa lại tốc độ quay thành G01
                 if (phanDau.includes("G00")) {
                     phanDau = phanDau.replace(/G00/g, "G01");
                 }
+
 
                 // Thêm G00 X0.000 Y0.000 vào phanDau nếu center được chọn
                 ketQua +=
@@ -65,6 +74,28 @@ document.addEventListener("DOMContentLoaded", function () {
             current += parseInt(milsMoiLan);
         }
 
+        // Nếu số Mils cần xuống vẫn còn dư thì thêm một dòng cuối cùng, số mils lần cuối bằng số Mils cần xuống. Ví dụ cần xuống 50 mils và mỗi lần xuống 20 mils thì sẽ có 3 lần xuống là 20, 40, 55, 55 là số Mils cần xuống cuối cùng
+        if (current > parseInt(milsXuong)) {
+            current = parseInt(milsXuong);
+        }
+        let formattedValue = current / 1000; // Chia cho 1000 để có dạng 0.140 thay vì 0.0140
+        if (center === "yes") {
+            // Nếu tốc độ quay dòng đầu là G00 thì sửa lại tốc độ quay thành G01
+            if (phanDau.includes("G00")) {
+                phanDau = phanDau.replace(/G00/g, "G01");
+            }
+            // Thêm G00 X0.000 Y0.000 vào phanDau nếu center được chọn
+            ketQua +=
+                "G00 X0.000 Y0.000\n" +
+                `G01 Z-${formattedValue.toFixed(3)}\n`
+                + phanDau + "\n"; // Giữ 3 số thập phân
+        } else {
+            ketQua = ketQua + phanDau + "\n";
+            ketQua = ketQua + `G01 Z-${formattedValue.toFixed(3)}\n`; // Giữ 3 số thập phân
+        }
+        ketQua = ketQua + phanDuoi + "\n";
+        ketQua = ketQua + "G01 Z0.050\n\n";
+
         if (end === "yes") {
             ketQua += endText;
         }
@@ -79,9 +110,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+// Đoạn mã này sẽ tự động điều chỉnh chiều cao của textarea khi nội dung thay đổi
 document.querySelector(".btn-success").addEventListener("click", function () {
     let ketQua = document.querySelectorAll("textarea")[2].value;
-
     let blob = new Blob([ketQua], { type: "text/plain" });
     let link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -89,9 +120,9 @@ document.querySelector(".btn-success").addEventListener("click", function () {
     link.click();
 });
 
+// Đoạn mã này sẽ mở/tắt chế độ chỉnh sửa cho textarea kết quả và thay đổi tên nút
 document.querySelector(".btn-outline-secondary").addEventListener("click", function () {
     let textarea = document.getElementById("ketQua");
-
     if (textarea.hasAttribute("readonly")) {
         textarea.removeAttribute("readonly"); // Bật chỉnh sửa
         textarea.focus(); // Đặt con trỏ vào ô
@@ -102,12 +133,14 @@ document.querySelector(".btn-outline-secondary").addEventListener("click", funct
     }
 });
 
+// Đoạn mã này sẽ xóa nội dung trong ô kết quả và đặt lại chiều cao của nó về auto khi nhấn nút "Xoá"
 document.querySelector(".btn-danger").addEventListener("click", function () {
     let ketQuaTextarea = document.getElementById("ketQua");
     ketQuaTextarea.value = ""; // Xoá nội dung trong ô kết quả
     ketQuaTextarea.style.height = "auto"; // Đặt lại chiều cao ban đầu
 });
 
+// Đoạn mã này sẽ cuộn lên đầu trang khi nhấn nút "Cuộn lên đầu trang"
 document.getElementById("scrollTopBtn").addEventListener("click", function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });

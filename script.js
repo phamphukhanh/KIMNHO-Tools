@@ -1,15 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Đoạn mã này sẽ lấy nội dung từ textarea đầu tiên và xử lý nó khi nhấn nút "Xem kết quả"
     document.querySelector(".btn-primary").addEventListener("click", function () {
         // Lấy mẫu G-code từ textarea duy nhất và xử lý chuỗi
         let template = document.querySelectorAll("textarea")[0].value.trim();
         if (template === "") {
-            alert("Nội dung G-code CNC không được để trống.");
+            alert("G-code CNC không được để trống.");
             return;
         }
 
         // Xóa các ký tự không cần thiết (Z0., Z0.1)
         template = template.replace(/ Z0\.1/g, "").replace(/ Z0\./g, "");
-        console.log(template);
 
 
         // Tách mẫu thành các dòng
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
             current += parseInt(milsMoiLan);
         }
         // Nếu có dư, sử dụng giá trị milsXuong chính xác cho khối cuối
-        if (current > parseInt(milsXuong)) {
+        if (current >= parseInt(milsXuong)) {
             current = parseInt(milsXuong);
             ketQua += addBlock(current);
         }
@@ -97,10 +97,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-
-    // Đoạn mã này sẽ tự động điều chỉnh chiều cao của textarea khi nội dung thay đổi
+    // Đoạn mã này sẽ lưu nội dung của textarea kết quả vào một tệp tin khi nhấn nút "Lưu file"
     document.querySelector(".btn-success").addEventListener("click", function () {
-        let ketQua = document.querySelectorAll("textarea")[1].value;
+        // let ketQua = document.querySelectorAll("textarea")[1].value;
+        let ketQua = document.getElementById("ketQua").value;
         let blob = new Blob([ketQua], { type: "text/plain" });
         let link = document.createElement("a");
         link.href = URL.createObjectURL(blob);

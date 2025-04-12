@@ -207,13 +207,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Đoạn mã này sẽ lưu nội dung của textarea kết quả vào một tệp tin khi nhấn nút "Lưu file"
     document.querySelector(".btn-success").addEventListener("click", function () {
-        // let ketQua = document.querySelectorAll("textarea")[1].value;
-        let ketQua = document.getElementById("ketQua").value;
-        let blob = new Blob([ketQua], { type: "text/plain" });
-        let link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "untitled.txt";
-        link.click();
+    let ketQua = document.getElementById("ketQua").value;
+    // Thay thế tất cả các ký tự xuống dòng (\n) bằng tổ hợp \r\n
+    let ketQuaDaSua = ketQua.replace(/\n/g, "\r\n");
+    let blob = new Blob([ketQuaDaSua], { type: "text/plain" });
+    console.log(blob);
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "untitled.txt";
+    link.click();
     });
 
     // Đoạn mã này sẽ mở/tắt chế độ chỉnh sửa cho textarea kết quả và thay đổi tên nút

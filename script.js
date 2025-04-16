@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
 
-
+    // Đoạn mã này đọc nội dung của tệp tin mẫu G-code và hiển thị vào textarea
     document.querySelector(".btn-primary").addEventListener("click", function () {
         // Lấy mẫu G-code từ textarea đầu tiên và xử lý chuỗi
         let template = document.querySelectorAll("textarea")[0].value.trim();
@@ -15,7 +15,10 @@ document.addEventListener("DOMContentLoaded", function () {
         let end = document.querySelector("input[name='end']:checked").value;
 
         if (template === "") {
-            alert("G-code CNC không được để trống.");
+            Swal.fire({
+                title: "G-code CNC mẫu không được để trống!",
+                icon: "warning",
+            });
             return;
         }
 
@@ -50,11 +53,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Kiểm tra dữ liệu bắt buộc
         if (milsXuong === "" || milsMoiLan === "") {
-            alert("Số Mils cần xuống hoặc số Mils mỗi lần xuống không được để trống.");
+            Swal.fire({
+                title: "Số Mils cần xuống hoặc số Mils mỗi lần xuống không được để trống!",
+                icon: "warning",
+            });
             return;
         }
         if (!/^\d+$/.test(milsXuong) || !/^\d+$/.test(milsMoiLan)) {
-            alert("Số Mils cần xuống và số Mils mỗi lần xuống phải là số nguyên dương.");
+            Swal.fire({
+                title: "Số Mils cần xuống và số Mils mỗi lần xuống phải là số nguyên dương!",
+                icon: "warning",
+            });
             return;
         }
 
@@ -108,32 +117,38 @@ document.addEventListener("DOMContentLoaded", function () {
         ketQuaTextarea.style.height = ketQuaTextarea.scrollHeight + "px";
     });
 
-
     // Đoạn mã này sẽ lưu nội dung của textarea kết quả vào một tệp tin khi nhấn nút "Lưu file"
     document.querySelector(".btn-success").addEventListener("click", function () {
-    let ketQua = document.getElementById("ketQua").value;
-    // Thay thế tất cả các ký tự xuống dòng (\n) bằng tổ hợp \r\n
-    let ketQuaDaSua = ketQua.replace(/\n/g, "\r\n");
-    let blob = new Blob([ketQuaDaSua], { type: "text/plain" });
-    console.log(blob);
-    let link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "untitled.txt";
-    link.click();
+        let ketQua = document.getElementById("ketQua").value;
+        // Thay thế tất cả các ký tự xuống dòng (\n) bằng tổ hợp \r\n
+        let ketQuaDaSua = ketQua.replace(/\n/g, "\r\n");
+        let blob = new Blob([ketQuaDaSua], { type: "text/plain" });
+        console.log(blob);
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "untitled.txt";
+        link.click();
     });
 
     // Đoạn mã này sẽ mở/tắt chế độ chỉnh sửa cho textarea kết quả và thay đổi tên nút
-    document.querySelector(".btn-outline-secondary").addEventListener("click", function () {
+    document.getElementById("edit-button").addEventListener("click", function () {
         let textarea = document.getElementById("ketQua");
+        let icon = this.querySelector("i");
+        let text = this.querySelector(".btn-text");
+
         if (textarea.hasAttribute("readonly")) {
-            textarea.removeAttribute("readonly"); // Bật chỉnh sửa
-            textarea.focus(); // Đặt con trỏ vào ô
-            this.textContent = "Hoàn tất"; // Đổi tên nút
+            textarea.removeAttribute("readonly");
+            textarea.focus();
+            icon.className = "fa fa-check";  // Đổi sang icon tick
+            text.textContent = "Hoàn tất";
         } else {
-            textarea.setAttribute("readonly", true); // Khóa lại
-            this.textContent = "Chỉnh sửa"; // Đổi lại tên nút
+            textarea.setAttribute("readonly", true);
+            icon.className = "fa fa-pencil-square-o"; // Đổi lại icon cây viết
+            text.textContent = "Chỉnh sửa";
         }
     });
+
+
 
     // Đoạn mã này sẽ xóa nội dung trong ô kết quả và đặt lại chiều cao của nó về auto khi nhấn nút "Xoá"
     document.querySelector(".btn-danger").addEventListener("click", function () {
@@ -146,4 +161,36 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("scrollTopBtn").addEventListener("click", function () {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+
+    // Đoạn mã này sẽ sao chép nội dung trong ô kết quả vào clipboard khi nhấn nút "Sao chép"
+    document.getElementById("copy-button").addEventListener("click", function () {
+        const ketQua = document.getElementById('ketQua').value;
+        if (ketQua.trim() === "") {
+            Swal.fire({
+                title: "Không có nội dung để sao chép!",
+                icon: "warning",
+            });
+            return;
+        }
+        navigator.clipboard.writeText(ketQua)
+            .then(() => {
+                Swal.fire({
+                    icon: "success",
+                    title: "Đã sao chép vào clipboard",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            })
+            .catch(err => {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: "Không thể sao chép. Trình duyệt không hỗ trợ!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                console.error("Clipboard copy failed:", err);
+            });
+    });
+
 });

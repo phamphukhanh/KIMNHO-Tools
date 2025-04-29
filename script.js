@@ -137,10 +137,16 @@ document.addEventListener("DOMContentLoaded", function () {
     // Đoạn mã này sẽ lưu nội dung của textarea kết quả vào một tệp tin khi nhấn nút "Lưu file"
     document.querySelector(".btn-success").addEventListener("click", function () {
         let ketQua = document.getElementById("ketQua").value;
+        if (ketQua.trim() === "") {
+            Swal.fire({
+                title: "Không có nội dung để lưu!",
+                icon: "warning",
+            });
+            return;
+        }
         // Thay thế tất cả các ký tự xuống dòng (\n) bằng tổ hợp \r\n
         let ketQuaDaSua = ketQua.replace(/\n/g, "\r\n");
         let blob = new Blob([ketQuaDaSua], { type: "text/plain" });
-        console.log(blob);
         let link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = "untitled.txt";

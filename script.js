@@ -11,8 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
         let center = document.querySelector("input[name='center']:checked").value;
         let milsXuong = document.querySelectorAll("input[type='number']")[0].value;
         let milsMoiLan = document.querySelectorAll("input[type='number']")[1].value;
-        let start = document.querySelector("input[name='start']:checked").value;
-        let end = document.querySelector("input[name='end']:checked").value;
+        let startEnd = document.querySelector("input[name='start-end']:checked").value;
+        let spacing = document.querySelector("input[name='spacing']:checked").value;
+        const keepOptions = document.getElementById("keep-options").checked;
 
         if (template === "") {
             Swal.fire({
@@ -43,12 +44,11 @@ document.addEventListener("DOMContentLoaded", function () {
         let phanDau = lines[0].trim();
         let phanDuoi = lines.length > 1 ? lines.slice(1).join("\n").trim() : "";
 
-
-
         const startText =
             "N10 G01 Z0.050 F4\n" +
             "N20 G01 Z0.050\n" +
             "M03\n\n\n";
+
         const endText = "\nG00 X0.000 Y0.000\nM04\nM30";
 
         // Kiểm tra dữ liệu bắt buộc
@@ -67,31 +67,36 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        let ketQua = (start === "yes") ? startText : "";
+        let ketQua = (startEnd === "yes") ? startText : "";
+        const addSpacing = spacing === "yes";
         let current = parseInt(milsMoiLan);
 
         // Định nghĩa hàm addBlock tùy theo tùy chọn center
         let addBlock;
         if (center === "yes") {
-            // Nếu center được chọn, chuyển đổi phanDau một lần duy nhất (nếu chứa "G00")
             let headerModified = phanDau.includes("G00") ? phanDau.replace(/G00/g, "G01") : phanDau;
             addBlock = function (currentVal) {
-                let formattedValue = currentVal / 1000; // vd: 140 -> 0.140
-                let block = "G00 X0.000 Y0.000\n" + `G01 Z-${formattedValue.toFixed(3)}\n` + headerModified + "\n";
+                let formattedValue = currentVal / 1000;
+                let block = "G00 X0.000 Y0.000\n" +
+                    `G01 Z-${formattedValue.toFixed(3)}\n` +
+                    headerModified + "\n";
                 if (phanDuoi !== "") {
                     block += phanDuoi + "\n";
                 }
-                block += "G01 Z0.050\n\n";
+                block += "G01 Z0.050\n";
+                if (addSpacing) block += "\n";
                 return block;
             };
         } else {
             addBlock = function (currentVal) {
                 let formattedValue = currentVal / 1000;
-                let block = phanDau + "\n" + `G01 Z-${formattedValue.toFixed(3)}\n`;
+                let block = phanDau + "\n" +
+                    `G01 Z-${formattedValue.toFixed(3)}\n`;
                 if (phanDuoi !== "") {
                     block += phanDuoi + "\n";
                 }
-                block += "G01 Z0.050\n\n";
+                block += "G01 Z0.050\n";
+                if (addSpacing) block += "\n";
                 return block;
             };
         }
@@ -106,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
             current = parseInt(milsXuong);
             ketQua += addBlock(current);
         }
-        if (end === "yes") {
+        if (startEnd === "yes") {
             ketQua += endText;
         }
 
@@ -115,6 +120,18 @@ document.addEventListener("DOMContentLoaded", function () {
         ketQuaTextarea.value = ketQua.trim();
         ketQuaTextarea.style.height = "auto";
         ketQuaTextarea.style.height = ketQuaTextarea.scrollHeight + "px";
+
+        if (!keepOptions) {
+            // Reset các radio về mặc định
+            document.querySelector("input[name='center'][value='no']").checked = true;
+            document.querySelector("input[name='start-end'][value='no']").checked = true;
+            document.querySelector("input[name='spacing'][value='no']").checked = true;
+
+            // Đặt lại các ô nhập liệu về mặc định
+            document.getElementById("inputCNC").value = "";
+            document.querySelectorAll("input[type='number']").forEach(input => input.value = "");
+        }
+
     });
 
     // Đoạn mã này sẽ lưu nội dung của textarea kết quả vào một tệp tin khi nhấn nút "Lưu file"
@@ -147,8 +164,6 @@ document.addEventListener("DOMContentLoaded", function () {
             text.textContent = "Chỉnh sửa";
         }
     });
-
-
 
     // Đoạn mã này sẽ xóa nội dung trong ô kết quả và đặt lại chiều cao của nó về auto khi nhấn nút "Xoá"
     document.querySelector(".btn-danger").addEventListener("click", function () {

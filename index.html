@@ -52,8 +52,14 @@
                 <div class="col-md-6">
                     <div class="row">
                         <div class="col-12">
-                            <label class="font-weight-bold">G-code CNC</label>
-                            <textarea class="form-control" rows="10" required></textarea>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="font-weight-bold mb-0">G-code CNC</label>
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="keep-options">
+                                    <label class="custom-control-label font-weight-bold mb-0" for="keep-options">Giữ lựa chọn</label>
+                                </div>
+                            </div>
+                            <textarea id="inputCNC" class="form-control mt-2" rows="10" required></textarea>
                         </div>
                     </div>
                 </div>
@@ -71,15 +77,15 @@
                             <input type="number" min="0" class="form-control" required>
                         </div>
                         <div class="border-left pl-3 col-md-6 ">
-                            <label class="font-weight-bold">Thêm Program Start?</label>
+                            <label class="font-weight-bold mt-2">Thêm Program Start, Program End?</label>
                             <div>
-                                <label class="mr-3"><input type="radio" name="start" value="yes"> Có</label>
-                                <label><input type="radio" name="start" value="no" checked> Không</label>
+                                <label class="mr-3"><input type="radio" name="start-end" value="yes"> Có</label>
+                                <label><input type="radio" name="start-end" value="no" checked> Không</label>
                             </div>
-                            <label class="font-weight-bold mt-2">Thêm Program End?</label>
+                            <label class="font-weight-bold mt-2">Cách dòng?</label>
                             <div>
-                                <label class="mr-3"><input type="radio" name="end" value="yes"> Có</label>
-                                <label><input type="radio" name="end" value="no" checked> Không</label>
+                                <label class="mr-3"><input type="radio" name="spacing" value="yes"> Có</label>
+                                <label><input type="radio" name="spacing" value="no" checked> Không</label>
                             </div>
                         </div>
                     </div>

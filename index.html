@@ -28,20 +28,21 @@
     <div class="container mt-3">
         <h3 class="text-center font-weight-bold">
             <div class="btn-group">
-                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
-                    data-display="static" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" data-display="static"
+                    aria-haspopup="true" aria-expanded="false">
                     <span class="h3 font-weight-bold">Cắt</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
                     <button class="dropdown-item" type="button">Cắt</button>
                     <button class="dropdown-item" type="button">Đục lỗ</button>
+                    <button class="dropdown-item" type="button">Khắc chữ</button>
                 </div>
             </div>
             <span data-toggle="tooltip" data-placement="right" data-html="true" title="
                 <div style='text-align: justify; max-width: 250px;'>
                     <b>Cắt đường thẳng, đường cong.</b><br><br>
                     1. Chạy BobCad 1 vòng.<br>
-                    2. Copy G-code vào đây (không nhất thiết phải xoá Z0.)
+                    2. Copy G-code vào (không nhất thiết phải xoá Z0.)
                 </div>" class="ml-1 small-tooltip">
                 <i class="fa fa-info-circle"></i>
             </span>
@@ -65,24 +66,44 @@
                 </div>
                 <div class="col-md-6 border-left pl-3">
                     <div class="row mt-2">
-                        <div class="col-md-6">
-                            <label class="font-weight-bold">Từ tâm đi ra (X0.000 Y0.000)?</label>
-                            <div>
-                                <label class="mr-3"><input type="radio" name="center" value="yes"> Có</label>
-                                <label><input type="radio" name="center" value="no" checked> Không</label>
+                        <div id="form-section" class="col-md-6">
+                            <!-- Form Cắt mặc định -->
+                            <div id="form-cut">
+                                <label class="font-weight-bold">Từ tâm đi ra (X0.000 Y0.000)?</label>
+                                <div>
+                                    <label class="mr-3"><input type="radio" name="center" value="yes"> Có</label>
+                                    <label><input type="radio" name="center" value="no" checked> Không</label>
+                                </div>
+                                <label class="font-weight-bold mt-2">Số Mils cần xuống:</label>
+                                <input type="number" min="0" class="form-control" required>
+                                <label class="font-weight-bold mt-2">Số Mils mỗi lần xuống:</label>
+                                <input type="number" min="0" class="form-control" required>
                             </div>
-                            <label class="font-weight-bold mt-2">Số Mils cần xuống:</label>
-                            <input type="number" min="0" class="form-control" required>
-                            <label class="font-weight-bold mt-2">Số Mils mỗi lần xuống:</label>
-                            <input type="number" min="0" class="form-control" required>
+
+                            <!-- Form Đục lỗ: ẩn lúc đầu -->
+                            <div id="form-drill" style="display: none;">
+                                <label class="font-weight-bold">Chọn độ sâu:</label>
+                                <div>
+                                    <label class="mr-3">
+                                        <input type="radio" name="depth-choice" value="5" checked> Xuống 5 Mils
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="depth-choice" value="custom"> Số khác
+                                    </label>
+                                </div>
+                                <div id="custom-depth" class="mt-2" style="display: none;">
+                                    <label class="font-weight-bold">Số Mils cần xuống:</label>
+                                    <input id="customDepthValue" type="number" min="0" class="form-control">
+                                </div>
+                            </div>
                         </div>
                         <div class="border-left pl-3 col-md-6 ">
-                            <label class="font-weight-bold mt-2">Thêm Program Start, Program End?</label>
+                            <label class="font-weight-bold">Thêm Program Start, Program End?</label>
                             <div>
                                 <label class="mr-3"><input type="radio" name="start-end" value="yes"> Có</label>
                                 <label><input type="radio" name="start-end" value="no" checked> Không</label>
                             </div>
-                            <label class="font-weight-bold mt-2">Cách dòng?</label>
+                            <label class="font-weight-bold">Cách dòng?</label>
                             <div>
                                 <label class="mr-3"><input type="radio" name="spacing" value="yes"> Có</label>
                                 <label><input type="radio" name="spacing" value="no" checked> Không</label>

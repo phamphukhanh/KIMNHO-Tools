@@ -3,10 +3,133 @@ document.addEventListener("DOMContentLoaded", function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
 
+    const tooltipElement = document.querySelector('.small-tooltip');
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    const dropdownLabel = document.querySelector('.dropdown-toggle span');
+
+    const formCut = document.getElementById("form-cut");
+    const formDrill = document.getElementById("form-drill");
+    const customDepth = document.getElementById("custom-depth");
+
+    // Cập nhật tooltip dựa theo lựa chọn
+    function updateTooltipContent(option) {
+        let content = '';
+        if (option === 'Cắt') {
+            content = `
+            <div style='text-align: justify; max-width: 250px;'>
+                <b>Cắt đường thẳng, đường cong.</b><br><br>
+                1. Chạy BobCad 1 vòng.<br>
+                2. Copy G-code vào đây (không nhất thiết phải xoá Z0.)
+            </div>`;
+        } else if (option === 'Đục lỗ') {
+            content = `
+            <div style='text-align: justify; max-width: 250px;'>
+                <b>Đục định vị, lỗ khác.</b><br><br>
+                1. Chấm các chấm trong BobCad.<br>
+                2. Copy G-code vào.
+            </div>`;
+        } else if (option === 'Khắc chữ') {
+            content = `
+            <div style='text-align: justify; max-width: 250px;'>
+                <b>Khắc chữ block.</b><br><br>
+                1. Chạy chữ trong BobCad, sau mỗi chữ có 2 dòng trống.<br>
+                2. Copy G-code vào.
+            </div>`;
+        }
+
+        tooltipElement.setAttribute("data-original-title", content);
+        $(tooltipElement).tooltip("hide").tooltip("show");
+
+        setTimeout(() => {
+            $(tooltipElement).tooltip("hide");
+        }, 2500);
+    }
+
+    // Gắn một lần duy nhất cho dropdown items
+    dropdownItems.forEach(item => {
+        item.addEventListener("click", function () {
+            const selectedText = this.textContent.trim();
+            dropdownLabel.textContent = selectedText;
+
+            // Cập nhật tooltip
+            updateTooltipContent(selectedText);
+
+            // Hiện/ẩn form tương ứng
+            if (selectedText === "Đục lỗ" || selectedText === "Khắc chữ") {
+                formCut.style.display = "none";
+                formDrill.style.display = "block";
+            } else {
+                formCut.style.display = "block";   // Cho cả Cắt và Khắc chữ
+                formDrill.style.display = "none";
+                customDepth.style.display = "none";
+                document.querySelector("input[name='depth-choice'][value='5']").checked = true;
+            }
+        });
+    });
+
+    // Ẩn/hiện input 'Số khác' trong đục lỗ
+    document.querySelectorAll("input[name='depth-choice']").forEach(radio => {
+        radio.addEventListener("change", function () {
+            customDepth.style.display = this.value === "custom" ? "block" : "none";
+        });
+    });
+
     // Đoạn mã này đọc nội dung của tệp tin mẫu G-code và hiển thị vào textarea
     document.querySelector(".btn-primary").addEventListener("click", function () {
         // Lấy mẫu G-code từ textarea đầu tiên và xử lý chuỗi
         let template = document.querySelectorAll("textarea")[0].value.trim();
+
+        const selectedMode = document.querySelector(".dropdown-toggle span").textContent.trim();
+
+        // Nếu là Đục lỗ thì xử lý theo cách chuẩn hóa đặc biệt
+        if (selectedMode === "Đục lỗ") {
+            const milsDown = document.querySelector("input[name='depth-choice']:checked").value;
+            const milsDownValue = milsDown === "custom"
+                ? document.getElementById("customDepthValue").value
+                : milsDown;
+
+            if (milsDownValue === "" || isNaN(milsDownValue) || parseFloat(milsDownValue) <= 0) {
+                Swal.fire({
+                    title: "Vui lòng nhập số Mils cần khoan (số dương)!",
+                    icon: "warning",
+                });
+                return;
+            }
+
+            // Chuyển mils xuống thành đơn vị mm
+            // Chuyển mils xuống thành đơn vị mm
+            let depthMM = (-parseInt(milsDownValue) / 1000).toFixed(3);  // Giữ đúng định dạng -0.600
+
+            // Đọc giá trị spacing 1 lần
+            const spacing = document.querySelector("input[name='spacing']:checked").value;
+
+            let lines = template.split("\n");
+            let ketQua = "";
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (line === "") return;
+
+                // Tìm X và Y
+                const match = line.match(/X[-+]?[0-9.]+(?:\s*)Y[-+]?[0-9.]+/i);
+                if (match) {
+                    ketQua += match[0].trim() + "\n";
+                    ketQua += `G01 Z${depthMM}\n`;
+                    ketQua += `G01 Z0.050\n`;
+                    if (spacing === "yes") ketQua += "\n";
+                }
+            });
+
+
+
+            // Hiển thị kết quả
+            const ketQuaTextarea = document.querySelector("#ketQua");
+            ketQuaTextarea.value = ketQua.trim();
+            ketQuaTextarea.style.height = "auto";
+            ketQuaTextarea.style.height = ketQuaTextarea.scrollHeight + "px";
+            return;
+        }
+
         // Lấy các tùy chọn và số liệu
         let center = document.querySelector("input[name='center']:checked").value;
         let milsXuong = document.querySelectorAll("input[type='number']")[0].value;

@@ -19,21 +19,21 @@ document.addEventListener("DOMContentLoaded", function () {
             <div style='text-align: justify; max-width: 250px;'>
                 <b>Cắt đường thẳng, đường cong.</b><br><br>
                 1. Chạy BobCad 1 vòng.<br>
-                2. Copy G-code vào đây (không nhất thiết phải xoá Z0.)
+                2. Copy G-code vào, không cần xoá Z0.
             </div>`;
         } else if (option === 'Đục lỗ') {
             content = `
             <div style='text-align: justify; max-width: 250px;'>
-                <b>Đục định vị, lỗ khác.</b><br><br>
+                <b>Đục lỗ định vị</b><br><br>
                 1. Chấm các chấm trong BobCad.<br>
-                2. Copy G-code vào.
+                2. Copy G-code vào, không cần xoá Z0..
             </div>`;
         } else if (option === 'Khắc chữ') {
             content = `
             <div style='text-align: justify; max-width: 250px;'>
                 <b>Khắc chữ block.</b><br><br>
-                1. Chạy chữ trong BobCad, sau mỗi chữ có 2 dòng trống.<br>
-                2. Copy G-code vào.
+                1. Chạy các chữ trong BobCad.<br>
+                2. Copy G-code vào, không cần xoá Z0..
             </div>`;
         }
 
@@ -323,7 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Xử lý các dòng trong G-code
         // Xóa các chuỗi không cần thiết và tách thành các khối
-        let characters = input.replace(/ Z0\.1/g, "").replace(/ Z0\./g, "").split("\n\n");
+        let characters = input.replace(/ Z0\.1/g, "").replace(/ Z0\./g, "").split(/(?=G00)/);
         if (milsDownValue === "" || isNaN(milsDownValue) || parseFloat(milsDownValue) <= 0) {
             Swal.fire({
                 title: "Vui lòng nhập số Mils cần khoan (số dương)!",

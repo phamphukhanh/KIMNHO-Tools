@@ -237,10 +237,10 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector(".btn-primary").addEventListener("click", function () {
         // Lấy mẫu G-code từ textarea đầu tiên và xử lý chuỗi
         let input = document.querySelectorAll("textarea")[0].value.trim();
-        if (input.includes("G01 Z-") || input.includes("G01 Z0.050") || input.includes("G00 X0.000 Y0.000")) {
+        if (input.includes("Z-") || input.includes("G01 Z0.050") || input.includes("G00 X0.000 Y0.000")) {
             Swal.fire({
-                title: "Chưa xóa G-code cũ!",
-                text: "Vui lòng xóa G-code cũ trước khi nhập G-code mới.",
+                title: "G-code đã có chỉnh sửa!\n(Chứa Z- hoặc G01 Z0.050 hoặc G00 X0.000 Y0.000)",
+                text: "Vui lòng nhập G-code chưa chỉnh sửa.",
                 icon: "warning",
             });
             return;

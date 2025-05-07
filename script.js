@@ -9,7 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const formCut = document.getElementById("form-cut");
     const formDrill = document.getElementById("form-drill");
-    const customDepth = document.getElementById("custom-depth");
+    const customCutDepth = document.getElementById("custom-cut-depth");
+    const customDrillDepth = document.getElementById("custom-drill-depth");
 
     // Cập nhật tooltip dựa theo lựa chọn
     function updateTooltipContent(option) {
@@ -61,26 +62,121 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 formCut.style.display = "block";   // Cho cả Cắt và Khắc chữ
                 formDrill.style.display = "none";
-                customDepth.style.display = "none";
-                document.querySelector("input[name='depth-choice'][value='5']").checked = true;
+                customDrillDepth.style.display = "none";
+                document.querySelector("input[name='drill-depth'][value='5']").checked = true;
             }
             // Đặt lại các ô nhập liệu về mặc định
             document.querySelectorAll("input[type='number']").forEach(input => input.value = "");
             document.querySelector("input[name='start-end'][value='no']").checked = true;
             document.querySelector("input[name='spacing'][value='no']").checked = true;
             document.querySelector("input[name='center'][value='no']").checked = true;
-            document.getElementById("customDepthValue").value = "";
+            document.getElementById("customDrillDepthValue").value = "";
         });
     });
 
     // Ẩn/hiện input 'Số khác' trong đục lỗ
-    document.querySelectorAll("input[name='depth-choice']").forEach(radio => {
+    document.querySelectorAll("input[name='drill-depth']").forEach(radio => {
         radio.addEventListener("change", function () {
-            customDepth.style.display = this.value === "custom" ? "block" : "none";
+            customDrillDepth.style.display = this.value === "custom" ? "block" : "none";
         });
     });
 
-    // Đoạn mã này sẽ xử lý việc khoan lỗ trong G-code
+    // Ẩn/hiện input 'Số khác' trong cắt
+    document.querySelectorAll("input[name='cut-depth']").forEach(radio => {
+        radio.addEventListener("change", function () {
+            customCutDepth.style.display = this.value === "custom" ? "block" : "none";
+        });
+    });
+
+    function putMilsInBlocks(input) {
+        const selectedMode = document.querySelector(".dropdown-toggle span").textContent.trim();
+        let milsDown = "";
+        let milsEach = "";
+        let output = "";
+        if (selectedMode === "Cắt" || selectedMode === "Khắc chữ") {
+            milsDown = document.querySelectorAll("input[type='number']")[0].value;
+            milsEach = document.querySelector("input[name='cut-depth']:checked").value;
+        } else if (selectedMode === "Đục lỗ") {
+            
+        }
+        let milsEachValue = milsEach === "custom" ? document.getElementById("customCutDepthValue").value : milsEach;
+        milsEachValue = parseInt(milsEachValue);
+        let milsDownValue = parseInt(milsDown);
+        if (milsDown === "" || milsEachValue === "") {
+            Swal.fire({
+                title: "Số Mils cần xuống hoặc số Mils mỗi lần xuống không được để trống!",
+                icon: "warning",
+            });
+            return;
+        }
+        if (milsDownValue < milsEachValue) {
+            Swal.fire({
+                title: "Số Mils cần xuống phải lớn hơn số Mils mỗi lần xuống!",
+                icon: "warning",
+            });
+            return;
+        }
+        if (milsDownValue <= 0 || milsEachValue <= 0) {
+            Swal.fire({
+                title: "Số Mils cần xuống và số Mils mỗi lần xuống phải là số dương!",
+                icon: "warning",
+            });
+            return;
+        }
+        if (milsDownValue > milsEachValue) {
+
+            input.forEach(line => {
+                output += milsAddingUp(line, milsDownValue, milsEachValue);
+            });
+        }
+    }
+
+    function milsAddingUp(input, milsDownValue, milsEachValue) {
+        // Chia nhỏ từng bước nếu Mils xuống > Mils mỗi lần xuống
+        const spacing = document.querySelector("input[name='spacing']:checked").value;
+        input = input.split("\n");
+        if (!input[0].includes("G00")) {
+            input[0] = "G00 " + input[0];
+        }
+        // console.log(input);
+        let result = "";
+
+        const maxStep = milsEachValue;
+        let total = milsDownValue;
+        let current = maxStep;
+
+
+        while (current < total) {
+            let partialDepth = (-current / 1000).toFixed(3);
+            result += input[0].trim() + "\n";
+            result += `G01 Z${partialDepth}\n`;
+            for (let i = 1; i < input.length; i++) {
+                if (!(i == input.length - 1)) {
+                    result += input[i].trim() + "\n";
+                }
+            }
+            result += `G01 Z0.050\n`;
+            if (spacing === "yes") result += "\n";
+            current += maxStep;
+        }
+
+        // Bước cuối (nếu còn dư hoặc bằng)
+        if (current >= total) {
+            let finalDepth = (-total / 1000).toFixed(3);
+            result += "G00 " + input[0].trim() + "\n";
+            result += `G01 Z${finalDepth}\n`;
+            for (let i = 1; i < input.length; i++) {
+                if (!(i == input.length - 1)) {
+                    result += input[i].trim() + "\n";
+                }
+            }
+            result += `G01 Z0.050\n`;
+        }
+        if (spacing === "yes") result += "\n\n";
+        return result;
+    }
+
+    // Đoạn mã này sẽ xử lý việc cắt trong G-code
     function cut(input) {
         if (input === "") {
             Swal.fire({
@@ -214,7 +310,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         return;
     }
-
+    // Đoạn mã này sẽ xử lý việc khoan lỗ trong G-code
     function drill(input) {
         if (input === "") {
             Swal.fire({
@@ -224,10 +320,10 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
         const keepOptions = document.getElementById("keep-options").checked;
-        const milsDown = document.querySelector("input[name='depth-choice']:checked").value;
+        const milsDown = document.querySelector("input[name='drill-depth']:checked").value;
         const startEnd = document.querySelector("input[name='start-end']:checked").value;
         const spacing = document.querySelector("input[name='spacing']:checked").value;
-        const milsDownValue = milsDown === "custom" ? document.getElementById("customDepthValue").value : milsDown;
+        const milsDownValue = milsDown === "custom" ? document.getElementById("customDrillDepthValue").value : milsDown;
         const startText =
             "N10 G01 Z0.050 F4\n" +
             "N20 G01 Z0.050\n" +
@@ -244,8 +340,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Chuyển mils xuống thành đơn vị mm
-        let depthMM = (-parseInt(milsDownValue) / 1000).toFixed(3);
         let result = (startEnd === "yes") ? startText : "";
 
         lines.forEach(line => {
@@ -290,8 +384,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!keepOptions) {
             // Reset các radio về mặc định
-            document.querySelector("input[name='depth-choice'][value='5']").checked = true;
-            customDepth.style.display = this.value === "custom" ? "block" : "none";
+            document.querySelector("input[name='drill-depth'][value='5']").checked = true;
+            customDrillDepth.style.display = this.value === "custom" ? "block" : "none";
             document.querySelector("input[name='start-end'][value='no']").checked = true;
             document.querySelector("input[name='spacing'][value='no']").checked = true;
 
@@ -301,7 +395,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         return;
     }
-
+    // Đoạn mã này sẽ xử lý việc khoan lỗ trong G-code
     function text(input) {
         if (input === "") {
             Swal.fire({
@@ -311,10 +405,10 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
         const keepOptions = document.getElementById("keep-options").checked;
-        const milsDown = document.querySelector("input[name='depth-choice']:checked").value;
+        const milsDown = document.querySelector("input[name='drill-depth']:checked").value;
         const startEnd = document.querySelector("input[name='start-end']:checked").value;
         const spacing = document.querySelector("input[name='spacing']:checked").value;
-        const milsDownValue = milsDown === "custom" ? document.getElementById("customDepthValue").value : milsDown;
+        const milsDownValue = milsDown === "custom" ? document.getElementById("customDrillDepthValue").value : milsDown;
         const startText =
             "N10 G01 Z0.050 F4\n" +
             "N20 G01 Z0.050\n" +
@@ -363,8 +457,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!keepOptions) {
             // Reset các radio về mặc định
-            document.querySelector("input[name='depth-choice'][value='5']").checked = true;
-            customDepth.style.display = this.value === "custom" ? "block" : "none";
+            document.querySelector("input[name='drill-depth'][value='5']").checked = true;
+            customDrillDepth.style.display = this.value === "custom" ? "block" : "none";
             document.querySelector("input[name='start-end'][value='no']").checked = true;
             document.querySelector("input[name='spacing'][value='no']").checked = true;
 
@@ -395,19 +489,29 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
         // Xóa các chuỗi không cần thiết
-        input = input.replace(/ Z0\.1/g, "").replace(/ Z0\./g, "");
+        input = input
+            .trim()
+            .replaceAll(" Z0.", "")
+            .replaceAll(" Z01.", "")
+            .replaceAll("G81 ", "")
+            .replaceAll(" R1. F1.", "");
+        // .replace(/[\r\n]+/gm, " ");
 
         // Lấy chế độ đã chọn từ dropdown
         const selectedMode = document.querySelector(".dropdown-toggle span").textContent.trim();
         switch (selectedMode) {
             case "Cắt":
-                cut(input);
+                input = input.split(/(?=G00)/);
+                putMilsInBlocks(input);
+                // cut(input);
                 break;
             case "Đục lỗ":
-                drill(input);
+                input = input.split("\n");
+                // drill(input);
                 break;
             case "Khắc chữ":
-                text(input);
+                input = input.split(/(?=G00)/);
+                // text(input);
                 break;
         }
     });

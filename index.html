@@ -60,7 +60,18 @@
                                         chọn</label>
                                 </div>
                             </div>
-                            <textarea id="inputCNC" class="form-control mt-2" rows="10" required></textarea>
+                            <textarea id="inputCNC" class="form-control mt-2" rows="10" required>
+G00 X-1.0515 Y0.9622
+G00 X-1.0515 Y0.8795
+G00 X-1.0515 Y0.7968
+G00 X-1.0515 Y0.7141
+G00 X-1.0515 Y0.6314
+G00 X-1.0515 Y0.5487
+G00 X-1.0515 Y0.466
+G00 X-1.0515 Y0.3833
+G00 X-1.0515 Y0.3006
+G00 X-1.0515 Y0.2179
+                            </textarea>
                         </div>
                     </div>
                 </div>
@@ -75,9 +86,25 @@
                                     <label><input type="radio" name="center" value="no" checked> Không</label>
                                 </div>
                                 <label class="font-weight-bold mt-2">Số Mils cần xuống:</label>
-                                <input type="number" min="0" class="form-control" required>
+                                <input type="number" min="0" class="form-control" value="20" required>
+                                <!-- <label class="font-weight-bold mt-2">Số Mils mỗi lần xuống:</label>
+                                <input type="number" min="0" class="form-control" required> -->
                                 <label class="font-weight-bold mt-2">Số Mils mỗi lần xuống:</label>
-                                <input type="number" min="0" class="form-control" required>
+                                <div>
+                                    <label class="mr-2">
+                                        <input type="radio" name="cut-depth" value="5" checked> 5 Mils
+                                    </label>
+                                    <label class="mr-2">
+                                        <input type="radio" name="cut-depth" value="20"> 20 Mils
+                                    </label>
+                                    <label class="mr-2">
+                                        <input type="radio" name="cut-depth" value="custom"> Số khác
+                                    </label>
+                                </div>
+                                <div id="custom-cut-depth" class="mt-2" style="display: none;">
+                                    <label class="font-weight-bold">Số Mils cần xuống:</label>
+                                    <input id="customCutDepthValue" type="number" min="0" class="form-control">
+                                </div>
                             </div>
 
                             <!-- Form Đục lỗ: ẩn lúc đầu -->
@@ -85,15 +112,17 @@
                                 <label class="font-weight-bold">Chọn độ sâu:</label>
                                 <div>
                                     <label class="mr-3">
-                                        <input type="radio" name="depth-choice" value="5" checked> Xuống 5 Mils
+                                        <input type="radio" name="drill-depth" value="5" checked> Xuống 5 Mils
                                     </label>
                                     <label>
-                                        <input type="radio" name="depth-choice" value="custom"> Số khác
+                                        <input type="radio" name="drill-depth" value="custom"> Số khác
                                     </label>
                                 </div>
-                                <div id="custom-depth" class="mt-2" style="display: none;">
+                                <div id="custom-drill-depth" class="mt-2" style="display: none;">
                                     <label class="font-weight-bold">Số Mils cần xuống:</label>
-                                    <input id="customDepthValue" type="number" min="0" class="form-control">
+                                    <input type="number" min="0" class="form-control" value="220" required>
+                                    <label class="font-weight-bold">Số Mils mỗi lần xuống:</label>
+                                    <input id="customDrillDepthValue" type="number" min="0" class="form-control">
                                 </div>
                             </div>
                         </div>

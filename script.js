@@ -256,11 +256,12 @@ document.addEventListener("DOMContentLoaded", function () {
         // Xóa các chuỗi không cần thiết
         input = input
             .trim()
+            // .replace(/[\r\n]+/gm, " ")
+            .replace("\n", "")
             .replaceAll(" Z0.", "")
             .replaceAll(" Z01.", "")
             .replaceAll("G81 ", "")
             .replaceAll(" R1. F1.", "");
-        // .replace(/[\r\n]+/gm, " ");
 
 
         putMilsInBlocks(input);

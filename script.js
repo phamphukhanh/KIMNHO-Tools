@@ -180,7 +180,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!input[0].includes("G00")) {
             input[0] = "G00 " + input[0];
         }
-        // console.log(input);
         let result = "";
         // Dòng đầu tiên làm phần đầu, các dòng còn lại làm phần sau
         let head = input[0].trim();
@@ -256,12 +255,13 @@ document.addEventListener("DOMContentLoaded", function () {
         // Xóa các chuỗi không cần thiết
         input = input
             .trim()
-            // .replace(/[\r\n]+/gm, " ")
-            .replace("\n", "")
+            .replaceAll(/\r?\n\s*\r?\n/g, "\n")
             .replaceAll(" Z0.", "")
             .replaceAll(" Z01.", "")
             .replaceAll("G81 ", "")
             .replaceAll(" R1. F1.", "");
+
+        console.log(input);
 
 
         putMilsInBlocks(input);

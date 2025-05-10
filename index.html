@@ -35,7 +35,6 @@
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
                     <button class="dropdown-item" type="button">Cắt</button>
                     <button class="dropdown-item" type="button">Đục lỗ</button>
-                    <button class="dropdown-item" type="button">Khắc chữ</button>
                 </div>
             </div>
             <span data-toggle="tooltip" data-placement="right" data-html="true" title="
@@ -74,10 +73,23 @@
                                     <label class="mr-3"><input type="radio" name="center" value="yes"> Có</label>
                                     <label><input type="radio" name="center" value="no" checked> Không</label>
                                 </div>
-                                <label class="font-weight-bold mt-2">Số Mils cần xuống:</label>
+                                <label class="font-weight-bold mt-2">Số Mil cần xuống:</label>
                                 <input type="number" min="0" class="form-control" required>
-                                <label class="font-weight-bold mt-2">Số Mils mỗi lần xuống:</label>
-                                <input type="number" min="0" class="form-control" required>
+                                <label class="font-weight-bold mt-2">Số Mil mỗi lần xuống:</label>
+                                <div>
+                                    <label class="mr-2">
+                                        <input type="radio" name="cut-depth" value="5" checked> 5 Mil
+                                    </label>
+                                    <label class="mr-2">
+                                        <input type="radio" name="cut-depth" value="20"> 20 Mil
+                                    </label>
+                                    <label class="mr-2">
+                                        <input type="radio" name="cut-depth" value="custom"> Số khác
+                                    </label>
+                                </div>
+                                <div id="custom-cut-depth" class="mt-1" style="display: none;">
+                                    <input id="customCutDepthValue" type="number" min="0" class="form-control">
+                                </div>
                             </div>
 
                             <!-- Form Đục lỗ: ẩn lúc đầu -->
@@ -85,15 +97,17 @@
                                 <label class="font-weight-bold">Chọn độ sâu:</label>
                                 <div>
                                     <label class="mr-3">
-                                        <input type="radio" name="depth-choice" value="5" checked> Xuống 5 Mils
+                                        <input type="radio" name="drill-depth" value="5" checked> 5 Mil
                                     </label>
                                     <label>
-                                        <input type="radio" name="depth-choice" value="custom"> Số khác
+                                        <input type="radio" name="drill-depth" value="custom"> Số khác
                                     </label>
                                 </div>
-                                <div id="custom-depth" class="mt-2" style="display: none;">
-                                    <label class="font-weight-bold">Số Mils cần xuống:</label>
-                                    <input id="customDepthValue" type="number" min="0" class="form-control">
+                                <div id="custom-drill-depth" class="mt-2" style="display: none;">
+                                    <label class="font-weight-bold">Số Mil cần xuống:</label>
+                                    <input type="number" min="0" class="form-control">
+                                    <label class="font-weight-bold">Số Mil mỗi lần xuống:</label>
+                                    <input id="customDrillDepthValue" type="number" min="0" class="form-control">
                                 </div>
                             </div>
                         </div>

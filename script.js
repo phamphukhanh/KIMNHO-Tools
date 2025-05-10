@@ -20,14 +20,15 @@ document.addEventListener("DOMContentLoaded", function () {
             <div style='text-align: justify; max-width: 250px;'>
                 <b>Cắt đường thẳng, đường cong, khắc chữ block.</b><br><br>
                 1. Chạy BobCad 1 vòng.<br>
-                2. Copy G-code vào, không cần xoá Z0.
+                2. Copy G-code vào, không cần xoá Z0.<br><br>
+                <b>Lưu ý: </b>Nhiều vòng khác nhau phải <u>cùng mũi</u>, <u>cùng mil</u>
             </div>`;
         } else if (option === 'Đục lỗ') {
             content = `
             <div style='text-align: justify; max-width: 250px;'>
                 <b>Đục lỗ định vị, các lỗ khác</b><br><br>
                 1. Chấm các chấm trong BobCad.<br>
-                2. Copy G-code vào, không cần xoá Z0..
+                2. Copy G-code vào, không cần xoá Z0.
             </div>`;
         }
 
@@ -82,9 +83,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Hàm này sẽ xử lý việc gắn số Mils (xuống và lên) vào các khối G-code
-    // Nếu milsDownValue lớn hơn milsEachValue, nó sẽ chia nhỏ các bước cắt thành các khối nhỏ hơn
-    function putMilsInBlocks(input) {
+    // Hàm này sẽ xử lý việc gắn số Mil (xuống và lên) vào các khối G-code
+    // Nếu milDownValue lớn hơn milEachValue, nó sẽ chia nhỏ các bước cắt thành các khối nhỏ hơn
+    function putMilInBlocks(input) {
         const keepOptions = document.getElementById("keep-options").checked;
         const selectedMode = document.querySelector(".dropdown-toggle span").textContent.trim();
         const startEnd = document.querySelector("input[name='start-end']:checked").value;
@@ -94,45 +95,45 @@ document.addEventListener("DOMContentLoaded", function () {
             "N20 G01 Z0.050\n" +
             "M03\n\n\n";
         var endText = "\n\n\nG00 X0.000 Y0.000\nM04\nM30";
-        let milsDown = "";
-        let milsEach = "";
+        let milDown = "";
+        let milEach = "";
         let output = startEnd === "yes" ? startText : "";
-        let milsDownValue = "";
-        let milsEachValue = ""
+        let milDownValue = "";
+        let milEachValue = ""
         if (selectedMode === "Cắt") {
             input = input.split(/(?=G00)/);
-            milsDown = document.querySelectorAll("input[type='number']")[0].value;
-            milsEach = document.querySelector("input[name='cut-depth']:checked").value;
-            milsEachValue = milsEach === "custom" ? document.getElementById("customCutDepthValue").value : milsEach;
+            milDown = document.querySelectorAll("input[type='number']")[0].value;
+            milEach = document.querySelector("input[name='cut-depth']:checked").value;
+            milEachValue = milEach === "custom" ? document.getElementById("customCutDepthValue").value : milEach;
         } else if (selectedMode === "Đục lỗ") {
             input = input.split("\n");
-            milsEach = document.querySelector("input[name='drill-depth']:checked").value;
-            if (milsEach === "custom") {
-                milsDown = document.querySelectorAll("input[type='number']")[2].value;
-                milsEachValue = document.getElementById("customDrillDepthValue").value
+            milEach = document.querySelector("input[name='drill-depth']:checked").value;
+            if (milEach === "custom") {
+                milDown = document.querySelectorAll("input[type='number']")[2].value;
+                milEachValue = document.getElementById("customDrillDepthValue").value
             } else {
-                milsDown = milsEachValue = document.querySelector("input[name='drill-depth']:checked").value;
+                milDown = milEachValue = document.querySelector("input[name='drill-depth']:checked").value;
             }
         }
-        milsDownValue = parseInt(milsDown);
-        milsEachValue = parseInt(milsEachValue);
-        if (milsDown === "" || milsEachValue === "") {
+        milDownValue = parseInt(milDown);
+        milEachValue = parseInt(milEachValue);
+        if (milDown === "" || milEachValue === "") {
             Swal.fire({
-                title: "Số Mils cần xuống hoặc số Mils mỗi lần xuống không được để trống!",
+                title: "Số Mil cần xuống hoặc số Mil mỗi lần xuống không được để trống!",
                 icon: "warning",
             });
             return;
         }
-        if (milsDownValue < milsEachValue) {
+        if (milDownValue < milEachValue) {
             Swal.fire({
-                title: "Số Mils cần xuống phải lớn hơn số Mils mỗi lần xuống!",
+                title: "Số Mil cần xuống phải lớn hơn số Mil mỗi lần xuống!",
                 icon: "warning",
             });
             return;
         }
-        if (milsDownValue <= 0 || milsEachValue <= 0) {
+        if (milDownValue <= 0 || milEachValue <= 0) {
             Swal.fire({
-                title: "Số Mils cần xuống và số Mils mỗi lần xuống phải là số dương!",
+                title: "Số Mil cần xuống và số Mil mỗi lần xuống phải là số dương!",
                 icon: "warning",
             });
             return;
@@ -141,10 +142,10 @@ document.addEventListener("DOMContentLoaded", function () {
         // Cộng dồn các dòng G-code
         for (let i = 0; i < input.length; i++) {
             if (i !== input.length - 1 && spacing === "yes") {
-                output += milsAddingUp(input[i], milsDownValue, milsEachValue) + "\n";
+                output += milAddingUp(input[i], milDownValue, milEachValue) + "\n";
             }
             else {
-                output += milsAddingUp(input[i], milsDownValue, milsEachValue);
+                output += milAddingUp(input[i], milDownValue, milEachValue);
             }
         }
 
@@ -171,9 +172,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Hàm này sẽ thêm các khối G-code vào đầu vào dựa trên giá trị milsDownValue và milsEachValue
-    // Nếu milsDownValue lớn hơn milsEachValue, nó sẽ chia nhỏ các bước cắt thành các khối nhỏ hơn
-    function milsAddingUp(input, milsDownValue, milsEachValue) {
+    // Hàm này sẽ thêm các khối G-code vào đầu vào dựa trên giá trị milDownValue và milEachValue
+    // Nếu milDownValue lớn hơn milEachValue, nó sẽ chia nhỏ các bước cắt thành các khối nhỏ hơn
+    function milAddingUp(input, milDownValue, milEachValue) {
         const spacing = document.querySelector("input[name='spacing']:checked").value;
         const center = document.querySelector("input[name='center']:checked").value;
         input = input.split("\n");
@@ -214,17 +215,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 return block;
             };
         }
-        // Chia nhỏ từng bước nếu Mils xuống lớn hơn Mils mỗi lần xuống
-        const maxStep = milsEachValue;
-        let total = milsDownValue;
+        // Chia nhỏ từng bước nếu Mil xuống lớn hơn Mil mỗi lần xuống
+        const maxStep = milEachValue;
+        let total = milDownValue;
         let current = maxStep;
 
         // Tạo các khối G-code cho mỗi bước cắt
         while (current < total) {
             result += addBlock(current);
-            current += parseInt(milsEachValue);
+            current += parseInt(milEachValue);
         }
-        // Nếu có dư, sử dụng giá trị milsDown chính xác cho khối cuối
+        // Nếu có dư, sử dụng giá trị milDown chính xác cho khối cuối
         if (current >= total) {
             current = total;
             result += addBlock(current);
@@ -264,7 +265,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(input);
 
 
-        putMilsInBlocks(input);
+        putMilInBlocks(input);
     });
 
     // Đoạn mã này sẽ lưu nội dung của textarea kết quả vào một tệp tin khi nhấn nút "Lưu file"

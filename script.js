@@ -262,8 +262,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .replaceAll("G81 ", "")
             .replaceAll(" R1. F1.", "");
 
-        console.log(input);
-
 
         putMilInBlocks(input);
     });

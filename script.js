@@ -257,8 +257,8 @@ document.addEventListener("DOMContentLoaded", function () {
         input = input
             .trim()
             .replaceAll(/\r?\n\s*\r?\n/g, "\n")
-            .replaceAll(" Z0.", "")
             .replaceAll(" Z0.1", "")
+            .replaceAll(" Z0.", "")
             .replaceAll("G81 ", "")
             .replaceAll(" R1. F1.", "");
 

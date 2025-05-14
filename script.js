@@ -12,6 +12,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const customCutDepth = document.getElementById("custom-cut-depth");
     const customDrillDepth = document.getElementById("custom-drill-depth");
 
+    // Kích hoạt tooltip
+    $(tooltipElement).tooltip("show");
+
+    // Ẩn sau 2.5 giây
+    setTimeout(() => {
+        $(tooltipElement).tooltip("hide");
+    }, 2000);
+
     // Cập nhật tooltip dựa theo lựa chọn
     function updateTooltipContent(option) {
         let content = '';
@@ -21,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <b>Cắt đường thẳng, đường cong, khắc chữ block.</b><br><br>
                 1. Chạy BobCad 1 vòng.<br>
                 2. Copy G-code vào, không cần xoá Z0.<br><br>
-                <b>Lưu ý: </b>Nhiều vòng khác nhau phải <u>cùng mũi</u>, <u>cùng mil</u>
+                <b class='text-danger'><u>Lưu ý:</u></b> Nhiều vòng khác nhau phải <u>để ý mũi</u>
             </div>`;
         } else if (option === 'Đục lỗ') {
             content = `
@@ -47,7 +55,6 @@ document.addEventListener("DOMContentLoaded", function () {
             dropdownLabel.textContent = selectedText;
 
             // Cập nhật tooltip
-            updateTooltipContent(selectedText);
 
             // Hiện/ẩn form tương ứng
             if (selectedText === "Đục lỗ") {
@@ -66,6 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelector("input[name='center'][value='no']").checked = true;
             document.getElementById("customCutDepthValue").value = "";
             document.getElementById("customDrillDepthValue").value = "";
+            updateTooltipContent(selectedText);
         });
     });
 
@@ -178,6 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const spacing = document.querySelector("input[name='spacing']:checked").value;
         const center = document.querySelector("input[name='center']:checked").value;
         input = input.split("\n");
+
         if (!input[0].includes("G00")) {
             input[0] = "G00 " + input[0];
         }
@@ -190,11 +199,21 @@ document.addEventListener("DOMContentLoaded", function () {
         // Nếu đi từ giữa thì thêm G00 X0 Y0 vào đầu dòng đầu tiên
         if (center === "yes") {
             let headerModified = head.includes("G00") ? head.replace(/G00/g, "G01") : head;
+
+            // So sánh tọa độ trong head và dòng đầu của rest (nếu có)
+            let firstLine = rest.split("\n")[0].trim();
+            let headCoords = headerModified.replace(/G[0-9]+/g, "").trim();
+            let firstCoords = firstLine.replace(/G[0-9]+/g, "").trim();
+
             addBlock = function (currentVal) {
                 let formattedValue = currentVal / 1000;
-                let block = "G00 X0.000 Y0.000\n" +
-                    `G01 Z-${formattedValue.toFixed(3)}\n` +
-                    headerModified + "\n";
+                let block = "G00 X0.000 Y0.000\n" + `G01 Z-${formattedValue.toFixed(3)}\n`;
+
+                // Nếu head và dòng đầu không giống nhau → thêm head
+                if (headCoords !== firstCoords) {
+                    block += headerModified + "\n";
+                }
+
                 if (rest !== "") {
                     block += rest + "\n";
                 }

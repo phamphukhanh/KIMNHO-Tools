@@ -102,14 +102,10 @@ document.addEventListener("DOMContentLoaded", function () {
             "N10 G01 Z0.050 F4\n" +
             "N20 G01 Z0.050\n" +
             "M03\n";
-        console.log(startText);
         var endText = "\nG00 X0.000 Y0.000\nM04\nM30";
-        console.log(endText);
         if (spacing === "yes") {
             startText = startText.replace("M03\n","M03\n\n\n");
-            console.log(startText);
             endText = endText.replace("\nG00","\n\n\nG00");
-            console.log(endText);
         }
 
         let milDown = "";

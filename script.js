@@ -98,11 +98,20 @@ document.addEventListener("DOMContentLoaded", function () {
         const selectedMode = document.querySelector(".dropdown-toggle span").textContent.trim();
         const startEnd = document.querySelector("input[name='start-end']:checked").value;
         const spacing = document.querySelector("input[name='spacing']:checked").value;
-        const startText =
+        var startText =
             "N10 G01 Z0.050 F4\n" +
             "N20 G01 Z0.050\n" +
-            "M03\n\n\n";
-        var endText = "\n\n\nG00 X0.000 Y0.000\nM04\nM30";
+            "M03\n";
+        console.log(startText);
+        var endText = "\nG00 X0.000 Y0.000\nM04\nM30";
+        console.log(endText);
+        if (spacing === "yes") {
+            startText = startText.replace("M03\n","M03\n\n\n");
+            console.log(startText);
+            endText = endText.replace("\nG00","\n\n\nG00");
+            console.log(endText);
+        }
+
         let milDown = "";
         let milEach = "";
         let output = startEnd === "yes" ? startText : "";
@@ -125,13 +134,31 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         milDownValue = parseInt(milDown);
         milEachValue = parseInt(milEachValue);
-        if (milDown === "" || milEachValue === "") {
+
+        if (isNaN(milDownValue)) {
             Swal.fire({
-                title: "Số Mil cần xuống hoặc số Mil mỗi lần xuống không được để trống!",
+                title: "Chưa điền số Mil cần xuống!",
                 icon: "warning",
             });
             return;
         }
+
+        if (isNaN(milEachValue)) {
+            Swal.fire({
+                title: "Chưa điền số Mil mỗi lần xuống!",
+                icon: "warning",
+            });
+            return;
+        }
+
+        if ((milDownValue === "" && milEachValue !== "") ||
+            (milDownValue !== "" && isNaN(milEachValue)) ||
+            (milDownValue !== "" && milEachValue === 0)
+        ) {
+            milDownValue = 0;
+            milEachValue = 0;
+        }
+
         if (milDownValue < milEachValue) {
             Swal.fire({
                 title: "Số Mil cần xuống phải lớn hơn số Mil mỗi lần xuống!",
@@ -139,9 +166,10 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             return;
         }
-        if (milDownValue <= 0 || milEachValue <= 0) {
+
+        if (milDownValue < 0 || milEachValue < 0) {
             Swal.fire({
-                title: "Số Mil cần xuống và số Mil mỗi lần xuống phải là số dương!",
+                title: "Số Mil cần xuống và số Mil mỗi lần xuống bị âm!",
                 icon: "warning",
             });
             return;
@@ -166,10 +194,11 @@ document.addEventListener("DOMContentLoaded", function () {
         resultTextarea.value = output.trim();
         resultTextarea.style.height = "auto";
         resultTextarea.style.height = resultTextarea.scrollHeight + "px";
-
         if (!keepOptions) {
             // Reset các radio về mặc định
+            document.querySelector("input[name='cut-depth'][value='5']").checked = true;
             document.querySelector("input[name='drill-depth'][value='5']").checked = true;
+            customCutDepth.style.display = this.value === "custom" ? "block" : "none";
             customDrillDepth.style.display = this.value === "custom" ? "block" : "none";
             document.querySelector("input[name='start-end'][value='no']").checked = true;
             document.querySelector("input[name='spacing'][value='no']").checked = true;
@@ -267,7 +296,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Kiểm tra xem ô nhập liệu có trống hay không
         if (input === "") {
             Swal.fire({
-                title: "G-code CNC mẫu không được để trống!",
+                title: "Chưa điền G-code CNC!",
                 icon: "warning",
             });
             return;

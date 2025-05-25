@@ -77,6 +77,22 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+
+    function resetValues() {
+        // Reset các radio về mặc định
+        document.querySelector("input[name='cut-depth'][value='5']").checked = true;
+        document.querySelector("input[name='drill-depth'][value='5']").checked = true;
+        customCutDepth.style.display = this.value === "custom" ? "block" : "none";
+        customDrillDepth.style.display = this.value === "custom" ? "block" : "none";
+        document.querySelector("input[name='center'][value='no']").checked = true;
+        document.querySelector("input[name='start-end'][value='no']").checked = true;
+        document.querySelector("input[name='spacing'][value='no']").checked = true;
+
+        // Đặt lại các ô nhập liệu về mặc định
+        document.getElementById("inputCNC").value = "";
+        document.querySelectorAll("input[type='number']").forEach(input => input.value = "");
+    }
+
     // Ẩn/hiện input 'Số khác' trong đục lỗ
     document.querySelectorAll("input[name='drill-depth']").forEach(radio => {
         radio.addEventListener("change", function () {
@@ -104,8 +120,8 @@ document.addEventListener("DOMContentLoaded", function () {
             "M03\n";
         var endText = "\nG00 X0.000 Y0.000\nM04\nM30";
         if (spacing === "yes") {
-            startText = startText.replace("M03\n","M03\n\n\n");
-            endText = endText.replace("\nG00","\n\n\nG00");
+            startText = startText.replace("M03\n", "M03\n\n\n");
+            endText = endText.replace("\nG00", "\n\n\nG00");
         }
 
         let milDown = "";
@@ -128,6 +144,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 milDown = milEachValue = document.querySelector("input[name='drill-depth']:checked").value;
             }
         }
+
+
         milDownValue = parseInt(milDown);
         milEachValue = parseInt(milEachValue);
 
@@ -191,17 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
         resultTextarea.style.height = "auto";
         resultTextarea.style.height = resultTextarea.scrollHeight + "px";
         if (!keepOptions) {
-            // Reset các radio về mặc định
-            document.querySelector("input[name='cut-depth'][value='5']").checked = true;
-            document.querySelector("input[name='drill-depth'][value='5']").checked = true;
-            customCutDepth.style.display = this.value === "custom" ? "block" : "none";
-            customDrillDepth.style.display = this.value === "custom" ? "block" : "none";
-            document.querySelector("input[name='start-end'][value='no']").checked = true;
-            document.querySelector("input[name='spacing'][value='no']").checked = true;
-
-            // Đặt lại các ô nhập liệu về mặc định
-            document.getElementById("inputCNC").value = "";
-            document.querySelectorAll("input[type='number']").forEach(input => input.value = "");
+            resetValues();
         }
     }
 
@@ -215,6 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!input[0].includes("G00")) {
             input[0] = "G00 " + input[0];
         }
+
         let result = "";
         // Dòng đầu tiên làm phần đầu, các dòng còn lại làm phần sau
         let head = input[0].trim();
@@ -269,6 +278,7 @@ document.addEventListener("DOMContentLoaded", function () {
             result += addBlock(current);
             current += parseInt(milEachValue);
         }
+
         // Nếu có dư, sử dụng giá trị milDown chính xác cho khối cuối
         if (current >= total) {
             current = total;

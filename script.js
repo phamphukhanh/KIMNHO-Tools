@@ -11,6 +11,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const formDrill = document.getElementById("form-drill");
     const customCutDepth = document.getElementById("custom-cut-depth");
     const customDrillDepth = document.getElementById("custom-drill-depth");
+    const keepOptions = document.getElementById("keep-options");
+    let selectedMode = "";
+    let keepOptionFlag = keepOptions.checked; // lưu trạng thái ban đầu
+
+    keepOptions.addEventListener("change", function () {
+        keepOptionFlag = !keepOptionFlag; // chỉ cập nhật biến, không ảnh hưởng checkbox
+    });
+
+
 
     // Kích hoạt tooltip
     $(tooltipElement).tooltip("show");
@@ -63,16 +72,12 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 formCut.style.display = "block";
                 formDrill.style.display = "none";
-                customDrillDepth.style.display = "none";
-                document.querySelector("input[name='drill-depth'][value='5']").checked = true;
             }
             // Đặt lại các ô nhập liệu về mặc định
-            document.querySelectorAll("input[type='number']").forEach(input => input.value = "");
-            document.querySelector("input[name='start-end'][value='no']").checked = true;
-            document.querySelector("input[name='spacing'][value='no']").checked = true;
-            document.querySelector("input[name='center'][value='no']").checked = true;
-            document.getElementById("customCutDepthValue").value = "";
-            document.getElementById("customDrillDepthValue").value = "";
+            if (!keepOptionFlag) {
+                resetValues();
+            }
+            // document.querySelector("input[name='center'][value='no']").checked = true;
             updateTooltipContent(selectedText);
         });
     });
@@ -80,17 +85,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function resetValues() {
         // Reset các radio về mặc định
+        document.getElementById("customCutDepthValue").value = "";
+        document.getElementById("customDrillDepthValue").value = "";
+        document.querySelector("input[name='center'][value='no']").checked = true;
         document.querySelector("input[name='cut-depth'][value='5']").checked = true;
         document.querySelector("input[name='drill-depth'][value='5']").checked = true;
         customCutDepth.style.display = this.value === "custom" ? "block" : "none";
         customDrillDepth.style.display = this.value === "custom" ? "block" : "none";
-        document.querySelector("input[name='center'][value='no']").checked = true;
         document.querySelector("input[name='start-end'][value='no']").checked = true;
         document.querySelector("input[name='spacing'][value='no']").checked = true;
 
         // Đặt lại các ô nhập liệu về mặc định
-        document.getElementById("inputCNC").value = "";
         document.querySelectorAll("input[type='number']").forEach(input => input.value = "");
+
+        customDrillDepth.style.display = "none";
     }
 
     // Ẩn/hiện input 'Số khác' trong đục lỗ
@@ -110,8 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Hàm này sẽ xử lý việc gắn số Mil (xuống và lên) vào các khối G-code
     // Nếu milDownValue lớn hơn milEachValue, nó sẽ chia nhỏ các bước cắt thành các khối nhỏ hơn
     function putMilInBlocks(input) {
-        const keepOptions = document.getElementById("keep-options").checked;
-        const selectedMode = document.querySelector(".dropdown-toggle span").textContent.trim();
+        selectedMode = document.querySelector(".dropdown-toggle span").textContent.trim();
         const startEnd = document.querySelector("input[name='start-end']:checked").value;
         const spacing = document.querySelector("input[name='spacing']:checked").value;
         var startText =
@@ -208,7 +215,8 @@ document.addEventListener("DOMContentLoaded", function () {
         resultTextarea.value = output.trim();
         resultTextarea.style.height = "auto";
         resultTextarea.style.height = resultTextarea.scrollHeight + "px";
-        if (!keepOptions) {
+        if (!keepOptionFlag) {
+            document.getElementById("inputCNC").value = "";
             resetValues();
         }
     }
@@ -218,32 +226,36 @@ document.addEventListener("DOMContentLoaded", function () {
     function milAddingUp(input, milDownValue, milEachValue) {
         const spacing = document.querySelector("input[name='spacing']:checked").value;
         const center = document.querySelector("input[name='center']:checked").value;
+
+        let result = "";
+
         input = input.split("\n");
+
+        // Nếu block chưa có dấu ';', thêm vào đầu duy nhất một lần
+        if (input[0].trim() !== ";") {
+            result += "; \n";
+        }
 
         if (!input[0].includes("G00")) {
             input[0] = "G00 " + input[0];
         }
 
-        let result = "";
-        // Dòng đầu tiên làm phần đầu, các dòng còn lại làm phần sau
         let head = input[0].trim();
         let rest = input.length > 1 ? input.slice(1).join("\n").trim() : "";
+
         let addBlock;
 
-        // Nếu đi từ giữa thì thêm G00 X0 Y0 vào đầu dòng đầu tiên
-        if (center === "yes") {
+        if (center === "yes" && selectedMode === "Cắt") {
             let headerModified = head.includes("G00") ? head.replace(/G00/g, "G01") : head;
-
-            // So sánh tọa độ trong head và dòng đầu của rest (nếu có)
             let firstLine = rest.split("\n")[0].trim();
             let headCoords = headerModified.replace(/G[0-9]+/g, "").trim();
             let firstCoords = firstLine.replace(/G[0-9]+/g, "").trim();
 
             addBlock = function (currentVal) {
                 let formattedValue = currentVal / 1000;
+                console.log("Formatted Value:", formattedValue);
                 let block = "G00 X0.000 Y0.000\n" + `G01 Z-${formattedValue.toFixed(3)}\n`;
 
-                // Nếu head và dòng đầu không giống nhau → thêm head
                 if (headCoords !== firstCoords) {
                     block += headerModified + "\n";
                 }
@@ -258,6 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             addBlock = function (currentVal) {
                 let formattedValue = currentVal / 1000;
+                console.log("Formatted Value:", formattedValue);
                 let block = head + "\n" +
                     `G01 Z-${formattedValue.toFixed(3)}\n`;
                 if (rest !== "") {
@@ -268,24 +281,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 return block;
             };
         }
-        // Chia nhỏ từng bước nếu Mil xuống lớn hơn Mil mỗi lần xuống
-        const maxStep = milEachValue;
-        let total = milDownValue;
-        let current = maxStep;
 
-        // Tạo các khối G-code cho mỗi bước cắt
-        while (current < total) {
+        // Lặp xuống
+        let current = parseInt(milEachValue);
+        while (current < parseInt(milDownValue)) {
             result += addBlock(current);
             current += parseInt(milEachValue);
         }
-
-        // Nếu có dư, sử dụng giá trị milDown chính xác cho khối cuối
-        if (current >= total) {
-            current = total;
-            result += addBlock(current);
+        // Dư thì xuống đúng bằng tổng
+        if (current >= parseInt(milDownValue)) {
+            result += addBlock(parseInt(milDownValue));
         }
+
         return result;
     }
+
 
     // Đoạn mã này đọc nội dung của tệp tin mẫu G-code và hiển thị vào textarea
     document.querySelector(".btn-primary").addEventListener("click", function () {

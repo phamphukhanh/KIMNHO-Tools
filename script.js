@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!keepOptionFlag) {
                 resetValues();
             }
-            // document.querySelector("input[name='center'][value='no']").checked = true;
+            
             updateTooltipContent(selectedText);
         });
     });
@@ -253,7 +253,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             addBlock = function (currentVal) {
                 let formattedValue = currentVal / 1000;
-                console.log("Formatted Value:", formattedValue);
                 let block = "G00 X0.000 Y0.000\n" + `G01 Z-${formattedValue.toFixed(3)}\n`;
 
                 if (headCoords !== firstCoords) {
@@ -270,7 +269,6 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             addBlock = function (currentVal) {
                 let formattedValue = currentVal / 1000;
-                console.log("Formatted Value:", formattedValue);
                 let block = head + "\n" +
                     `G01 Z-${formattedValue.toFixed(3)}\n`;
                 if (rest !== "") {

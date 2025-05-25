@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const tooltipElement = document.querySelector('.small-tooltip');
     const dropdownItems = document.querySelectorAll('.dropdown-item');
     const dropdownLabel = document.querySelector('.dropdown-toggle span');
-
     const formCut = document.getElementById("form-cut");
     const formDrill = document.getElementById("form-drill");
     const customCutDepth = document.getElementById("custom-cut-depth");
@@ -18,8 +17,6 @@ document.addEventListener("DOMContentLoaded", function () {
     keepOptions.addEventListener("change", function () {
         keepOptionFlag = !keepOptionFlag; // chỉ cập nhật biến, không ảnh hưởng checkbox
     });
-
-
 
     // Kích hoạt tooltip
     $(tooltipElement).tooltip("show");
@@ -57,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 2500);
     }
 
+
     // Gắn một lần duy nhất cho dropdown items
     dropdownItems.forEach(item => {
         item.addEventListener("click", function () {
@@ -77,11 +75,10 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!keepOptionFlag) {
                 resetValues();
             }
-            
+
             updateTooltipContent(selectedText);
         });
     });
-
 
     function resetValues() {
         // Reset các radio về mặc định
@@ -294,7 +291,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return result;
     }
 
-
     // Đoạn mã này đọc nội dung của tệp tin mẫu G-code và hiển thị vào textarea
     document.querySelector(".btn-primary").addEventListener("click", function () {
         // Lấy mẫu G-code từ textarea đầu tiên và xử lý chuỗi
@@ -408,4 +404,12 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     });
 
+    window.addEventListener('load', function () {
+        // Làm sạch console khi trang được tải
+        // và hiển thị thông báo về quyền sở hữu trang web
+        console.clear();
+        console.log("%cTrang web là tài sản của D.N.T.N Kim Nhỏ, không sao chép dưới mọi hình thức!\n\n" +
+            "This website is the property of Kim Nho Enterprise, do not copy in any form!",
+            "color: red; font-size: 20px; font-weight: bold; text-align: center;");
+    });
 });

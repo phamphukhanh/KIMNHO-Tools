@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function resetValues() {
         // Reset các radio về mặc định
         document.getElementById("customCutDepthValue").value = "";
-        document.getElementById("customDrillDepthValue").value = "";
+        document.getElementById("customDrillEachValue").value = "";
         document.querySelector("input[name='center'][value='no']").checked = true;
         document.querySelector("input[name='cut-depth'][value='5']").checked = true;
         document.querySelector("input[name='drill-depth'][value='5']").checked = true;
@@ -102,6 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("input[name='drill-depth']").forEach(radio => {
         radio.addEventListener("change", function () {
             customDrillDepth.style.display = this.value === "custom" ? "block" : "none";
+            document.getElementById("customDrillDepthValue").focus();
         });
     });
 
@@ -109,6 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("input[name='cut-depth']").forEach(radio => {
         radio.addEventListener("change", function () {
             customCutDepth.style.display = this.value === "custom" ? "block" : "none";
+            document.getElementById("customCutDepthValue").focus();
         });
     });
 
@@ -143,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
             milEach = document.querySelector("input[name='drill-depth']:checked").value;
             if (milEach === "custom") {
                 milDown = document.querySelectorAll("input[type='number']")[2].value;
-                milEachValue = document.getElementById("customDrillDepthValue").value
+                milEachValue = document.getElementById("customDrillEachValue").value
             } else {
                 milDown = milEachValue = document.querySelector("input[name='drill-depth']:checked").value;
             }

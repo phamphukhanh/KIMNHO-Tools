@@ -87,14 +87,14 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector("input[name='center'][value='no']").checked = true;
         document.querySelector("input[name='cut-depth'][value='5']").checked = true;
         document.querySelector("input[name='drill-depth'][value='5']").checked = true;
-        customCutDepth.style.display = this.value === "custom" ? "block" : "none";
-        customDrillDepth.style.display = this.value === "custom" ? "block" : "none";
         document.querySelector("input[name='start-end'][value='no']").checked = true;
         document.querySelector("input[name='spacing'][value='no']").checked = true;
-
-        // Đặt lại các ô nhập liệu về mặc định
+        document.querySelector("input[name='comment'][value='no']").checked = true;
         document.querySelectorAll("input[type='number']").forEach(input => input.value = "");
 
+        // Đặt lại các ô nhập liệu về mặc định
+        customCutDepth.style.display = this.value === "custom" ? "block" : "none";
+        customDrillDepth.style.display = this.value === "custom" ? "block" : "none";
         customDrillDepth.style.display = "none";
     }
 
@@ -225,18 +225,20 @@ document.addEventListener("DOMContentLoaded", function () {
     function milAddingUp(input, milDownValue, milEachValue) {
         const spacing = document.querySelector("input[name='spacing']:checked").value;
         const center = document.querySelector("input[name='center']:checked").value;
-
+        const comment = document.querySelector("input[name='comment']:checked").value;
         let result = "";
 
         input = input.split("\n");
 
         // Nếu block chưa có dấu ';', thêm vào đầu duy nhất một lần
-        if (input[0].trim() !== ";") {
+        if (comment === 'yes' && input[0].trim() !== ";") {
             result += "; \n";
         }
 
-        if (!input[0].includes("G00")) {
+        if (!input[0].includes("G00") && !input[0].includes("G01")) {
             input[0] = "G00 " + input[0];
+        } else if (input[0].includes("G01") && !input[0].includes("G00")) {
+            input[0] = input[0].replace("G01", "G00");
         }
 
         let head = input[0].trim();
@@ -293,6 +295,41 @@ document.addEventListener("DOMContentLoaded", function () {
         return result;
     }
 
+    // Hàm này sẽ xử lý logic bật tắt ô kết quả
+    function toggleEditMode(buttonId, textareaId) {
+        const button = document.getElementById(buttonId);
+        const textarea = document.getElementById(textareaId);
+        const icon = button.querySelector("i");
+        const text = button.querySelector(".btn-text");
+
+        if (textarea.hasAttribute("readonly")) {
+            textarea.removeAttribute("readonly");
+            textarea.focus();
+            icon.className = "fa fa-check";
+            text.textContent = "Hoàn tất";
+        } else {
+            textarea.setAttribute("readonly", true);
+            icon.className = "fa fa-pencil-square-o";
+            text.textContent = "Chỉnh sửa";
+        }
+    }
+
+    function resetEditMode(buttonId, textareaId) {
+        const button = document.getElementById(buttonId);
+        const textarea = document.getElementById(textareaId);
+        const icon = button.querySelector("i");
+        const text = button.querySelector(".btn-text");
+
+        // Chỉ thực hiện nếu đang chỉnh sửa
+        if (!textarea.hasAttribute("readonly")) {
+            textarea.setAttribute("readonly", true);
+            icon.className = "fa fa-pencil-square-o";
+            text.textContent = "Chỉnh sửa";
+        }
+    }
+
+
+
     // Đoạn mã này đọc nội dung của tệp tin mẫu G-code và hiển thị vào textarea
     document.querySelector(".btn-primary").addEventListener("click", function () {
         // Lấy mẫu G-code từ textarea đầu tiên và xử lý chuỗi
@@ -321,9 +358,8 @@ document.addEventListener("DOMContentLoaded", function () {
             .replaceAll(" Z0.", "")
             .replaceAll("G81 ", "")
             .replaceAll(" R1. F1.", "");
-
-
         putMilInBlocks(input);
+        resetEditMode("edit-button", "result");
     });
 
     // Đoạn mã này sẽ lưu nội dung của textarea kết quả vào một tệp tin khi nhấn nút "Lưu file"
@@ -347,20 +383,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Đoạn mã này sẽ mở/tắt chế độ chỉnh sửa cho textarea kết quả và thay đổi tên nút
     document.getElementById("edit-button").addEventListener("click", function () {
-        let textarea = document.getElementById("result");
-        let icon = this.querySelector("i");
-        let text = this.querySelector(".btn-text");
-
-        if (textarea.hasAttribute("readonly")) {
-            textarea.removeAttribute("readonly");
-            textarea.focus();
-            icon.className = "fa fa-check";  // Đổi sang icon tick
-            text.textContent = "Hoàn tất";
-        } else {
-            textarea.setAttribute("readonly", true);
-            icon.className = "fa fa-pencil-square-o"; // Đổi lại icon cây viết
-            text.textContent = "Chỉnh sửa";
-        }
+        toggleEditMode("edit-button", "result");
     });
 
     // Đoạn mã này sẽ xóa nội dung trong ô kết quả và đặt lại chiều cao của nó về auto khi nhấn nút "Xoá"

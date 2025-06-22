@@ -1,4 +1,14 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Không cho phép người dùng nhập dấu trừ và ký tự khoa học vào các ô nhập liệu số
+    document.querySelectorAll("input[type='number']").forEach(input => {
+        input.addEventListener("keydown", function (event) {
+            if (event.key === "-" || event.key === "e" || event.key === "E") {
+                event.preventDefault();
+            }
+        });
+    });
+
+
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
@@ -163,17 +173,17 @@ document.addEventListener("DOMContentLoaded", function () {
             milEachValue = 20;
 
             let currentMil = ceramicThickness - ringBottom;
-            if (currentMil < 0) {
-                Swal.fire({
-                    title: "Số Mil cần xuống bị âm!",
-                    text: "Kiểm tra lại số vòng, bề dày phôi sứ và bề dày đít ring.",
-                    icon: "warning",
-                });
-                document.querySelector("#result").value = "";
-                return;
-            }
 
             input.forEach(block => {
+                console.log("Số mil cần xuống:", currentMil);
+                if (currentMil < 0) {
+                    Swal.fire({
+                        title: "Có gì đó sai sai!",
+                        text: "Kiểm tra lại độ, số vòng, bề dày phôi sứ và bề dày đít ring.",
+                        icon: "warning",
+                    });
+                    return;
+                }
                 milBlocks.push({ block, milDown: currentMil });
                 currentMil -= (ringAngle - 1);
             });

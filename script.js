@@ -102,6 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             updateTooltipContent(selectedText);
+            resetEditMode();
         });
     });
 
@@ -218,29 +219,59 @@ document.addEventListener("DOMContentLoaded", function () {
         // KIỂM TRA GIÁ TRỊ MIL
         // -----------------------------
 
-        if (isNaN(milDownValue) && selectedMode !== "Chạy độ ring") {
-            Swal.fire({
-                title: "Chưa điền số Mil cần xuống!",
-                icon: "warning",
-            });
-            return;
+        if (selectedMode !== "Chạy độ ring") {
+            milDownValue = parseInt(milDownValue);
+            milEachValue = parseInt(milEachValue);
+
+            const isInvalidInput =
+                isNaN(milDownValue) || isNaN(milEachValue) ||
+                (milDownValue === 0 && milEachValue !== 0) ||
+                (!isNaN(milDownValue) && milDownValue !== 0 && milEachValue === 0)
+                ;
+
+            if (isInvalidInput) {
+                Swal.fire({
+                    title: "Số Mil cần xuống hoặc mỗi lần xuống chưa đúng! (bị bỏ trống hoặc bằng 0)",
+                    text: "Tự động đặt lại về 0.",
+                    icon: "warning"
+                });
+                milDownValue = 0;
+                milEachValue = 0;
+                milBlocks = input.map(block => ({ block, milDown: 0 }));
+            }
+
+            if (milDownValue < 0) {
+                Swal.fire({
+                    title: "Số Mil cần xuống nhập vào bị âm!",
+                    text: "Kiểm tra lại số Mil cần xuống.",
+                    icon: "warning"
+                });
+                return;
+            }
+
+            if (milEachValue < 0) {
+                Swal.fire({
+                    title: "Số Mil mỗi lần xuống nhập vào bị âm!",
+                    text: "Kiểm tra lại số Mil mỗi lần xuống.",
+                    icon: "warning"
+                });
+                return;
+            }
+
+            if (
+                milDownValue < milEachValue &&
+                milDownValue !== 0 &&
+                milEachValue !== 0
+            ) {
+                Swal.fire({
+                    title: "Số Mil cần xuống phải lớn hơn hoặc bằng mỗi lần xuống!",
+                    icon: "warning"
+                });
+                return;
+            }
         }
 
-        if (isNaN(milEachValue)) {
-            Swal.fire({
-                title: "Chưa điền số Mil mỗi lần xuống!",
-                icon: "warning",
-            });
-            return;
-        }
 
-        if ((milDownValue < milEachValue || milDownValue < 0 || milEachValue <= 0) && selectedMode !== "Chạy độ ring") {
-            Swal.fire({
-                title: "Số Mil cần xuống không hợp lệ!",
-                icon: "warning",
-            });
-            return;
-        }
 
         // -----------------------------
         // XỬ LÝ KẾT QUẢ
@@ -368,9 +399,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function resetEditMode(buttonId, textareaId) {
-        const button = document.getElementById(buttonId);
-        const textarea = document.getElementById(textareaId);
+    function resetEditMode() {
+        const button = document.getElementById("edit-button");
+        const textarea = document.getElementById("result");
         const icon = button.querySelector("i");
         const text = button.querySelector(".btn-text");
 
@@ -381,6 +412,7 @@ document.addEventListener("DOMContentLoaded", function () {
             text.textContent = "Chỉnh sửa";
         }
     }
+
 
 
 
@@ -413,7 +445,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .replaceAll("G81 ", "")
             .replaceAll(" R1. F1.", "");
         putMilInBlocks(input);
-        resetEditMode("edit-button", "result");
+        resetEditMode();
     });
 
     // Đoạn mã này sẽ lưu nội dung của textarea kết quả vào một tệp tin khi nhấn nút "Lưu file"
@@ -445,7 +477,9 @@ document.addEventListener("DOMContentLoaded", function () {
         let resultTextarea = document.getElementById("result");
         resultTextarea.value = ""; // Xoá nội dung trong ô kết quả
         resultTextarea.style.height = "auto"; // Đặt lại chiều cao ban đầu
-        resetEditMode("edit-button", "result"); // Đặt lại chế độ chỉnh sửa
+        resetEditMode(); // Đặt lại chế độ chỉnh sửa
+        // Trở về đầu trang
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     // Đoạn mã này sẽ cuộn lên đầu trang khi nhấn nút "Cuộn lên đầu trang"

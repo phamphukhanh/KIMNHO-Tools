@@ -71,16 +71,7 @@
                         <div id="form-section" class="col-md-6">
                             <!-- Form Cắt mặc định -->
                             <div id="form-cut">
-                                <label class="font-weight-bold"><ins>Từ tâm đi ra (X0.000 Y0.000)?</ins></label>
-                                <div>
-                                    <label class="mr-3">
-                                        <input type="radio" name="center" value="yes"> Có
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="center" value="no" checked> Không
-                                    </label>
-                                </div>
-                                <label class="font-weight-bold mt-2">Số Mil cần xuống:</label>
+                                <label class="font-weight-bold">Số Mil cần xuống:</label>
                                 <input type="number" min="0" class="form-control" required>
                                 <label class="font-weight-bold mt-2">Số Mil mỗi lần xuống:</label>
                                 <div>
@@ -94,8 +85,17 @@
                                         <input type="radio" name="cut-depth" value="custom"> Số khác
                                     </label>
                                 </div>
-                                <div id="custom-cut-depth" class="mt-1" style="display: none;">
+                                <div id="custom-cut-depth" class="mt-1 mb-1" style="display: none;">
                                     <input id="customCutDepthValue" type="number" min="0" class="form-control">
+                                </div>
+                                <label class="font-weight-bold"><ins>Từ tâm đi ra (X0.000 Y0.000)?</ins></label>
+                                <div>
+                                    <label class="mr-3">
+                                        <input type="radio" name="center" value="yes"> Có
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="center" value="no" checked> Không
+                                    </label>
                                 </div>
                             </div>
 
@@ -139,13 +139,21 @@
                                         <option value="10">10°</option>
                                         <option value="11">11°</option>
                                         <option value="12">12°</option>
+                                        <option value="13">13°</option>
+                                        <option value="14">14°</option>
+                                        <option value="15">15°</option>
+                                        <option value="16">16°</option>
+                                        <option value="17">17°</option>
+                                        <option value="18">18°</option>
+                                        <option value="19">19°</option>
+                                        <option value="20">20°</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="font-weight-bold mt-2">Bề dày đít ring <u>(tính luôn recess nếu
                                             có)</u></label>
                                     <input type="number" min="60" class="form-control" id="ring-bottom-thickness"
-                                        placeholder="Đít ring + Recess (nếu có)">
+                                        placeholder="Tối thiểu 60 mils" required>
                                 </div>
                             </div>
                         </div>

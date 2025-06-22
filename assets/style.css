@@ -11,6 +11,10 @@ html {
     background-color: #78bb7b;
 }
 
+#form-section {
+    height: 253px;
+}
+
 .map-container {
     position: relative;
     width: 100%;

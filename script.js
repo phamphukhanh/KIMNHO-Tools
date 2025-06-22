@@ -474,12 +474,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Đoạn mã này sẽ xóa nội dung trong ô kết quả và đặt lại chiều cao của nó về auto khi nhấn nút "Xoá"
     document.querySelector(".btn-danger").addEventListener("click", function () {
-        let resultTextarea = document.getElementById("result");
-        resultTextarea.value = ""; // Xoá nội dung trong ô kết quả
-        resultTextarea.style.height = "auto"; // Đặt lại chiều cao ban đầu
-        resetEditMode(); // Đặt lại chế độ chỉnh sửa
-        // Trở về đầu trang
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        Swal.fire({
+            title: "Xóa thiệt hả?",
+            text: "Coi chừng bấm lộn!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Xoá luôn!",
+            cancelButtonText: "Không, bấm lộn rồi!",
+            returnFocus: false // 🧠 Ngăn SweetAlert tự focus lại nút cũ
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let resultTextarea = document.getElementById("result");
+                resultTextarea.value = ""; // Xoá nội dung trong ô kết quả
+                resultTextarea.style.height = "auto"; // Đặt lại chiều cao ban đầu
+                resetEditMode(); // Đặt lại chế độ chỉnh sửa
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+        });
     });
 
     // Đoạn mã này sẽ cuộn lên đầu trang khi nhấn nút "Cuộn lên đầu trang"

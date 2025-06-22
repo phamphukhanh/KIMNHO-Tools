@@ -445,6 +445,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let resultTextarea = document.getElementById("result");
         resultTextarea.value = ""; // Xoá nội dung trong ô kết quả
         resultTextarea.style.height = "auto"; // Đặt lại chiều cao ban đầu
+        resetEditMode("edit-button", "result"); // Đặt lại chế độ chỉnh sửa
     });
 
     // Đoạn mã này sẽ cuộn lên đầu trang khi nhấn nút "Cuộn lên đầu trang"

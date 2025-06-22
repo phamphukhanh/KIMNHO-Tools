@@ -35,6 +35,7 @@
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
                     <button class="dropdown-item" type="button">Cắt</button>
                     <button class="dropdown-item" type="button">Đục lỗ</button>
+                    <button class="dropdown-item" type="button">Chạy độ ring</button>
                 </div>
             </div>
             <span data-toggle="tooltip" data-placement="right" data-html="true" title="
@@ -60,7 +61,43 @@
                                         chọn</label>
                                 </div>
                             </div>
-                            <textarea id="inputCNC" class="form-control mt-2" rows="10" required></textarea>
+                            <textarea id="inputCNC" class="form-control mt-2" rows="10" required>
+G00 X-0.1745 Y0.3512 Z0.
+X0.1745 Y0.3512 Z0.
+G02 X0.5245 Y0.0002 I0. J-0.35
+X0.1745 Y-0.3508 I-0.35 J-0.001
+G01 X-0.1745 Y-0.3508 Z0.
+G02 X-0.5245 Y0.0002 I0. J0.35
+X-0.1745 Y0.3512 I0.35 J0.001
+G01 X0.1745 Y0.3512 Z0.
+
+G00 X-0.1745 Y0.3012 Z0.
+G01 X0.1745 Y0.3012 Z0.
+G02 X0.4745 Y0.0003 I0. J-0.3
+G02 X0.1745 Y-0.3008 I-0.3 J-0.0009
+G01 X-0.1745 Y-0.3008 Z0.
+G02 X-0.4745 Y0.0001 I0. J0.3
+G02 X-0.1745 Y0.3012 I0.3 J0.0009
+G01 X0.1745 Y0.3012 Z0.
+
+G00 X-0.1745 Y0.2512 Z0.
+G01 X0.1745 Y0.2512 Z0.
+G02 X0.4245 Y0.0005 I0. J-0.25
+G02 X0.1745 Y-0.2508 I-0.25 J-0.0007
+G01 X-0.1745 Y-0.2508 Z0.
+G02 X-0.4245 Y-0.0001 I0. J0.25
+G02 X-0.1745 Y0.2512 I0.25 J0.0007
+G01 X0.1745 Y0.2512 Z0.
+
+G00 X0.1745 Y0.2012 Z0.
+G01 X-0.1745 Y0.2012 Z0.
+G03 X-0.3745 Y0.0006 I0. J-0.2
+G03 X-0.1745 Y-0.2008 I0.2 J-0.0006
+G01 X0.1745 Y-0.2008 Z0.
+G03 X0.3745 Y-0.0002 I0. J0.2
+G03 X0.1745 Y0.2012 I-0.2 J0.0006
+G01 X-0.1745 Y0.2012 Z0.
+                            </textarea>
                         </div>
                     </div>
                 </div>
@@ -111,6 +148,37 @@
                                     <input id="customDrillEachValue" type="number" min="0" class="form-control">
                                 </div>
                             </div>
+
+
+                            <!-- Form Chạy độ ring: ẩn lúc đầu -->
+                            <div id="form-ring-angle" style="display: none;">
+                                <label class="font-weight-bold" for="ceramic-thickness">Chọn bề dày sứ:</label>
+                                <select class="form-control" id="ceramic-thickness">
+                                    <option value="125">125</option>
+                                    <option value="187">187</option>
+                                    <option value="250">250</option>
+                                    <option value="375">375</option>
+                                </select>
+                                <label class="font-weight-bold mt-2">Chọn độ ring</label>
+                                <div>
+                                    <select class="form-control" id="ring-angles">
+                                        <option value="5" selected>5 độ</option>
+                                        <option value="6">6 độ</option>
+                                        <option value="7">7 độ</option>
+                                        <option value="8">8 độ</option>
+                                        <option value="9">9 độ</option>
+                                        <option value="10">10 độ</option>
+                                        <option value="11">11 độ</option>
+                                        <option value="12">12 độ</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="font-weight-bold">Nhập bề dày đít ring <u>(tính luôn recess nếu
+                                            có)</u></label>
+                                    <input type="number" min="60" class="form-control" id="ring-bottom-thickness"
+                                        placeholder="Đít ring + Recess (nếu có)">
+                                </div>
+                            </div>
                         </div>
                         <div class="border-left pl-3 col-md-6 ">
                             <label class="font-weight-bold">Thêm Program Start, Program End?</label>
@@ -141,7 +209,7 @@
                 <div class="col-md-12">
                     <div class="mt-3">
                         <!-- Hàng ngang: label bên trái, nút bên phải -->
-                        <label class="h5 font-weight-bold mb-0">Kết quả</label>
+                        <label class="h5 font-weight-bold mb-0" id="result-label">Kết quả</label>
                         <!-- <div class="d-flex justify-content-between align-items-center">
                             <button id="copy-button" class="btn btn-secondary font-weight-bold">
                                 <i class="fa fa-copy"></i>

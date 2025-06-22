@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const dropdownLabel = document.querySelector('.dropdown-toggle span');
     const formCut = document.getElementById("form-cut");
     const formDrill = document.getElementById("form-drill");
+    const formRingAngle = document.getElementById("form-ring-angle");
+    const ringAngles = document.getElementById("ring-angles");
     const customCutDepth = document.getElementById("custom-cut-depth");
     const customDrillDepth = document.getElementById("custom-drill-depth");
     const keepOptions = document.getElementById("keep-options");
@@ -44,6 +46,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 1. Chấm các chấm trong BobCad.<br>
                 2. Copy G-code vào, không cần xoá Z0.
             </div>`;
+        } else if (option === 'Chạy độ ring') {
+            content = `
+            <div style='text-align: justify; max-width: 250px;'>
+                <b>Chạy độ mặt dưới ring</b><br><br>
+                1. Chạy BobCad hết tất cả vòng.<br>
+                2. Copy G-code vào, không cần xoá Z0.<br>
+            </div>`;
         }
 
         tooltipElement.setAttribute("data-original-title", content);
@@ -62,15 +71,21 @@ document.addEventListener("DOMContentLoaded", function () {
             dropdownLabel.textContent = selectedText;
 
             // Cập nhật tooltip
-
             // Hiện/ẩn form tương ứng
             if (selectedText === "Đục lỗ") {
                 formCut.style.display = "none";
+                formRingAngle.style.display = "none";
                 formDrill.style.display = "block";
+            } else if (selectedText === "Chạy độ ring") {
+                formCut.style.display = "none";
+                formDrill.style.display = "none";
+                formRingAngle.style.display = "block";
             } else {
                 formCut.style.display = "block";
                 formDrill.style.display = "none";
+                formRingAngle.style.display = "none";
             }
+
             // Đặt lại các ô nhập liệu về mặc định
             if (!keepOptionFlag) {
                 resetValues();
@@ -91,7 +106,9 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector("input[name='spacing'][value='no']").checked = true;
         document.querySelector("input[name='comment'][value='no']").checked = true;
         document.querySelectorAll("input[type='number']").forEach(input => input.value = "");
-
+        document.querySelector("select#ceramic-thickness").value = "125";
+        document.querySelector("select#ring-angles").value = "5";
+        document.querySelector("input#ring-bottom-thickness").value = "";
         // Đặt lại các ô nhập liệu về mặc định
         customCutDepth.style.display = this.value === "custom" ? "block" : "none";
         customDrillDepth.style.display = this.value === "custom" ? "block" : "none";
@@ -114,9 +131,17 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+
+    // // Ẩn/hiện input 'Số khác' trong chạy độ ring
+    // ringAngles.addEventListener("change", function () {
+    //     customRingAngle.style.display = this.value === "custom" ? "block" : "none";
+    //     document.getElementById("customRingAngleValue").focus();
+    // });
+
     // Hàm này sẽ xử lý việc gắn số Mil (xuống và lên) vào các khối G-code
     // Nếu milDownValue lớn hơn milEachValue, nó sẽ chia nhỏ các bước cắt thành các khối nhỏ hơn
     function putMilInBlocks(input) {
+
         selectedMode = document.querySelector(".dropdown-toggle span").textContent.trim();
         const startEnd = document.querySelector("input[name='start-end']:checked").value;
         const spacing = document.querySelector("input[name='spacing']:checked").value;
@@ -124,6 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "N10 G01 Z0.050 F4\n" +
             "N20 G01 Z0.050\n" +
             "M03\n";
+
         var endText = "\nG00 X0.000 Y0.000\nM04\nM30";
         if (spacing === "yes") {
             startText = startText.replace("M03\n", "M03\n\n\n");
@@ -134,8 +160,47 @@ document.addEventListener("DOMContentLoaded", function () {
         let milEach = "";
         let output = startEnd === "yes" ? startText : "";
         let milDownValue = "";
-        let milEachValue = ""
-        if (selectedMode === "Cắt") {
+        let milEachValue = "";
+        let ceramicThickness = "";
+        let ringAngle = "";
+        let ringBottom = "";
+        if (selectedMode === "Chạy độ ring") {
+            input = input.split(/(?=G00)/);
+            milEachValue = 20;
+            ceramicThickness = document.querySelector("select#ceramic-thickness").value;
+            ringAngle = document.querySelector("select#ring-angles").value;
+            ringBottom = document.querySelector("input#ring-bottom-thickness").value;
+            milDownValue = ceramicThickness - ringBottom;
+            input.forEach((block) => {
+                if (milDownValue < 0) {
+                    Swal.fire({
+                        title: "Số Mil cần xuống bị âm!",
+                        text: "Kiểm tra lại số vòng, bề dày phôi sứ và bề dày đít ring.",
+                        icon: "warning",
+                    });
+                    output = "";
+                    document.querySelector("#result").value = output;
+                    return;
+                }
+                output += milAddingUp(block, milDownValue, milEachValue) + "\n";
+                milDownValue = milDownValue - (ringAngle - 1);
+            });
+            if (startEnd === "yes") {
+                output = output.trim() + endText;
+            }
+            console.log("Kết quả:\n" + output);
+            // Hiển thị kết quả
+            const resultTextarea = document.querySelector("#result");
+            resultTextarea.value = output.trim();
+            resultTextarea.style.height = "auto";
+            resultTextarea.style.height = resultTextarea.scrollHeight + "px";
+            if (!keepOptionFlag) {
+                document.getElementById("inputCNC").value = "";
+                resetValues();
+            }
+            return;
+        }
+        else if (selectedMode === "Cắt") {
             input = input.split(/(?=G00)/);
             milDown = document.querySelectorAll("input[type='number']")[0].value;
             milEach = document.querySelector("input[name='cut-depth']:checked").value;

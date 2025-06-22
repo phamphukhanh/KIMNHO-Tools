@@ -107,8 +107,8 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector("input[name='comment'][value='no']").checked = true;
         document.querySelectorAll("input[type='number']").forEach(input => input.value = "");
         document.querySelector("select#ceramic-thickness").value = "125";
-        document.querySelector("select#ring-angles").value = "5";
-        document.querySelector("input#ring-bottom-thickness").value = "";
+        document.querySelector("select#ring-angles").value = "7";
+        document.querySelector("input#ring-bottom-thickness").value = 60;
         // Đặt lại các ô nhập liệu về mặc định
         customCutDepth.style.display = this.value === "custom" ? "block" : "none";
         customDrillDepth.style.display = this.value === "custom" ? "block" : "none";
@@ -132,95 +132,83 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-    // // Ẩn/hiện input 'Số khác' trong chạy độ ring
-    // ringAngles.addEventListener("change", function () {
-    //     customRingAngle.style.display = this.value === "custom" ? "block" : "none";
-    //     document.getElementById("customRingAngleValue").focus();
-    // });
-
     // Hàm này sẽ xử lý việc gắn số Mil (xuống và lên) vào các khối G-code
     // Nếu milDownValue lớn hơn milEachValue, nó sẽ chia nhỏ các bước cắt thành các khối nhỏ hơn
     function putMilInBlocks(input) {
-
         selectedMode = document.querySelector(".dropdown-toggle span").textContent.trim();
         const startEnd = document.querySelector("input[name='start-end']:checked").value;
         const spacing = document.querySelector("input[name='spacing']:checked").value;
-        var startText =
-            "N10 G01 Z0.050 F4\n" +
-            "N20 G01 Z0.050\n" +
-            "M03\n";
 
-        var endText = "\nG00 X0.000 Y0.000\nM04\nM30";
+        let startText = "N10 G01 Z0.050 F4\nN20 G01 Z0.050\nM03\n";
+        let endText = "\nG00 X0.000 Y0.000\nM04\nM30";
+
         if (spacing === "yes") {
             startText = startText.replace("M03\n", "M03\n\n\n");
             endText = endText.replace("\nG00", "\n\n\nG00");
         }
 
-        let milDown = "";
-        let milEach = "";
-        let output = startEnd === "yes" ? startText : "";
-        let milDownValue = "";
-        let milEachValue = "";
-        let ceramicThickness = "";
-        let ringAngle = "";
-        let ringBottom = "";
+        let milDownValue = 0;
+        let milEachValue = 0;
+        let milBlocks = [];
+
+        // -----------------------------
+        // XỬ LÝ TỪNG CHẾ ĐỘ RIÊNG BIỆT
+        // -----------------------------
+
         if (selectedMode === "Chạy độ ring") {
             input = input.split(/(?=G00)/);
+            const ceramicThickness = parseInt(document.querySelector("select#ceramic-thickness").value);
+            const ringAngle = parseInt(document.querySelector("select#ring-angles").value);
+            const ringBottom = parseInt(document.querySelector("input#ring-bottom-thickness").value);
             milEachValue = 20;
-            ceramicThickness = document.querySelector("select#ceramic-thickness").value;
-            ringAngle = document.querySelector("select#ring-angles").value;
-            ringBottom = document.querySelector("input#ring-bottom-thickness").value;
-            milDownValue = ceramicThickness - ringBottom;
-            input.forEach((block) => {
-                if (milDownValue < 0) {
-                    Swal.fire({
-                        title: "Số Mil cần xuống bị âm!",
-                        text: "Kiểm tra lại số vòng, bề dày phôi sứ và bề dày đít ring.",
-                        icon: "warning",
-                    });
-                    output = "";
-                    document.querySelector("#result").value = output;
-                    return;
-                }
-                output += milAddingUp(block, milDownValue, milEachValue) + "\n";
-                milDownValue = milDownValue - (ringAngle - 1);
+
+            let currentMil = ceramicThickness - ringBottom;
+            if (currentMil < 0) {
+                Swal.fire({
+                    title: "Số Mil cần xuống bị âm!",
+                    text: "Kiểm tra lại số vòng, bề dày phôi sứ và bề dày đít ring.",
+                    icon: "warning",
+                });
+                document.querySelector("#result").value = "";
+                return;
+            }
+
+            input.forEach(block => {
+                milBlocks.push({ block, milDown: currentMil });
+                currentMil -= (ringAngle - 1);
             });
-            if (startEnd === "yes") {
-                output = output.trim() + endText;
-            }
-            console.log("Kết quả:\n" + output);
-            // Hiển thị kết quả
-            const resultTextarea = document.querySelector("#result");
-            resultTextarea.value = output.trim();
-            resultTextarea.style.height = "auto";
-            resultTextarea.style.height = resultTextarea.scrollHeight + "px";
-            if (!keepOptionFlag) {
-                document.getElementById("inputCNC").value = "";
-                resetValues();
-            }
-            return;
         }
+
         else if (selectedMode === "Cắt") {
             input = input.split(/(?=G00)/);
-            milDown = document.querySelectorAll("input[type='number']")[0].value;
-            milEach = document.querySelector("input[name='cut-depth']:checked").value;
+            const milDown = document.querySelectorAll("input[type='number']")[0].value;
+            const milEach = document.querySelector("input[name='cut-depth']:checked").value;
             milEachValue = milEach === "custom" ? document.getElementById("customCutDepthValue").value : milEach;
-        } else if (selectedMode === "Đục lỗ") {
-            input = input.split("\n");
-            milEach = document.querySelector("input[name='drill-depth']:checked").value;
-            if (milEach === "custom") {
-                milDown = document.querySelectorAll("input[type='number']")[2].value;
-                milEachValue = document.getElementById("customDrillEachValue").value
-            } else {
-                milDown = milEachValue = document.querySelector("input[name='drill-depth']:checked").value;
-            }
+
+            milDownValue = parseInt(milDown);
+            milEachValue = parseInt(milEachValue);
+            milBlocks = input.map(block => ({ block, milDown: milDownValue }));
         }
 
+        else if (selectedMode === "Đục lỗ") {
+            input = input.split("\n");
+            const milEach = document.querySelector("input[name='drill-depth']:checked").value;
+            if (milEach === "custom") {
+                const milDown = document.querySelectorAll("input[type='number']")[2].value;
+                milEachValue = document.getElementById("customDrillEachValue").value;
+                milDownValue = parseInt(milDown);
+            } else {
+                milDownValue = milEachValue = parseInt(milEach);
+            }
 
-        milDownValue = parseInt(milDown);
-        milEachValue = parseInt(milEachValue);
+            milBlocks = input.map(block => ({ block, milDown: milDownValue }));
+        }
 
-        if (isNaN(milDownValue)) {
+        // -----------------------------
+        // KIỂM TRA GIÁ TRỊ MIL
+        // -----------------------------
+
+        if (isNaN(milDownValue) && selectedMode !== "Chạy độ ring") {
             Swal.fire({
                 title: "Chưa điền số Mil cần xuống!",
                 icon: "warning",
@@ -236,54 +224,45 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        if ((milDownValue === "" && milEachValue !== "") ||
-            (milDownValue !== "" && isNaN(milEachValue)) ||
-            (milDownValue !== "" && milEachValue === 0)
-        ) {
-            milDownValue = 0;
-            milEachValue = 0;
-        }
-
-        if (milDownValue < milEachValue) {
+        if ((milDownValue < milEachValue || milDownValue < 0 || milEachValue <= 0) && selectedMode !== "Chạy độ ring") {
             Swal.fire({
-                title: "Số Mil cần xuống phải lớn hơn số Mil mỗi lần xuống!",
+                title: "Số Mil cần xuống không hợp lệ!",
                 icon: "warning",
             });
             return;
         }
 
-        if (milDownValue < 0 || milEachValue < 0) {
-            Swal.fire({
-                title: "Số Mil cần xuống và số Mil mỗi lần xuống bị âm!",
-                icon: "warning",
-            });
-            return;
-        }
+        // -----------------------------
+        // XỬ LÝ KẾT QUẢ
+        // -----------------------------
 
-        // Cộng dồn các dòng G-code
-        for (let i = 0; i < input.length; i++) {
-            if (i !== input.length - 1 && spacing === "yes") {
-                output += milAddingUp(input[i], milDownValue, milEachValue) + "\n";
-            }
-            else {
-                output += milAddingUp(input[i], milDownValue, milEachValue);
-            }
-        }
+        let output = startEnd === "yes" ? startText : "";
+
+        milBlocks.forEach(({ block, milDown }, i) => {
+            let result = milAddingUp(block, milDown, milEachValue);
+            if (spacing === "yes" && i !== milBlocks.length - 1) result += "\n";
+            output += result;
+        });
 
         if (startEnd === "yes") {
             output = output.trim() + endText;
         }
 
-        // Hiển thị kết quả
+        // -----------------------------
+        // HIỂN THỊ KẾT QUẢ
+        // -----------------------------
+
         const resultTextarea = document.querySelector("#result");
         resultTextarea.value = output.trim();
         resultTextarea.style.height = "auto";
         resultTextarea.style.height = resultTextarea.scrollHeight + "px";
+
         if (!keepOptionFlag) {
             document.getElementById("inputCNC").value = "";
             resetValues();
         }
     }
+
 
     // Hàm này sẽ thêm các khối G-code vào đầu vào dựa trên giá trị milDownValue và milEachValue
     // Nếu milDownValue lớn hơn milEachValue, nó sẽ chia nhỏ các bước cắt thành các khối nhỏ hơn

@@ -62,42 +62,7 @@
                                 </div>
                             </div>
                             <textarea id="inputCNC" class="form-control mt-2" rows="10" required>
-G00 X-0.1745 Y0.3512 Z0.
-X0.1745 Y0.3512 Z0.
-G02 X0.5245 Y0.0002 I0. J-0.35
-X0.1745 Y-0.3508 I-0.35 J-0.001
-G01 X-0.1745 Y-0.3508 Z0.
-G02 X-0.5245 Y0.0002 I0. J0.35
-X-0.1745 Y0.3512 I0.35 J0.001
-G01 X0.1745 Y0.3512 Z0.
-
-G00 X-0.1745 Y0.3012 Z0.
-G01 X0.1745 Y0.3012 Z0.
-G02 X0.4745 Y0.0003 I0. J-0.3
-G02 X0.1745 Y-0.3008 I-0.3 J-0.0009
-G01 X-0.1745 Y-0.3008 Z0.
-G02 X-0.4745 Y0.0001 I0. J0.3
-G02 X-0.1745 Y0.3012 I0.3 J0.0009
-G01 X0.1745 Y0.3012 Z0.
-
-G00 X-0.1745 Y0.2512 Z0.
-G01 X0.1745 Y0.2512 Z0.
-G02 X0.4245 Y0.0005 I0. J-0.25
-G02 X0.1745 Y-0.2508 I-0.25 J-0.0007
-G01 X-0.1745 Y-0.2508 Z0.
-G02 X-0.4245 Y-0.0001 I0. J0.25
-G02 X-0.1745 Y0.2512 I0.25 J0.0007
-G01 X0.1745 Y0.2512 Z0.
-
-G00 X0.1745 Y0.2012 Z0.
-G01 X-0.1745 Y0.2012 Z0.
-G03 X-0.3745 Y0.0006 I0. J-0.2
-G03 X-0.1745 Y-0.2008 I0.2 J-0.0006
-G01 X0.1745 Y-0.2008 Z0.
-G03 X0.3745 Y-0.0002 I0. J0.2
-G03 X0.1745 Y0.2012 I-0.2 J0.0006
-G01 X-0.1745 Y0.2012 Z0.
-                            </textarea>
+</textarea>
                         </div>
                     </div>
                 </div>
@@ -108,8 +73,12 @@ G01 X-0.1745 Y0.2012 Z0.
                             <div id="form-cut">
                                 <label class="font-weight-bold"><ins>Từ tâm đi ra (X0.000 Y0.000)?</ins></label>
                                 <div>
-                                    <label class="mr-3"><input type="radio" name="center" value="yes"> Có</label>
-                                    <label><input type="radio" name="center" value="no" checked> Không</label>
+                                    <label class="mr-3">
+                                        <input type="radio" name="center" value="yes"> Có
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="center" value="no" checked> Không
+                                    </label>
                                 </div>
                                 <label class="font-weight-bold mt-2">Số Mil cần xuống:</label>
                                 <input type="number" min="0" class="form-control" required>
@@ -152,28 +121,28 @@ G01 X-0.1745 Y0.2012 Z0.
 
                             <!-- Form Chạy độ ring: ẩn lúc đầu -->
                             <div id="form-ring-angle" style="display: none;">
-                                <label class="font-weight-bold" for="ceramic-thickness">Chọn bề dày sứ:</label>
+                                <label class="font-weight-bold" for="ceramic-thickness">Bề dày phôi sứ:</label>
                                 <select class="form-control" id="ceramic-thickness">
                                     <option value="125">125</option>
                                     <option value="187">187</option>
                                     <option value="250">250</option>
                                     <option value="375">375</option>
                                 </select>
-                                <label class="font-weight-bold mt-2">Chọn độ ring</label>
+                                <label class="font-weight-bold mt-2">Độ ring</label>
                                 <div>
                                     <select class="form-control" id="ring-angles">
-                                        <option value="5" selected>5 độ</option>
-                                        <option value="6">6 độ</option>
-                                        <option value="7">7 độ</option>
-                                        <option value="8">8 độ</option>
-                                        <option value="9">9 độ</option>
-                                        <option value="10">10 độ</option>
-                                        <option value="11">11 độ</option>
-                                        <option value="12">12 độ</option>
+                                        <option value="5">5°</option>
+                                        <option value="6">6°</option>
+                                        <option value="7" selected>7°</option>
+                                        <option value="8">8°</option>
+                                        <option value="9">9°</option>
+                                        <option value="10">10°</option>
+                                        <option value="11">11°</option>
+                                        <option value="12">12°</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="font-weight-bold">Nhập bề dày đít ring <u>(tính luôn recess nếu
+                                    <label class="font-weight-bold mt-2">Bề dày đít ring <u>(tính luôn recess nếu
                                             có)</u></label>
                                     <input type="number" min="60" class="form-control" id="ring-bottom-thickness"
                                         placeholder="Đít ring + Recess (nếu có)">
@@ -186,12 +155,12 @@ G01 X-0.1745 Y0.2012 Z0.
                                 <label class="mr-3"><input type="radio" name="start-end" value="yes"> Có</label>
                                 <label><input type="radio" name="start-end" value="no" checked> Không</label>
                             </div>
-                            <label class="font-weight-bold">Cách dòng?</label>
+                            <label class="font-weight-bold mt-2">Cách dòng?</label>
                             <div>
                                 <label class="mr-3"><input type="radio" name="spacing" value="yes"> Có</label>
                                 <label><input type="radio" name="spacing" value="no" checked> Không</label>
                             </div>
-                            <label class="font-weight-bold">Thêm chú thích?</label>
+                            <label class="font-weight-bold mt-2">Thêm chú thích?</label>
                             <div>
                                 <label class="mr-3"><input type="radio" name="comment" value="yes"> Có</label>
                                 <label><input type="radio" name="comment" value="no" checked> Không</label>

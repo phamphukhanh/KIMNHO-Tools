@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Offset G-code Demo (Mil)</title>
+  <style>
+    textarea { width: 100%; font-family: monospace; }
+    body { font-family: sans-serif; margin: 20px; }
+  </style>
+</head>
+<body>
+  <h2>Offset G-code Demo (Đơn vị Mil)</h2>
+
+  <h3>Nhập G-code:</h3>
+  <textarea id="input" rows="10">
+G00 X0.1745 Y0.2012 Z0.
+G01 X-0.1745 Y0.2012 Z0.
+G03 X-0.3745 Y0.0006 I0. J-0.2
+G03 X-0.1745 Y-0.2008 I0.2 J-0.0006
+G01 X0.1745 Y-0.2008 Z0.
+G03 X0.3745 Y-0.0002 I0. J0.2
+G03 X0.1745 Y0.2012 I-0.2 J0.0006
+G01 X-0.1745 Y0.2012 Z0.
+  </textarea><br><br>
+
+  <label><input type="radio" name="mode" value="shrink" checked> Thu nhỏ</label>
+  <label><input type="radio" name="mode" value="expand"> Mở rộng</label><br><br>
+
+  Khoảng cách (mil): <input type="number" id="delta" step="1" value="20"><br><br>
+
+  <button onclick="process()">Xử lý</button>
+
+  <h3>G-code mới:</h3>
+  <textarea id="output" rows="10"></textarea>
+
+<script>
+function parseLine(line) {
+  const cmd = line.trim().split(" ")[0];
+  let params = {};
+  line.trim().split(" ").slice(1).forEach(tok => {
+    if (tok.length > 0) {
+      let k = tok[0].toUpperCase();
+      let v = parseFloat(tok.substring(1));
+      params[k] = v;
+    }
+  });
+  return { cmd, params };
+}
+
+function offsetLine(p1, p2, delta) {
+  let dx = p2[0] - p1[0];
+  let dy = p2[1] - p1[1];
+  let len = Math.hypot(dx, dy);
+  if (len === 0) return [p1, p2];
+  let nx = -dy / len;
+  let ny = dx / len;
+  return [
+    [p1[0] + delta*nx, p1[1] + delta*ny],
+    [p2[0] + delta*nx, p2[1] + delta*ny]
+  ];
+}
+
+function offsetArc(start, end, center, delta, ccw=true) {
+  let r = Math.hypot(start[0]-center[0], start[1]-center[1]);
+  let rNew = r - delta;
+  if (rNew <= 0) throw new Error("Offset quá lớn, bán kính <= 0");
+  let thS = Math.atan2(start[1]-center[1], start[0]-center[0]);
+  let thE = Math.atan2(end[1]-center[1], end[0]-center[0]);
+  let sNew = [center[0] + rNew*Math.cos(thS), center[1] + rNew*Math.sin(thS)];
+  let eNew = [center[0] + rNew*Math.cos(thE), center[1] + rNew*Math.sin(thE)];
+  let I = center[0] - sNew[0];
+  let J = center[1] - sNew[1];
+  return { start: sNew, end: eNew, I, J, ccw };
+}
+
+function process() {
+  const gcode = document.getElementById("input").value.trim().split("\n");
+  const mode = document.querySelector('input[name="mode"]:checked').value;
+  let deltaMil = parseFloat(document.getElementById("delta").value);
+  if (isNaN(deltaMil)) deltaMil = 0;
+  let delta = deltaMil / 1000.0; // đổi sang inch
+  if (mode === "expand") delta = -delta;
+
+  let out = [];
+  let curr = [0,0];
+  gcode.forEach(line => {
+    if (line.trim()==="") return;
+    const {cmd, params} = parseLine(line);
+    if (cmd==="G00") {
+      if ("X" in params) curr[0] = params.X;
+      if ("Y" in params) curr[1] = params.Y;
+      out.push(line); // giữ nguyên G00
+    }
+    else if (cmd==="G01") {
+      let next = [params.X, params.Y];
+      let [p1, p2] = offsetLine(curr, next, delta);
+      out.push(`G01 X${p2[0].toFixed(4)} Y${p2[1].toFixed(4)}`);
+      curr = p2;
+    }
+    else if (cmd==="G02" || cmd==="G03") {
+      let ccw = (cmd==="G03");
+      let next = [params.X, params.Y];
+      let center = [curr[0]+params.I, curr[1]+params.J];
+      let arc = offsetArc(curr, next, center, delta, ccw);
+      out.push(`${cmd} X${arc.end[0].toFixed(4)} Y${arc.end[1].toFixed(4)} I${arc.I.toFixed(4)} J${arc.J.toFixed(4)}`);
+      curr = arc.end;
+    }
+    else {
+      out.push(line); // các lệnh khác giữ nguyên
+    }
+  });
+
+  document.getElementById("output").value = out.join("\n");
+}
+</script>
+</body>
+</html>

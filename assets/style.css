@@ -55,3 +55,7 @@ html {
     font-weight: 700;
     color: #000;
 }
+
+.no-margin-label {
+    margin-bottom: 0px;
+}

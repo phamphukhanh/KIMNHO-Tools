@@ -19,9 +19,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const formCut = document.getElementById("form-cut");
     const formDrill = document.getElementById("form-drill");
     const formRingAngle = document.getElementById("form-ring-angle");
-    const ringAngles = document.getElementById("ring-angles");
     const customCutDepth = document.getElementById("custom-cut-depth");
     const customDrillDepth = document.getElementById("custom-drill-depth");
+    const customInitialDepth = document.getElementById("custom-initial-depth");
     const keepOptions = document.getElementById("keep-options");
     let selectedMode = "";
     let keepOptionFlag = keepOptions.checked; // lưu trạng thái ban đầu
@@ -142,6 +142,21 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    document.querySelectorAll("input[name='initial-depth']").forEach(radio => {
+        radio.addEventListener("change", function () {
+            // const customInitialDepth = document.getElementById("custom-initial-depth");
+            if (this.value === "custom") {
+                customInitialDepth.style.visibility = "visible";
+                document.getElementById("customInitialDepthValue").focus();
+            } else {
+                customInitialDepth.style.visibility = "hidden";
+            }
+        });
+    });
+
+
+
+
 
     // Hàm này sẽ xử lý việc gắn số Mil (xuống và lên) vào các khối G-code
     // Nếu milDownValue lớn hơn milEachValue, nó sẽ chia nhỏ các bước cắt thành các khối nhỏ hơn
@@ -192,7 +207,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         else if (selectedMode === "Cắt") {
             input = input.split(/(?=G00)/);
-            const milDown = document.querySelectorAll("input[type='number']")[0].value;
+            const milDown = document.querySelector("input[id='mil-down']").value;
             const milEach = document.querySelector("input[name='cut-depth']:checked").value;
             milEachValue = milEach === "custom" ? document.getElementById("customCutDepthValue").value : milEach;
 
@@ -205,7 +220,7 @@ document.addEventListener("DOMContentLoaded", function () {
             input = input.split("\n");
             const milEach = document.querySelector("input[name='drill-depth']:checked").value;
             if (milEach === "custom") {
-                const milDown = document.querySelectorAll("input[type='number']")[2].value;
+                const milDown = document.getElementById("customDrillDepthValue").value;
                 milEachValue = document.getElementById("customDrillEachValue").value;
                 milDownValue = parseInt(milDown);
             } else {

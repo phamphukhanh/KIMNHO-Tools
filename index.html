@@ -36,6 +36,7 @@
                     <button class="dropdown-item" type="button">Cắt</button>
                     <button class="dropdown-item" type="button">Đục lỗ</button>
                     <button class="dropdown-item" type="button">Chạy độ ring</button>
+                    <button class="dropdown-item" type="button">Bóp/Nới</button>
                 </div>
             </div>
             <span data-toggle="tooltip" data-placement="right" data-html="true" title="
@@ -71,6 +72,27 @@
                         <div id="form-section" class="col-md-6">
                             <!-- Form Cắt mặc định -->
                             <div id="form-cut">
+                                <label class="font-weight-bold no-margin-label">Điểm bắt đầu:</label>
+                                <div class="d-flex align-items-center">
+                                    <label class="mr-3 mb-0 d-flex align-items-center">
+                                        <input type="radio" name="initial-depth" value="0" checked class="mr-1"> 0
+                                    </label>
+
+                                    <div class="d-flex align-items-center flex-grow-1">
+                                        <label class="mb-0 mr-2 d-flex align-items-center" style="white-space: nowrap;">
+                                            <input type="radio" name="initial-depth" value="custom" class="mr-1"> Số
+                                            khác
+                                        </label>
+                                        <div class="input-group flex-grow-1" id="custom-initial-depth"
+                                            style="visibility:hidden;">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text font-weight-bold">-</span>
+                                            </div>
+                                            <input id="customInitialDepthValue" type="number" min="0"
+                                                class="form-control" placeholder="" aria-label="Negative number">
+                                        </div>
+                                    </div>
+                                </div>
                                 <label class="font-weight-bold" for="mil-down">Số Mil cần xuống:</label>
                                 <input type="number" min="0" class="form-control" id="mil-down" required>
                                 <label class="font-weight-bold mt-2">Số Mil mỗi lần xuống:</label>
@@ -150,10 +172,11 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="font-weight-bold mt-2" for="ring-bottom-thickness">Bề dày đít ring <u>(tính luôn recess nếu
+                                    <label class="font-weight-bold mt-2" for="ring-bottom-thickness">Bề dày đít ring
+                                        <u>(tính luôn recess nếu
                                             có):</u></label>
-                                    <input type="number" min="60" max="250" class="form-control" id="ring-bottom-thickness"
-                                        placeholder="Tối thiểu 60 mils" required>
+                                    <input type="number" min="60" max="250" class="form-control"
+                                        id="ring-bottom-thickness" placeholder="Tối thiểu 60 mils" required>
                                 </div>
                             </div>
                         </div>

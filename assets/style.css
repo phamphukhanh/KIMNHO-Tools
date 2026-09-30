@@ -146,3 +146,117 @@ html {
 #result:focus {
     box-shadow: none;
 }
+
+/* Buộc tiêu đề ở Header luôn nằm chính giữa màn hình */
+.header-title-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none; /* Tránh cản trở click khi thu nhỏ màn hình */
+}
+
+/* Đồng hồ dạng Badge LED kỹ thuật */
+.clock-badge {
+    background-color: rgba(0, 0, 0, 0.28); /* Nền tối dịu mắt */
+    color: #20c997; /* Màu xanh LED kỹ thuật (hoặc dùng #ffc107 nếu thích màu vàng) */
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 1px; /* Giúp các con số cách nhau rõ ràng */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+}
+
+
+/* ==========================================
+   GIAO DIỆN TỐI (DARK MODE)
+   ========================================== */
+
+/* Nền toàn trang */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+/* Các khung viền và thẻ chứa */
+body.dark-mode .border {
+    border-color: #383838 !important;
+}
+
+body.dark-mode .shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Form nhập liệu & Dropdown/Select */
+body.dark-mode .form-control,
+body.dark-mode select.form-control {
+    background-color: #242424;
+    color: #f1f1f1;
+    border-color: #444;
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode select.form-control:focus {
+    background-color: #2d2d2d;
+    color: #ffffff;
+    border-color: #666;
+}
+
+/* Trình soạn thảo G-Code trong Dark Mode (Phong cách VS Code Dark) */
+body.dark-mode .gcode-editor-container {
+    background-color: #1e1e1e !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode .line-numbers {
+    background-color: #252526 !important;
+    color: #858585 !important;
+    border-right-color: #3c3c3c !important;
+}
+
+/* Ô Kết quả G-code khi ở chế độ CHỈ ĐỌC (Nền xám tối) */
+body.dark-mode #result[readonly] {
+    background-color: #1e1e1e !important;
+    color: #d4d4d4 !important;
+}
+
+/* Ô Kết quả G-code khi BẬT EDIT (Nền xám sáng hơn một chút) */
+body.dark-mode #result:not([readonly]) {
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
+}
+
+/* Nhãn chữ & Footer */
+body.dark-mode .text-black-50 {
+    color: #a0a0a0 !important;
+}
+
+body.dark-mode .dropdown-menu {
+    background-color: #2b2b2b;
+    border-color: #444;
+}
+
+body.dark-mode .dropdown-item {
+    color: #e0e0e0;
+}
+
+body.dark-mode .dropdown-item:hover {
+    background-color: #3a3a3a;
+    color: #fff;
+}
+
+/* Cố định chiều rộng nút Dark Mode để tránh thay đổi kích thước khi đổi Tối / Sáng */
+#toggle-dark-mode {
+    width: 82px; /* Kích thước cố định vừa vặn cho cả 2 trạng thái */
+    text-align: center;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 6px;
+}

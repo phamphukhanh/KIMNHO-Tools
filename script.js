@@ -38,6 +38,17 @@ document.addEventListener("DOMContentLoaded", function () {
         $(tooltipElement).tooltip("hide");
     }, 2000);
 
+
+    // Cập nhật đồng hồ ở Header
+    function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('vi-VN');
+        const clockEl = document.getElementById('live-clock');
+        if (clockEl) clockEl.textContent = timeString;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
     // Cập nhật tooltip dựa theo lựa chọn
     function updateTooltipContent(option) {
         let content = '';
@@ -571,4 +582,40 @@ document.addEventListener("DOMContentLoaded", function () {
             "This website is the property of Kim Nho Enterprise, do not copy in any form!",
             "color: red; font-size: 20px; font-weight: bold; text-align: center;");
     });
+
+    // ==========================================
+    // XỬ LÝ NÚT DARK MODE
+    // ==========================================
+    const darkModeBtn = document.getElementById("toggle-dark-mode");
+
+    // Hàm cập nhật trạng thái giao diện & giao diện của nút
+    function setDarkMode(isDark) {
+        if (isDark) {
+            document.body.classList.add("dark-mode");
+            darkModeBtn.innerHTML = '<i class="fa fa-sun-o text-warning mr-1"></i> Sáng';
+            darkModeBtn.classList.remove("btn-dark");
+            darkModeBtn.classList.add("btn-outline-light");
+            localStorage.setItem("theme", "dark");
+        } else {
+            document.body.classList.remove("dark-mode");
+            darkModeBtn.innerHTML = '<i class="fa fa-moon-o mr-1"></i> Tối';
+            darkModeBtn.classList.remove("btn-outline-light");
+            darkModeBtn.classList.add("btn-dark");
+            localStorage.setItem("theme", "light");
+        }
+    }
+
+    // Kiểm tra cài đặt đã lưu trong localStorage khi vừa mở trang
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+        setDarkMode(true);
+    }
+
+    // Gán sự kiện click cho nút Dark Mode
+    if (darkModeBtn) {
+        darkModeBtn.addEventListener("click", function () {
+            const isDark = !document.body.classList.contains("dark-mode");
+            setDarkMode(isDark);
+        });
+    }
 });

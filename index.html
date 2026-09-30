@@ -16,14 +16,33 @@
 </head>
 
 <body>
-    <ul class="nav nav-pills p-2 bg-kimnho font-weight-bold" id="pills-tab" role="tablist">
-        <li class="nav-item mr-auto">
-            <span class="ml-2 d-flex align-items-center">
-                <img src="images/DNTN.png" width="30" height="auto" class="mr-2 d-inline-block align-top" alt="">
-                <span class="align-middle">D.N.T.N KIM NHỎ</span>
-            </span>
-        </li>
-    </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-kimnho px-3 py-2 shadow-sm position-relative">
+        <!-- Bên trái: Logo + Tên doanh nghiệp + Badge Version -->
+        <a class="navbar-brand d-flex align-items-center font-weight-bold text-white mb-0" href="#">
+            <img src="images/DNTN.png" width="30" height="auto" class="mr-2" alt="Logo">
+            <span>D.N.T.N KIM NHỎ</span>
+            <span class="badge badge-light text-dark ml-2 style-v">v3.0</span>
+        </a>
+
+        <!-- Ở giữa: Căn giữa tuyệt đối 100% -->
+        <div class="header-title-center text-white font-weight-bold h6 mb-0 d-none d-md-block">
+            <i class="fa fa-cogs mr-1"></i> Bộ Xử Lý G-Code CNC
+        </div>
+
+        <!-- Bên phải: Đồng hồ LED Badge + Dark Mode -->
+        <div class="d-flex align-items-center text-white ml-auto">
+            <!-- Đồng hồ LED kỹ thuật -->
+            <div class="clock-badge mr-3 d-none d-sm-flex align-items-center">
+                <i class="fa fa-clock-o mr-2 text-warning"></i>
+                <span id="live-clock">00:00:00</span>
+            </div>
+
+            <!-- Nút Dark Mode -->
+            <button class="btn btn-sm btn-dark font-weight-bold" id="toggle-dark-mode">
+                <i class="fa fa-moon-o mr-1"></i> Tối
+            </button>
+        </div>
+    </nav>
 
     <div class="container mt-3">
         <h3 class="text-center font-weight-bold">
@@ -193,7 +212,8 @@
                 <div class="col">
                     <div class="gcode-editor-container border rounded d-flex overflow-hidden">
                         <div id="line-numbers" class="line-numbers">1</div>
-                        <textarea id="result" class="form-control border-0 rounded-0 flex-grow-1" rows="5" readonly wrap="off"></textarea>
+                        <textarea id="result" class="form-control border-0 rounded-0 flex-grow-1" rows="5" readonly
+                            wrap="off"></textarea>
                     </div>
                 </div>
 

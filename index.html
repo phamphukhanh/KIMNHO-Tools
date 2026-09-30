@@ -150,10 +150,11 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="font-weight-bold mt-2" for="ring-bottom-thickness">Bề dày đít ring <u>(tính luôn recess nếu
+                                    <label class="font-weight-bold mt-2" for="ring-bottom-thickness">Bề dày đít ring
+                                        <u>(tính luôn recess nếu
                                             có):</u></label>
-                                    <input type="number" min="60" max="250" class="form-control" id="ring-bottom-thickness"
-                                        placeholder="Tối thiểu 60 mils" required>
+                                    <input type="number" min="60" max="250" class="form-control"
+                                        id="ring-bottom-thickness" placeholder="Tối thiểu 60 mils" required>
                                 </div>
                             </div>
                         </div>
@@ -188,13 +189,16 @@
                     <label class="h5 font-weight-bold mb-0" id="result-label">Kết quả</label>
                 </div>
 
-                <!-- Cột trái: Khung Kết quả (Chiếm 10/12 phần chiều ngang) -->
-                <div class="col-md-10">
-                    <textarea id="result" class="form-control" rows="5" readonly></textarea>
+                <!-- Cột trái: Tự động chiếm trọn phần không gian còn lại (flex-grow) -->
+                <div class="col">
+                    <div class="gcode-editor-container border rounded d-flex overflow-hidden">
+                        <div id="line-numbers" class="line-numbers">1</div>
+                        <textarea id="result" class="form-control border-0 rounded-0 flex-grow-1" rows="5" readonly wrap="off"></textarea>
+                    </div>
                 </div>
 
-                <!-- Cột phải: Cột chứa các nút thao tác (Chiếm 2/12 phần chiều ngang) -->
-                <div class="col-md-2">
+                <!-- Cột phải: Chỉ ôm vừa đủ chiều rộng của cụm nút (col-auto), bỏ padding trái (pl-0) -->
+                <div class="col-auto pl-0">
                     <div class="action-buttons-sticky">
                         <button class="btn btn-danger btn-block font-weight-bold mb-2">
                             <i class="fa fa-trash-o"></i> Xoá

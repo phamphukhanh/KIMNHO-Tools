@@ -126,6 +126,33 @@ document.addEventListener("DOMContentLoaded", function () {
         customDrillDepth.style.display = "none";
     }
 
+
+    // Hàm tự động cập nhật số dòng bên trái
+    function updateLineNumbers() {
+        console.log("Reached");
+        const resultTextarea = document.getElementById("result");
+        const lineNumbersDiv = document.getElementById("line-numbers");
+
+        const lines = resultTextarea.value.split("\n");
+        const lineCount = lines.length;
+        console.log("Line count:", lineCount);
+
+        let lineNumHTML = "";
+        for (let i = 1; i <= lineCount; i++) {
+            lineNumHTML += i + "<br>";
+        }
+
+        // Dùng innerHTML thay vì textContent để render thẻ <br> chuẩn HTML
+        lineNumbersDiv.innerHTML = lineNumHTML || "1";
+    }
+
+    // Bắt sự kiện người dùng tự gõ/chỉnh sửa trong ô kết quả ở chế độ Edit
+    document.getElementById("result").addEventListener("input", function () {
+        updateLineNumbers();
+        this.style.height = "auto";
+        this.style.height = this.scrollHeight + "px";
+    });
+
     // Ẩn/hiện input 'Số khác' trong đục lỗ
     document.querySelectorAll("input[name='drill-depth']").forEach(radio => {
         radio.addEventListener("change", function () {
@@ -294,160 +321,7 @@ document.addEventListener("DOMContentLoaded", function () {
         resultTextarea.value = output.trim();
         resultTextarea.style.height = "auto";
         resultTextarea.style.height = resultTextarea.scrollHeight + "px";
-
-        if (!keepOptionFlag) {
-            document.getElementById("inputCNC").value = "";
-            resetValues();
-        }
-    } function putMilInBlocks(input) {
-        selectedMode = document.querySelector(".dropdown-toggle span").textContent.trim();
-        const startEnd = document.querySelector("input[name='start-end']:checked").value;
-        const spacing = document.querySelector("input[name='spacing']:checked").value;
-
-        let startText = "N10 G01 Z0.050 F4\nN20 G01 Z0.050\nM03\n";
-        let endText = "\nG00 X0.000 Y0.000\nM04\nM30";
-
-        if (spacing === "yes") {
-            startText = startText.replace("M03\n", "M03\n\n\n");
-            endText = endText.replace("\nG00", "\n\n\nG00");
-        }
-
-        let milDownValue = 0;
-        let milEachValue = 0;
-        let milBlocks = [];
-        let rawBlocks = []; // Dùng biến riêng để lưu mảng các block, tránh đè lên chuỗi input
-
-        // -----------------------------
-        // XỬ LÝ TỪNG CHẾ ĐỘ RIÊNG BIỆT
-        // -----------------------------
-
-        if (selectedMode === "Chạy độ ring") {
-            rawBlocks = input.split(/(?=G00)/);
-            const ceramicThickness = parseFloat(document.querySelector("select#ceramic-thickness").value);
-            const ringAngle = parseFloat(document.querySelector("select#ring-angles").value);
-            const ringBottom = parseFloat(document.querySelector("input#ring-bottom-thickness").value);
-            milEachValue = 20;
-
-            let currentMil = ceramicThickness - ringBottom;
-
-            rawBlocks.forEach(block => {
-                if (currentMil < 0) {
-                    Swal.fire({
-                        title: "Có gì đó sai sai!",
-                        text: "Kiểm tra lại độ, số vòng, bề dày phôi sứ và bề dày đít ring.",
-                        icon: "warning",
-                    });
-                    return;
-                }
-                milBlocks.push({ block, milDown: currentMil });
-                currentMil -= (ringAngle - 1);
-            });
-        }
-
-        else if (selectedMode === "Cắt") {
-            rawBlocks = input.split(/(?=G00)/);
-            const milDown = document.querySelectorAll("input[type='number']")[0].value;
-            const milEach = document.querySelector("input[name='cut-depth']:checked").value;
-            milEachValue = milEach === "custom" ? document.getElementById("customCutDepthValue").value : milEach;
-
-            milDownValue = parseFloat(milDown);
-            milEachValue = parseFloat(milEachValue);
-            milBlocks = rawBlocks.map(block => ({ block, milDown: milDownValue }));
-        }
-
-        else if (selectedMode === "Đục lỗ") {
-            rawBlocks = input.split("\n");
-            const milEach = document.querySelector("input[name='drill-depth']:checked").value;
-            if (milEach === "custom") {
-                const milDown = document.querySelectorAll("input[type='number']")[2].value;
-                milEachValue = document.getElementById("customDrillEachValue").value;
-                milDownValue = parseFloat(milDown);
-            } else {
-                milDownValue = milEachValue = parseFloat(milEach);
-            }
-
-            milBlocks = rawBlocks.map(block => ({ block, milDown: milDownValue }));
-        }
-
-        // -----------------------------
-        // KIỂM TRA GIÁ TRỊ MIL
-        // -----------------------------
-
-        if (selectedMode !== "Chạy độ ring") {
-            milDownValue = parseFloat(milDownValue);
-            milEachValue = parseFloat(milEachValue);
-
-            const isInvalidInput =
-                isNaN(milDownValue) || isNaN(milEachValue) ||
-                (milDownValue === 0 && milEachValue !== 0) ||
-                (!isNaN(milDownValue) && milDownValue !== 0 && milEachValue === 0);
-
-            if (isInvalidInput) {
-                Swal.fire({
-                    title: "Số Mil cần xuống hoặc mỗi lần xuống chưa đúng! (bị bỏ trống hoặc bằng 0)",
-                    text: "Tự động đặt lại về 0.",
-                    icon: "warning"
-                });
-                milDownValue = 0;
-                milEachValue = 0;
-                milBlocks = rawBlocks.map(block => ({ block, milDown: 0 }));
-            }
-
-            if (milDownValue < 0) {
-                Swal.fire({
-                    title: "Số Mil cần xuống nhập vào bị âm!",
-                    text: "Kiểm tra lại số Mil cần xuống.",
-                    icon: "warning"
-                });
-                return;
-            }
-
-            if (milEachValue < 0) {
-                Swal.fire({
-                    title: "Số Mil mỗi lần xuống nhập vào bị âm!",
-                    text: "Kiểm tra lại số Mil mỗi lần xuống.",
-                    icon: "warning"
-                });
-                return;
-            }
-
-            if (
-                milDownValue < milEachValue &&
-                milDownValue !== 0 &&
-                milEachValue !== 0
-            ) {
-                Swal.fire({
-                    title: "Số Mil cần xuống phải lớn hơn hoặc bằng mỗi lần xuống!",
-                    icon: "warning"
-                });
-                return;
-            }
-        }
-
-        // -----------------------------
-        // XỬ LÝ KẾT QUẢ
-        // -----------------------------
-
-        let output = startEnd === "yes" ? startText : "";
-
-        milBlocks.forEach(({ block, milDown }, i) => {
-            let result = milAddingUp(block, milDown, milEachValue);
-            if (spacing === "yes" && i !== milBlocks.length - 1) result += "\n";
-            output += result;
-        });
-
-        if (startEnd === "yes") {
-            output = output.trim() + endText;
-        }
-
-        // -----------------------------
-        // HIỂN THỊ KẾT QUẢ
-        // -----------------------------
-
-        const resultTextarea = document.querySelector("#result");
-        resultTextarea.value = output.trim();
-        resultTextarea.style.height = "auto";
-        resultTextarea.style.height = resultTextarea.scrollHeight + "px";
+        updateLineNumbers();
 
         if (!keepOptionFlag) {
             document.getElementById("inputCNC").value = "";
@@ -490,7 +364,7 @@ document.addEventListener("DOMContentLoaded", function () {
             addBlock = function (currentVal) {
                 let formattedValue = currentVal / 1000;
                 // Đổi toFixed(3) thành toFixed(4) để xuất chuẩn Z-0.0005 khi xuống 0.5 mil
-                let block = "G00 X0.000 Y0.000\n" + `G01 Z-${formattedValue.toFixed(4)}\n`;
+                let block = head + "\n" + `G01 Z-${formattedValue.toFixed(4)}\n`;
 
                 if (headCoords !== firstCoords) {
                     block += headerModified + "\n";
@@ -646,6 +520,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 let resultTextarea = document.getElementById("result");
                 resultTextarea.value = ""; // Xoá nội dung trong ô kết quả
                 resultTextarea.style.height = "auto"; // Đặt lại chiều cao ban đầu
+                updateLineNumbers();
                 resetEditMode(); // Đặt lại chế độ chỉnh sửa
                 window.scrollTo({ top: 0, behavior: "smooth" });
             }

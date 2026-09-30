@@ -55,3 +55,11 @@ html {
     font-weight: 700;
     color: #000;
 }
+
+/* Dãy nút trượt theo khi cuộn trang */
+.action-buttons-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 20px; /* Khoảng cách cách mép trên màn hình khi cuộn chuột tới */
+    z-index: 10;
+}

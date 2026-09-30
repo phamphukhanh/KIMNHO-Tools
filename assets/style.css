@@ -172,6 +172,70 @@ html {
     backdrop-filter: blur(4px);
 }
 
+/* 1. Thu nhỏ rõ rệt tên doanh nghiệp bên trái */
+.brand-title {
+    font-size: 0.9rem !important; /* Giảm kích thước nhỏ gọn */
+    font-weight: 700;             /* Độ đậm vừa phải */
+    letter-spacing: 0.5px;
+    opacity: 0.95;
+}
+
+/* 2. Tiêu đề ứng dụng ở giữa */
+.app-title {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.header-icon {
+    font-size: 1.1rem;
+}
+
+/* 3. Căn chuẩn trục dọc cho Badge v3.0 không bị lệch */
+.custom-version-badge {
+    font-size: 0.72rem !important;
+    padding: 0.3em 0.55em !important;
+    line-height: 1 !important;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 4px;
+}
+
+/* Buộc toàn bộ cụm ở giữa căn giữa tuyệt đối cả ngang lẫn dọc */
+.header-title-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+    
+    /* Ép tất cả icon, chữ, badge nằm chung 1 trục dọc */
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Chuẩn hóa line-height cho Chữ và Icon */
+.app-title, 
+.header-icon {
+    line-height: 1 !important;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Đưa Badge v3.0 lên vừa khít tâm chữ CNC */
+.custom-version-badge {
+    font-size: 0.72rem !important;
+    padding: 0.25em 0.5em !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    border-radius: 4px;
+    margin-bottom: 0 !important;
+    
+    /* Mẹo quang học: Nâng nhẹ badge lên 1px - 2px để khớp chuẩn với chữ in hoa CNC */
+    transform: translateY(1px); 
+}
+
 
 /* ==========================================
    GIAO DIỆN TỐI (DARK MODE)
@@ -259,4 +323,15 @@ body.dark-mode .dropdown-item:hover {
     align-items: center;
     justify-content: center;
     margin-right: 6px;
+}
+
+/* Hiệu ứng chuyển màu mượt mà khi đổi giao diện */
+.map-container iframe {
+    transition: filter 0.3s ease;
+}
+
+/* Đổi màu Google Maps sang Dark Mode khi bật chế độ tối */
+body.dark-mode .map-container iframe {
+    /* Mẹo đảo màu: Đen hóa nền trắng, giữ nguyên sắc độ sông hồ/mặt đất */
+    filter: invert(90%) hue-rotate(180deg) contrast(100%);
 }

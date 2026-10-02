@@ -56,29 +56,58 @@ html {
     color: #000;
 }
 
-/* Dãy nút trượt theo khi cuộn trang */
+/* Tạo khoảng cách chuẩn giữa Icon và Chữ cho dãy nút thao tác */
+.action-buttons-sticky .btn i {
+    margin-right: 5px !important;
+}
+
+/* Dãy nút Sticky trên Desktop */
 .action-buttons-sticky {
     position: -webkit-sticky;
     position: sticky;
     top: 20px;
     z-index: 10;
-    width: 115px; /* Giới hạn chiều rộng cụm nút vừa vặn */
+    width: 115px;
 }
 
-/* Điều chỉnh độ rộng lề inside (padding) để chữ và icon nằm gọn đẹp trong 115px */
+/* Các nút tự giãn 100% chiều ngang cột trên Desktop */
 .action-buttons-sticky .btn {
+    width: 100%;
+    margin-bottom: 8px;
     padding-left: 0.4rem;
     padding-right: 0.4rem;
     font-size: 0.88rem;
 }
 
+/* Tối ưu riêng cho Mobile (< 768px) */
+@media (max-width: 767.98px) {
+    .action-buttons-sticky {
+        position: static !important;
+        width: 100% !important;
+        display: flex;
+        gap: 6px;
+        margin-top: 10px;
+        align-items: stretch;
+    }
 
-.gcode-editor-container {
-    font-family: 'Consolas', 'Courier New', monospace; /* Font chữ lập trình chuẩn */
-    font-size: 14px;
-    line-height: 1.5;
-    background-color: #fff;
+    .action-buttons-sticky .btn {
+        flex: 1;
+        width: auto !important;
+        margin: 0 !important;
+        padding: 6px 2px;
+        font-size: 0.78rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    /* Khoảng cách dịu mắt cho icon trên điện thoại */
+    .action-buttons-sticky .btn i {
+        margin-right: 4px !important;
+    }
 }
+
 
 /* Khung chứa trình biên tập G-code */
 .gcode-editor-container {
@@ -86,6 +115,8 @@ html {
     font-size: 14px !important;
     line-height: 1.5 !important;
     background-color: #f8f9fa;
+    min-height: 178px !important;
+    /* Chiều cao tối thiểu cân bằng với 4 nút bên phải */
 }
 
 /* Cột số dòng bên trái */
@@ -97,25 +128,13 @@ html {
     color: #6c757d;
     user-select: none;
     min-width: 48px;
-    padding: 8px 10px !important; /* Khớp chính xác với padding ô #result */
+    padding: 8px 10px !important;
     text-align: right;
     border-right: 1px solid #ced4da;
     box-sizing: border-box;
 }
 
 /* Ô Textarea G-Code */
-#result {
-    font-family: inherit !important;
-    font-size: inherit !important;
-    line-height: inherit !important;
-    padding: 8px 10px !important; /* Khớp chính xác với padding cột .line-numbers */
-    white-space: pre;
-    overflow-x: auto;
-    background-color: #fff;
-    resize: none;
-}
-
-/* Ô Textarea G-Code khi ở chế độ CHỈ ĐỌC (Mặc định - Nền xám) */
 #result[readonly] {
     font-family: inherit !important;
     font-size: inherit !important;
@@ -123,13 +142,14 @@ html {
     padding: 8px 10px !important;
     white-space: pre;
     overflow-x: auto;
-    background-color: #e9ecef !important; /* Màu xám đặc trưng của ô readonly */
+    background-color: #e9ecef !important;
     color: #495057;
     cursor: default;
     resize: none;
+    min-height: 178px !important;
+    /* Đảm bảo textarea không bị co nhỏ hơn 178px */
 }
 
-/* Ô Textarea G-Code khi BẬT EDIT (Chỉnh sửa - Nền trắng) */
 #result:not([readonly]) {
     font-family: inherit !important;
     font-size: inherit !important;
@@ -137,10 +157,11 @@ html {
     padding: 8px 10px !important;
     white-space: pre;
     overflow-x: auto;
-    background-color: #ffffff !important; /* Đổi sang nền trắng để biết đang edit */
+    background-color: #ffffff !important;
     color: #212529;
     cursor: text;
     resize: none;
+    min-height: 178px !important;
 }
 
 #result:focus {
@@ -154,28 +175,34 @@ html {
     top: 50%;
     transform: translate(-50%, -50%);
     white-space: nowrap;
-    pointer-events: none; /* Tránh cản trở click khi thu nhỏ màn hình */
+    pointer-events: none;
+    /* Tránh cản trở click khi thu nhỏ màn hình */
 }
 
 /* Đồng hồ dạng Badge LED kỹ thuật */
 .clock-badge {
-    background-color: rgba(0, 0, 0, 0.28); /* Nền tối dịu mắt */
-    color: #20c997; /* Màu xanh LED kỹ thuật (hoặc dùng #ffc107 nếu thích màu vàng) */
+    background-color: rgba(0, 0, 0, 0.28);
+    /* Nền tối dịu mắt */
+    color: #20c997;
+    /* Màu xanh LED kỹ thuật (hoặc dùng #ffc107 nếu thích màu vàng) */
     padding: 4px 12px;
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.25);
     font-family: 'Consolas', 'Courier New', monospace;
     font-size: 0.95rem;
     font-weight: 700;
-    letter-spacing: 1px; /* Giúp các con số cách nhau rõ ràng */
+    letter-spacing: 1px;
+    /* Giúp các con số cách nhau rõ ràng */
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(4px);
 }
 
 /* 1. Thu nhỏ rõ rệt tên doanh nghiệp bên trái */
 .brand-title {
-    font-size: 0.9rem !important; /* Giảm kích thước nhỏ gọn */
-    font-weight: 700;             /* Độ đậm vừa phải */
+    font-size: 0.9rem !important;
+    /* Giảm kích thước nhỏ gọn */
+    font-weight: 700;
+    /* Độ đậm vừa phải */
     letter-spacing: 0.5px;
     opacity: 0.95;
 }
@@ -208,14 +235,14 @@ html {
     transform: translate(-50%, -50%);
     white-space: nowrap;
     pointer-events: none;
-    
+
     /* Ép tất cả icon, chữ, badge nằm chung 1 trục dọc */
     display: flex !important;
     align-items: center !important;
 }
 
 /* Chuẩn hóa line-height cho Chữ và Icon */
-.app-title, 
+.app-title,
 .header-icon {
     line-height: 1 !important;
     display: inline-flex;
@@ -231,9 +258,9 @@ html {
     align-items: center !important;
     border-radius: 4px;
     margin-bottom: 0 !important;
-    
+
     /* Mẹo quang học: Nâng nhẹ badge lên 1px - 2px để khớp chuẩn với chữ in hoa CNC */
-    transform: translateY(1px); 
+    transform: translateY(1px);
 }
 
 
@@ -316,7 +343,8 @@ body.dark-mode .dropdown-item:hover {
 
 /* Cố định chiều rộng nút Dark Mode để tránh thay đổi kích thước khi đổi Tối / Sáng */
 #toggle-dark-mode {
-    width: 82px; /* Kích thước cố định vừa vặn cho cả 2 trạng thái */
+    width: 82px;
+    /* Kích thước cố định vừa vặn cho cả 2 trạng thái */
     text-align: center;
     white-space: nowrap;
     display: inline-flex;
@@ -334,4 +362,101 @@ body.dark-mode .dropdown-item:hover {
 body.dark-mode .map-container iframe {
     /* Mẹo đảo màu: Đen hóa nền trắng, giữ nguyên sắc độ sông hồ/mặt đất */
     filter: invert(90%) hue-rotate(180deg) contrast(100%);
+}
+
+/* ==========================================
+   STYLING HEADER NAVBAR & RESPONSIVE MOBILE
+   ========================================== */
+
+.brand-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    opacity: 0.95;
+}
+
+.app-title {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.header-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.custom-version-badge {
+    font-size: 0.72rem;
+    padding: 0.25em 0.5em;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 4px;
+    margin-bottom: 0;
+    transform: translateY(-1px);
+}
+
+/* Định vị khối ở giữa cho màn hình Desktop (>= 768px) */
+@media (min-width: 768px) {
+    .header-title-center {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        white-space: nowrap;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+    }
+}
+
+/* Xử lý tối ưu riêng cho Màn hình nhỏ / Điện thoại (< 768px) */
+@media (max-width: 767.98px) {
+
+    /* Ẩn hoàn toàn tiêu đề ở giữa để tránh đè chữ trên mobile */
+    .header-title-center {
+        display: none !important;
+    }
+
+    /* Thu nhỏ tên doanh nghiệp và logo cho vừa màn hình hẹp */
+    .brand-title {
+        font-size: 0.8rem !important;
+    }
+
+    .navbar-brand img {
+        width: 20px !important;
+    }
+
+    /* Thu nhỏ đồng hồ và nút Dark Mode */
+    .clock-badge {
+        padding: 3px 8px;
+        font-size: 0.8rem;
+    }
+
+    #toggle-dark-mode {
+        width: 70px;
+        font-size: 0.8rem;
+        padding: 0.2rem 0.4rem;
+    }
+
+    /* Chuyển cụm nút thao tác kết quả từ xếp dọc bên phải sang xếp ngang bên dưới */
+    .action-buttons-sticky {
+        position: static !important;
+        width: 100% !important;
+        display: flex;
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .action-buttons-sticky .btn {
+        flex: 1;
+        margin-bottom: 0 !important;
+        padding: 6px 2px;
+        font-size: 0.78rem;
+    }
+
+    .col-auto.pl-0 {
+        padding-left: 15px !important;
+        width: 100%;
+    }
 }

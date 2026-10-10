@@ -1,0 +1,73 @@
+/* ==========================================
+   HEADER, NAVBAR & CÁC BADGE
+   ========================================== */
+.brand-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    opacity: 0.95;
+}
+
+.app-title {
+    font-size: 1.2rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+}
+
+.header-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+}
+
+.custom-version-badge {
+    font-size: 0.72rem;
+    padding: 0.25em 0.5em;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 4px;
+    margin-bottom: 0;
+    transform: translateY(-1px);
+}
+
+/* Đồng hồ dạng Badge LED kỹ thuật */
+.clock-badge {
+    background-color: rgba(0, 0, 0, 0.28);
+    color: #20c997;
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+}
+
+/* Nút Dark Mode */
+#toggle-dark-mode {
+    width: 82px;
+    text-align: center;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Căn giữa tiêu đề trên Desktop */
+@media (min-width: 768px) {
+    .header-title-center {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        white-space: nowrap;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+    }
+}

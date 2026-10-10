@@ -1,0 +1,72 @@
+/* ==========================================
+   GIAO DIỆN TỐI (DARK MODE)
+   ========================================== */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .border {
+    border-color: #383838 !important;
+}
+
+body.dark-mode .shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5) !important;
+}
+
+body.dark-mode .form-control,
+body.dark-mode select.form-control {
+    background-color: #242424;
+    color: #f1f1f1;
+    border-color: #444;
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode select.form-control:focus {
+    background-color: #2d2d2d;
+    color: #ffffff;
+    border-color: #666;
+}
+
+body.dark-mode .gcode-editor-container {
+    background-color: #1e1e1e !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode .line-numbers {
+    background-color: #252526 !important;
+    color: #858585 !important;
+    border-right-color: #3c3c3c !important;
+}
+
+body.dark-mode #result[readonly] {
+    background-color: #1e1e1e !important;
+    color: #d4d4d4 !important;
+}
+
+body.dark-mode #result:not([readonly]) {
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .text-black-50 {
+    color: #a0a0a0 !important;
+}
+
+body.dark-mode .dropdown-menu {
+    background-color: #2b2b2b;
+    border-color: #444;
+}
+
+body.dark-mode .dropdown-item {
+    color: #e0e0e0;
+}
+
+body.dark-mode .dropdown-item:hover {
+    background-color: #3a3a3a;
+    color: #fff;
+}
+
+body.dark-mode .map-container iframe {
+    filter: invert(90%) hue-rotate(180deg) contrast(100%);
+}

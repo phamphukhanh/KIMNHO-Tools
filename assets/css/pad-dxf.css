@@ -1,0 +1,167 @@
+/* ==========================================
+   GIAO DIỆN CÔNG CỤ TẠO LAYOUT DXF
+   ========================================== */
+.main-wrapper {
+    display: flex;
+    gap: 20px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+/* Khối bên trái: Bảng nhập tọa độ */
+.table-section {
+    flex: 1 1 450px;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border: 1px solid #dee2e6;
+}
+
+.table-container {
+    max-height: 520px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+/* Khối bên phải: Màn hình Radar */
+.preview-section {
+    flex: 1 1 500px;
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    color: #2ecc71;
+    margin-top: 0;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+canvas#layoutCanvas {
+    background-color: #000000;
+    border: 1px solid #444;
+    width: 100%;
+    height: 520px;
+    border-radius: 4px;
+    cursor: crosshair;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#dataTable {
+    user-select: none; 
+}
+
+#dataTable th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#dataTable td {
+    padding: 0 !important;
+    vertical-align: middle;
+}
+
+#dataTable td input {
+    width: 100%;
+    padding: 6px 10px;
+    border: none;
+    box-sizing: border-box;
+    font-family: 'Consolas', 'Courier New', monospace;
+    outline: none;
+    background: transparent;
+}
+
+#dataTable td input:focus {
+    background-color: #e8f4fd;
+}
+
+.idx-col {
+    background-color: #ecf0f1;
+    text-align: center;
+    font-weight: bold;
+    width: 45px;
+    color: #7f8c8d;
+}
+
+/* ==========================================
+   HIỆU ỨNG BÔI ĐEN NHIỀU Ô & HIGHLIGHT HÀNG
+   ========================================== */
+#dataTable td.selected-cell {
+    border: 2px solid #1a73e8 !important;
+}
+
+#dataTable td.selected-cell input {
+    background-color: #e8f0fe !important;
+    color: #1a73e8 !important;
+    font-weight: bold;
+    cursor: crosshair;
+}
+
+/* Hàng được chọn từ Canvas (Highlight Vàng) */
+#dataTable tr.active-row td {
+    background-color: #fff3cd !important;
+}
+
+#dataTable tr.active-row td input {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+    font-weight: bold;
+}
+
+/* ==========================================
+   HỖ TRỢ DARK MODE
+   ========================================== */
+body.dark-mode .table-section {
+    background-color: #242424 !important;
+    border-color: #383838 !important;
+}
+
+body.dark-mode #dataTable td {
+    border-color: #444 !important;
+}
+
+body.dark-mode #dataTable td input {
+    color: #f1f1f1 !important;
+}
+
+body.dark-mode #dataTable td input:focus {
+    background-color: #333333 !important;
+}
+
+body.dark-mode .idx-col {
+    background-color: #1a1a1a !important;
+    color: #888 !important;
+}
+
+body.dark-mode #dataTable td.selected-cell {
+    border: 2px solid #8ab4f8 !important;
+}
+
+body.dark-mode #dataTable td.selected-cell input {
+    background-color: #2b3d5b !important;
+    color: #8ab4f8 !important;
+}
+
+body.dark-mode #dataTable tr.active-row td {
+    background-color: #4d3800 !important;
+}
+
+body.dark-mode #dataTable tr.active-row td input {
+    background-color: #4d3800 !important;
+    color: #ffda6a !important;
+}

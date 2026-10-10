@@ -1,0 +1,63 @@
+/* ==========================================
+   CẤU TRÚC NỀN TẢNG & KHUNG TRANG
+   ========================================== */
+html {
+    scroll-behavior: smooth;
+}
+
+.container {
+    margin-top: 4.5rem;
+}
+
+.bg-kimnho {
+    background-color: #78bb7b;
+}
+
+#form-section {
+    height: 253px;
+}
+
+#inputCNC {
+    height: 220px;
+    resize: vertical;
+}
+
+.text-reset {
+    text-decoration: underline;
+}
+
+/* ==========================================
+   BẢN ĐỒ & THÔNG BÁO (MAP, TOOLTIP & SWAL)
+   ========================================== */
+.map-container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    height: 250px;
+    margin: auto;
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    transition: filter 0.3s ease;
+}
+
+.small-tooltip {
+    font-size: 0.75em;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.tooltip-inner {
+    text-align: justify;
+    max-width: 250px;
+}
+
+.swal2-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000;
+}

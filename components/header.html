@@ -1,15 +1,56 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-kimnho px-3 py-2 shadow-sm position-relative">
-    <a class="navbar-brand d-flex align-items-center mb-0 p-0" href="index.html">
-        <img src="assets/images/DNTN.png" width="24" height="auto" class="mr-2" alt="Logo">
-        <span class="brand-title">D.N.T.N KIM NHỎ</span>
-    </a>
+    <!-- Bên trái: Brand Logo kết hợp Dropdown Menu Công Cụ -->
+    <div class="dropdown">
+        <a class="navbar-brand d-flex align-items-center mb-0 p-1 px-2 rounded brand-dropdown-btn text-white text-decoration-none" 
+           href="#" id="brandDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img src="assets/images/DNTN.png" width="24" height="auto" class="mr-2" alt="Logo">
+            <span class="brand-title font-weight-bold mr-1">D.N.T.N KIM NHỎ</span>
+            <i class="fa fa-chevron-down brand-arrow ml-1"></i>
+        </a>
 
-    <div class="header-title-center text-white mb-0 d-none d-md-flex align-items-center">
-        <i class="fa fa-cogs mr-2 header-icon"></i>
-        <span class="app-title font-weight-bold">Bộ Xử Lý G-Code CNC</span>
-        <span class="badge badge-light text-dark ml-2 custom-version-badge">v3.0</span>
+        <!-- Menu Công Cụ Thả Xuống -->
+        <div class="dropdown-menu shadow-lg border-0 mt-2" aria-labelledby="brandDropdown">
+            <div class="dropdown-header text-uppercase font-weight-bold text-muted small">
+                <i class="fa fa-th-large mr-1"></i> Hệ Thống Công Cụ
+            </div>
+            <div class="dropdown-divider"></div>
+            
+            <a class="dropdown-item d-flex align-items-center py-2" href="index.html">
+                <i class="fa fa-cogs mr-3 text-primary fa-lg"></i>
+                <div>
+                    <div class="font-weight-bold">Bộ Xử Lý G-Code CNC</div>
+                    <small class="text-muted">Tính toán & biên tập tầng Z</small>
+                </div>
+            </a>
+            
+            <a class="dropdown-item d-flex align-items-center py-2" href="pages/xyc-2-dxf.html">
+                <i class="fa fa-crosshairs mr-3 text-info fa-lg"></i>
+                <div>
+                    <div class="font-weight-bold">Chuyển Tọa Độ (XYC &rarr; DXF)</div>
+                    <small class="text-muted">Xuất file CAD & Canvas Radar</small>
+                </div>
+            </a>
+
+            <a class="dropdown-item d-flex align-items-center py-2" href="pages/autocad-tools.html">
+                <i class="fa fa-tachometer mr-3 text-success fa-lg"></i>
+                <div>
+                    <div class="font-weight-bold">Công cụ AutoCad</div>
+                    <small class="text-muted">Các công cụ hỗ trợ thiết kế</small>
+                </div>
+            </a>
+
+            
+        </div>
     </div>
 
+    <!-- Ở giữa: Tiêu đề công cụ hiện tại -->
+    <div class="header-title-center text-white mb-0 d-none d-md-flex align-items-center">
+        <i class="fa fa-cogs mr-2 header-icon" id="header-page-icon"></i>
+        <span class="app-title font-weight-bold" id="header-page-title">Bộ Xử Lý G-Code CNC</span>
+        <span class="badge badge-light text-dark ml-2 custom-version-badge">v4.0</span>
+    </div>
+
+    <!-- Bên phải: Đồng hồ + Dark Mode -->
     <div class="d-flex align-items-center text-white ml-auto">
         <div class="clock-badge mr-3 d-none d-sm-flex align-items-center">
             <i class="fa fa-clock-o mr-2 text-warning"></i>

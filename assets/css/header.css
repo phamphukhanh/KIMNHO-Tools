@@ -71,3 +71,53 @@
         align-items: center;
     }
 }
+
+/* Hiệu ứng hover nổi bật cụm Logo Brand */
+.brand-dropdown-btn {
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.brand-dropdown-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    text-decoration: none !important;
+}
+
+.brand-dropdown-btn:active {
+    transform: scale(0.98);
+}
+
+/* Biểu tượng mũi tên nhỏ và xoay khi mở menu */
+.brand-arrow {
+    font-size: 0.68rem;
+    opacity: 0.8;
+    transition: transform 0.2s ease;
+}
+
+.dropdown.show .brand-arrow {
+    transform: rotate(180deg);
+}
+
+/* Tùy chỉnh Menu thả xuống cao cấp */
+.dropdown-menu {
+    min-width: 290px;
+    border-radius: 8px;
+}
+
+.dropdown-item {
+    transition: background-color 0.15s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f3f5;
+}
+
+body.dark-mode .dropdown-menu {
+    background-color: #252525;
+    border-color: #444;
+}
+
+body.dark-mode .dropdown-item:hover {
+    background-color: #333333;
+}

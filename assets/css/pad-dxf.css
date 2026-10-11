@@ -165,3 +165,42 @@ body.dark-mode #dataTable tr.active-row td input {
     background-color: #4d3800 !important;
     color: #ffda6a !important;
 }
+
+/* ==========================================
+   DARK MODE CHO THANH CÔNG CỤ (TOOLBAR)
+   ========================================== */
+/* Khung nền chứa các nút điều khiển */
+body.dark-mode .toolbar-card {
+    background-color: #2a2a2a !important;
+    border-color: #3d3d3d !important;
+}
+
+/* Đường vạch kẻ ngang phân cách hàng */
+body.dark-mode .toolbar-card .border-bottom {
+    border-color: #3d3d3d !important;
+}
+
+/* Chữ nhãn & Ghi chú thông tin */
+body.dark-mode .toolbar-card label,
+body.dark-mode .toolbar-card .text-secondary,
+body.dark-mode .toolbar-card small {
+    color: #cccccc !important;
+}
+
+/* Khung chứa Radio button chọn hình dáng Pad */
+body.dark-mode .toolbar-card .bg-white {
+    background-color: #1e1e1e !important;
+    border-color: #3d3d3d !important;
+}
+
+/* Chữ của Radio button (Vuông / Tròn) */
+body.dark-mode .toolbar-card .custom-control-label {
+    color: #e0e0e0 !important;
+}
+
+/* Ô nhập kích thước Pad */
+body.dark-mode .toolbar-card #pad-size-mil {
+    background-color: #1e1e1e !important;
+    color: #ffffff !important;
+    border-color: #444444 !important;
+}

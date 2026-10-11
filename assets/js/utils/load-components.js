@@ -27,6 +27,12 @@ async function loadComponent(elementId, filePath) {
     }
 }
 
+// Tắt cơ chế tự động ghi nhớ vị trí cuộn cũ của trình duyệt
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+
+
 document.addEventListener("DOMContentLoaded", async function () {
     await loadComponent("header-placeholder", "components/header.html");
     await loadComponent("footer-placeholder", "components/footer.html");

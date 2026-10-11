@@ -25,7 +25,7 @@ function resetEditMode() {
     const button = document.getElementById("edit-button");
     const textarea = document.getElementById("result");
     if (!button || !textarea) return;
-    
+
     const icon = button.querySelector("i");
     const text = button.querySelector(".btn-text");
 
@@ -67,7 +67,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    $(function () {$('[data-toggle="tooltip"]').tooltip();
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
     });
 
     const tooltipElement = document.querySelector('.small-tooltip');
@@ -88,10 +89,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (tooltipElement) {
-        $(tooltipElement).tooltip("show");
+        // Đợi 300ms cho Header động load xong và layout ổn định mới tính toán vị trí tooltip
         setTimeout(() => {
-            $(tooltipElement).tooltip("hide");
-        }, 2000);
+            $(tooltipElement).tooltip({
+                boundary: 'window',      // Giữ tooltip không bị tràn khung
+                placement: 'right'       // Đảm bảo luôn hiện bên phải icon
+            }).tooltip("show");
+
+            // Sau khi hiện 2.5 giây thì tự động ẩn
+            setTimeout(() => {
+                $(tooltipElement).tooltip("hide");
+            }, 2500);
+        }, 300);
     }
 
     function updateTooltipContent(option) {

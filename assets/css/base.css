@@ -97,41 +97,41 @@ html {
 }
 
 
-/* Thu hẹp khoảng cách giữa chấm radio và chữ tương ứng */
+/* 1. Khung chứa: Kéo nhẹ toàn bộ sang trái để thẳng hàng thị giác với chữ S */
 .compact-radio-group {
     display: flex !important;
     align-items: center;
     justify-content: flex-start;
     gap: 14px !important;
-    /* Khoảng cách giữa các khối nút thoáng hơn */
     flex-wrap: nowrap !important;
+    margin-left: -2px !important;
+    /* Bí quyết kéo toàn bộ group sang trái */
 }
 
-/* Đẩy chữ nhích sang trái (gần radio hơn) - Đã cập nhật theo ý bạn lúc nãy */
+/* 2. Khoảng cách giữa chấm tròn và chữ của nó */
 .compact-radio-group .custom-control {
-    padding-left: 1.15rem !important;
-    /* Thu hẹp khoảng cách chữ và radio */
+    padding-left: 1.2rem !important;
     margin-right: 0 !important;
 }
 
+/* 3. Style chữ của nút: Tăng kích thước lên 0.95rem */
 .compact-radio-group .custom-control-label {
-    font-size: 0.9rem !important;
+    font-size: 0.95rem !important;
+    /* Tăng chữ to hơn */
     font-weight: 400 !important;
     white-space: nowrap !important;
     cursor: pointer;
-    /* THÊM DÒNG NÀY: Ép chiều cao dòng để tính toán tâm chuẩn xác */
     line-height: 1.5 !important;
 }
 
-/* ========================================================
-   SỬA LỖI LỆCH TÂM: Cân bằng nút Radio và Chữ trên 1 đường thẳng
-   ======================================================== */
+/* 4. Định vị chấm tròn: Phóng to tỷ lệ thuận với chữ */
 .compact-radio-group .custom-control-label::before,
 .compact-radio-group .custom-control-label::after {
-    /* Điều chỉnh top xuống 0.2rem để nút radio nằm ngay chính giữa chữ */
-    top: 0.2rem !important;
+    left: -1.2rem !important;
+    top: 0.22rem !important;
+    /* Hạ xuống 0.02rem để bù lại độ lớn của chữ mới */
 
-    /* Giữ nguyên kích thước nút radio */
-    width: 0.9rem !important;
-    height: 0.9rem !important;
+    /* Phóng to nút radio để cân xứng với chữ to */
+    width: 1rem !important;
+    height: 1rem !important;
 }

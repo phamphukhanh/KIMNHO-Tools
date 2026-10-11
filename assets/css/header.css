@@ -27,6 +27,12 @@
     /* Thay cho mr-2 để khoảng cách vừa vặn mắt người nhìn */
 }
 
+/* Giữ chiều cao tối thiểu cho Header khi chưa kịp load xong */
+#header-placeholder {
+    min-height: 56px;
+    display: block;
+}
+
 .custom-version-badge {
     font-size: 0.72rem;
     padding: 0.25em 0.5em;

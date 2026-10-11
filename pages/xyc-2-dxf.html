@@ -53,29 +53,29 @@
                                 <span class="text-secondary font-weight-bold"
                                     style="font-size: 13px; line-height: 1; white-space: nowrap;">Dạng:</span>
 
-                                <!-- Option Vuông -->
-                                <label class="d-inline-flex align-items-center mb-0 font-weight-bold text-dark"
-                                    style="font-size: 13px; cursor: pointer; user-select: none; line-height: 1;">
-                                    <input type="radio" id="shape-square" name="padShape" value="square" checked
-                                        style="cursor: pointer; margin: 0 4px 0 0;">
-                                    <span>Vuông</span>
-                                </label>
+                                <!-- Áp dụng class group từ base.css -->
+                                <div class="compact-radio-group mb-0">
+                                    <!-- Option Vuông -->
+                                    <div class="custom-control custom-radio custom-control-inline mr-0">
+                                        <input type="radio" id="shape-square" name="padShape" value="square"
+                                            class="custom-control-input" checked>
+                                        <label class="custom-control-label" for="shape-square">Vuông</label>
+                                    </div>
 
-                                <!-- Option Tròn -->
-                                <label class="d-inline-flex align-items-center mb-0 font-weight-bold text-dark"
-                                    style="font-size: 13px; cursor: pointer; user-select: none; line-height: 1;">
-                                    <input type="radio" id="shape-circle" name="padShape" value="circle"
-                                        style="cursor: pointer; margin: 0 4px 0 0;">
-                                    <span>Tròn</span>
-                                </label>
+                                    <!-- Option Tròn -->
+                                    <div class="custom-control custom-radio custom-control-inline mr-0">
+                                        <input type="radio" id="shape-circle" name="padShape" value="circle"
+                                            class="custom-control-input">
+                                        <label class="custom-control-label" for="shape-circle">Tròn</label>
+                                    </div>
 
-                                <!-- Option Điểm -->
-                                <label class="d-inline-flex align-items-center mb-0 font-weight-bold text-dark"
-                                    style="font-size: 13px; cursor: pointer; user-select: none; line-height: 1;">
-                                    <input type="radio" id="shape-point" name="padShape" value="point"
-                                        style="cursor: pointer; margin: 0 4px 0 0;">
-                                    <span>Điểm</span>
-                                </label>
+                                    <!-- Option Điểm -->
+                                    <div class="custom-control custom-radio custom-control-inline mr-0">
+                                        <input type="radio" id="shape-point" name="padShape" value="point"
+                                            class="custom-control-input">
+                                        <label class="custom-control-label" for="shape-point">Điểm</label>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- 2. Kích thước Pad -->

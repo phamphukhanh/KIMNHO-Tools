@@ -47,14 +47,15 @@
         <!-- Tiêu đề và hướng dẫn công cụ -->
         <h3 class="text-center font-weight-bold">
             <div class="btn-group">
-                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" data-display="static"
-                    aria-haspopup="true" aria-expanded="false">
-                    <span class="h3 font-weight-bold">Cắt</span>
+                <button type="button" class="btn btn-info dropdown-toggle shadow-sm" data-toggle="dropdown"
+                    data-display="static" aria-haspopup="true" aria-expanded="false" style="border-radius: 8px;">
+                    <span class="h4 font-weight-bold mb-0" id="dropdown-title-text">Cắt</span>
                 </button>
-                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
-                    <button class="dropdown-item" type="button">Cắt</button>
-                    <button class="dropdown-item" type="button">Đục lỗ</button>
-                    <button class="dropdown-item" type="button">Chạy độ ring</button>
+
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left shadow custom-dropdown-menu">
+                    <button class="dropdown-item active font-weight-bold" type="button">Cắt</button>
+                    <button class="dropdown-item font-weight-bold" type="button">Đục lỗ</button>
+                    <button class="dropdown-item font-weight-bold" type="button">Chạy độ ring</button>
                 </div>
             </div>
             <span data-toggle="tooltip" data-placement="right" data-html="true" title="
@@ -225,7 +226,8 @@
                                         <div class="form-group mb-0">
                                             <label
                                                 class="font-weight-bold text-secondary small mb-1 text-decoration-underline"
-                                                for="ring-bottom-thickness">Bề dày đít ring (tính thêm recess nếu có):</label>
+                                                for="ring-bottom-thickness">Bề dày đít ring (tính thêm recess nếu
+                                                có):</label>
                                             <input type="number" min="60" max="250" class="form-control form-control-sm"
                                                 id="ring-bottom-thickness" placeholder="Tối thiểu 60 mils" required>
                                         </div>

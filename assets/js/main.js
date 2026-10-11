@@ -139,30 +139,43 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // XỬ LÝ CLICK DROPDOWN MENU (THUẦN TEXT)
     dropdownItems.forEach(item => {
         item.addEventListener("click", function () {
-            const selectedText = this.textContent.trim();
-            if (dropdownLabel) dropdownLabel.textContent = selectedText;
+            // 1. Quản lý vạch highlight active
+            dropdownItems.forEach(btn => btn.classList.remove("active"));
+            this.classList.add("active");
 
+            // 2. Lấy tên mục vừa click
+            const selectedText = this.textContent.trim();
+
+            // 3. Cập nhật Tiêu đề nút chính
+            if (dropdownLabel) {
+                dropdownLabel.textContent = selectedText;
+            }
+
+            // 4. Đổi giao diện Form và nội dung Tooltip
             if (selectedText === "Đục lỗ") {
                 if (formCut) formCut.style.display = "none";
                 if (formRingAngle) formRingAngle.style.display = "none";
                 if (formDrill) formDrill.style.display = "block";
+                updateTooltipContent("Đục lỗ");
             } else if (selectedText === "Chạy độ ring") {
                 if (formCut) formCut.style.display = "none";
                 if (formDrill) formDrill.style.display = "none";
                 if (formRingAngle) formRingAngle.style.display = "block";
+                updateTooltipContent("Chạy độ ring");
             } else {
                 if (formCut) formCut.style.display = "block";
                 if (formDrill) formDrill.style.display = "none";
                 if (formRingAngle) formRingAngle.style.display = "none";
+                updateTooltipContent("Cắt");
             }
 
             if (!keepOptionFlag) {
                 resetValues();
             }
 
-            updateTooltipContent(selectedText);
             resetEditMode();
         });
     });

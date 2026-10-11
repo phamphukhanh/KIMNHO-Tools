@@ -108,30 +108,122 @@ html {
     /* Bí quyết kéo toàn bộ group sang trái */
 }
 
-/* 2. Khoảng cách giữa chấm tròn và chữ của nó */
+/* 2. Xóa bỏ điểm mù của khung bọc ngoài */
 .compact-radio-group .custom-control {
-    padding-left: 1.2rem !important;
+    padding-left: 0 !important;
+    /* Xóa khoảng trống thừa của div */
     margin-right: 0 !important;
 }
 
-/* 3. Style chữ của nút: Tăng kích thước lên 0.95rem */
+/* 3. Bóp khoảng cách giữa chữ và radio, mở rộng vùng click */
 .compact-radio-group .custom-control-label {
+    /* Giảm padding-left xuống 1.5rem (hoặc 24px) để chữ sát radio hơn */
+    padding-left: 1.5rem !important;
     font-size: 0.95rem !important;
-    /* Tăng chữ to hơn */
     font-weight: 400 !important;
     white-space: nowrap !important;
     cursor: pointer;
     line-height: 1.5 !important;
+    display: inline-block;
+    width: 100%;
 }
 
-/* 4. Định vị chấm tròn: Phóng to tỷ lệ thuận với chữ */
+/* 4. Định vị nút tròn sát lề trái, đảm bảo nằm trong vùng click của label */
 .compact-radio-group .custom-control-label::before,
 .compact-radio-group .custom-control-label::after {
-    left: -1.2rem !important;
+    /* Dịch nút radio sang phải một chút để tạo vùng đệm bên trái có thể click */
+    left: 0.15rem !important;
     top: 0.22rem !important;
-    /* Hạ xuống 0.02rem để bù lại độ lớn của chữ mới */
-
-    /* Phóng to nút radio để cân xứng với chữ to */
     width: 1rem !important;
     height: 1rem !important;
+}
+
+/* ==========================================
+   TÙY CHỈNH DROPDOWN MENU CHÍNH
+   ========================================== */
+.custom-dropdown-menu {
+    border: none;
+    border-radius: 10px;
+    padding: 8px 0;
+    min-width: 200px;
+}
+
+.custom-dropdown-menu .dropdown-item {
+    padding: 10px 20px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    color: #495057;
+}
+
+/* Hiệu ứng khi lướt chuột qua */
+.custom-dropdown-menu .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #17a2b8;
+    transform: translateX(4px);
+    /* Nhích nhẹ chữ sang phải tạo cảm giác tương tác */
+}
+
+/* Nổi bật mục đang được chọn (Active) */
+.custom-dropdown-menu .dropdown-item.active {
+    background-color: #e8f4fd;
+    /* Nền xanh nhạt dịu mắt */
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+    /* Vạch đánh dấu bên trái */
+}
+
+/* Dark Mode cho Dropdown */
+body.dark-mode .custom-dropdown-menu {
+    background-color: #2b2b2b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.dark-mode .custom-dropdown-menu .dropdown-item {
+    color: #e0e0e0;
+}
+
+body.dark-mode .custom-dropdown-menu .dropdown-item:hover {
+    background-color: #3a3a3a;
+    color: #4dd0e1;
+}
+
+body.dark-mode .custom-dropdown-menu .dropdown-item.active {
+    background-color: #1a3a42;
+    color: #63e6fa;
+    border-left-color: #63e6fa;
+}
+
+/* ========================================================
+   CHUẨN HÓA COMPACT RADIO CHO TOÀN BỘ BẢNG CẤU HÌNH (INDEX.HTML)
+   ======================================================== */
+
+/* 1. Xóa margin thừa & Chống hiện con trỏ bôi đen chữ khi click lỡ tay */
+.card .custom-control.custom-radio {
+    padding-left: 0 !important;
+    margin-right: 0 !important;
+    user-select: none !important;
+    /* Triệt tiêu hoàn toàn con trỏ bôi đen I-beam */
+}
+
+/* 2. Thẻ Label làm vùng nhận click duy nhất: Kéo chữ sát vào radio & phủ 100% diện tích */
+.card .custom-control-label {
+    padding-left: 1.25rem !important;
+    /* Kéo chữ sát về phía chấm tròn (rất gần) */
+    font-size: 0.95rem !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+    cursor: pointer !important;
+    display: inline-block;
+    white-space: nowrap !important;
+}
+
+/* 3. Đặt nút radio lọt thỏm vào đúng mép trái Label (Không còn khoảng trống chết) */
+.card .custom-control-label::before,
+.card .custom-control-label::after {
+    left: 0 !important;
+    /* Nút bám chặt lề trái label */
+    top: 0.2rem !important;
+    /* Cân bằng tâm chính xác theo chiều dọc */
+    width: 0.95rem !important;
+    height: 0.95rem !important;
 }

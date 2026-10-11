@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ==========================================
-    // 2. XỬ LÝ SỰ KIỆN CHECKBOX VÀ NÚT TẢI VỀ
+    // 2. XỬ LÝ SỰ KIỆN CHECKBOX VÀ TẢI FILE / NÉN ZIP
     // ==========================================
     function initCheckboxEvents() {
         const checkAllBox = document.getElementById("check-all-tools");
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const downloadBtn = document.getElementById("btn-download-selected");
         const countBadge = document.getElementById("selected-count-badge");
 
-        // Hàm cập nhật màu nút tải về
+        // Cập nhật trạng thái nút bấm và badge đếm số lượng
         function updateDownloadState() {
             const selected = document.querySelectorAll(".tool-checkbox:checked");
             const count = selected.length;
@@ -87,11 +87,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (count > 0) {
                     downloadBtn.classList.replace("btn-secondary", "btn-success");
                     countBadge.classList.replace("text-dark", "text-success");
-                    countBadge.style.backgroundColor = "white"; // Sáng text lên
+                    countBadge.style.backgroundColor = "white";
                 } else {
                     downloadBtn.classList.replace("btn-success", "btn-secondary");
                     countBadge.classList.replace("text-success", "text-dark");
-                    countBadge.style.backgroundColor = ""; // Về mặc định
+                    countBadge.style.backgroundColor = "";
                 }
             }
         }
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
-        // Chọn từng mục
+        // Chọn lẻ từng item
         toolCheckboxes.forEach(cb => {
             cb.addEventListener("change", function () {
                 if (!this.checked && checkAllBox) {
@@ -116,24 +116,81 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
-        // Bắt sự kiện tải hàng loạt
+        // TẢI FILE (1 FILE ĐỘC LẬP HOẶC TỰ ĐỘNG NÉN .ZIP KHI CHỌN NHIỀU FILE)
         if (downloadBtn) {
-            downloadBtn.addEventListener("click", function () {
+            downloadBtn.addEventListener("click", async function () {
                 const selected = document.querySelectorAll(".tool-checkbox:checked");
+                if (selected.length === 0) return;
 
-                selected.forEach((cb, index) => {
-                    const filename = cb.getAttribute("data-filename");
+                // TH1: CHỌN DÚNG 1 FILE -> TẢI TRỰC TIẾP FILE ĐÓ
+                if (selected.length === 1) {
+                    const filename = selected[0].getAttribute("data-filename");
+                    const link = document.createElement("a");
+                    link.href = TOOLS_BASE_PATH + filename;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    return;
+                }
 
-                    // Timeout giúp trình duyệt tải nhiều file mà không bị chặn (popup blocker)
-                    setTimeout(() => {
-                        const link = document.createElement("a");
-                        link.href = TOOLS_BASE_PATH + filename;
-                        link.download = filename;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    }, index * 300);
-                });
+                // TH2: CHỌN TỪ 2 FILE TRỞ LÊN -> NÉN THÀNH 1 FILE .ZIP
+                if (typeof JSZip === "undefined") {
+                    Swal.fire({
+                        title: "Thiếu thư viện!",
+                        text: "Chưa tải được thư viện JSZip. Vui lòng kiểm tra lại kết nối mạng.",
+                        icon: "error"
+                    });
+                    return;
+                }
+
+                // Đổi giao diện nút bấm sang trạng thái đang nén
+                const originalHtml = downloadBtn.innerHTML;
+                downloadBtn.disabled = true;
+                downloadBtn.innerHTML = `<i class="fa fa-spinner fa-spin mr-1"></i>Đang đóng gói ZIP...`;
+
+                try {
+                    const zip = new JSZip();
+
+                    // Lấy toàn bộ dữ liệu file bằng fetch()
+                    const fetchPromises = Array.from(selected).map(async (cb) => {
+                        const filename = cb.getAttribute("data-filename");
+                        const fileUrl = TOOLS_BASE_PATH + filename;
+                        const response = await fetch(fileUrl);
+                        if (!response.ok) throw new Error(`Không thể lấy dữ liệu file: ${filename}`);
+                        const blob = await response.blob();
+                        zip.file(filename, blob);
+                    });
+
+                    await Promise.all(fetchPromises);
+
+                    // Tạo file .zip trong bộ nhớ
+                    const zipBlob = await zip.generateAsync({ type: "blob" });
+
+                    // Kích hoạt tải file ZIP về máy
+                    const link = document.createElement("a");
+                    const blobUrl = URL.createObjectURL(zipBlob);
+                    link.href = blobUrl;
+                    link.download = "CAD_Tools_KIMNHO.zip";
+                    document.body.appendChild(link);
+                    link.click();
+
+                    // Dọn dẹp tài nguyên
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(blobUrl);
+
+                } catch (error) {
+                    console.error("Lỗi đóng gói file ZIP:", error);
+                    Swal.fire({
+                        title: "Lỗi tải file!",
+                        text: "Không thể gom file vào ZIP. Vui lòng kiểm tra lại đường dẫn lưu trữ file.",
+                        icon: "error"
+                    });
+                } finally {
+                    // Phục hồi lại trạng thái nút ban đầu
+                    downloadBtn.disabled = false;
+                    downloadBtn.innerHTML = originalHtml;
+                }
             });
         }
     }

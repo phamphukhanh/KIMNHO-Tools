@@ -13,12 +13,16 @@ async function loadComponent(elementId, filePath) {
             html = html.replace(/src=(["'])assets\//g, 'src=$1../assets/');
             html = html.replace(/href=(["'])index.html/g, 'href=$1../index.html');
             html = html.replace(/href=(["'])pages\//g, 'href=$1../pages/');
+            // Cập nhật đường dẫn cho hình ảnh Logo Kim Nhỏ trong Header
+            html = html.replace(/src=(["'])assets\/images\//g, 'src=$1../assets/images/');
         }
 
-        // Bắt lỗi an toàn: Chỉ gán HTML khi tìm thấy ID trên DOM
+        // Bắt lỗi an toàn & ÉP THAY THẾ (outerHTML) ĐỂ XÓA THẺ PLACEHOLDER THỪA
         const targetEl = document.getElementById(elementId);
         if (targetEl) {
-            targetEl.innerHTML = html;
+            // Thay vì nhét <nav> vào trong <div id="header-placeholder">
+            // Chúng ta thay thế cái <div id="header-placeholder"> bằng <nav> luôn!
+            targetEl.outerHTML = html; 
         } else {
             console.warn(`Cảnh báo: Không tìm thấy phần tử #${elementId} trên trang hiện tại.`);
         }

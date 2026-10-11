@@ -172,3 +172,25 @@ html.dark-mode .selected-cell input.cell-data {
     background-color: #094771 !important; /* Màu xanh bôi đen dịu mắt */
     color: #ffffff !important;
 }
+
+
+/* ==========================================
+   11. BỔ SUNG OVERRIDE VÙNG CHỨA TRANG XYC
+   ========================================== */
+
+/* Ép màu nền tối cho các khung bao ngoài của trang XYC */
+html.dark-mode .main-wrapper,
+html.dark-mode .table-section,
+html.dark-mode .preview-section,
+html.dark-mode .toolbar-card {
+    background-color: #1e1e1e !important;
+    border-color: #444 !important;
+    color: #e0e0e0 !important;
+}
+
+/* Ghi đè triệt để class bg-white của Bootstrap (Khung chọn Dạng Vuông/Tròn/Điểm) */
+html.dark-mode .bg-white {
+    background-color: #2d2d2d !important;
+    border-color: #444 !important;
+    color: #e0e0e0 !important;
+}

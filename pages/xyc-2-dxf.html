@@ -36,46 +36,73 @@
             <div class="table-section">
                 <!-- THANH CÔNG CỤ (TOOLBAR) -->
                 <div class="toolbar-card bg-light p-3 rounded border mb-3">
-                    <!-- Hàng 1: Cấu hình Pad & Quản lý dòng -->
-                    <div
-                        class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2 pb-2 border-bottom">
-                        <div class="d-flex align-items-center">
-                            <label for="pad-size-mil" class="mb-0 font-weight-bold mr-2 text-secondary text-nowrap"
-                                style="font-size: 13px;">
-                                <i class="fa fa-arrows-alt mr-2"></i>Kích thước Pad (Mil):
-                            </label>
-                            <input type="number" id="pad-size-mil"
-                                class="form-control form-control-sm font-weight-bold text-center" value="1" min="0.01"
-                                step="0.1" style="width: 75px;">
-                        </div>
 
-                        <div class="btn-group btn-group-sm">
-                            <button class="btn btn-secondary font-weight-bold" id="btn-add-row">
-                                <i class="fa fa-plus mr-1"></i>Thêm dòng
-                            </button>
-                            <button class="btn btn-outline-danger font-weight-bold" id="btn-clear-table">
-                                <i class="fa fa-trash mr-1"></i>Làm sạch
-                            </button>
+                    <!-- Hàng 1: Cấu hình PAD (Canh giữa 100% theo chiều ngang) -->
+                    <div class="d-flex align-items-center justify-content-center mb-2 pb-2 border-bottom"
+                        style="min-height: 31px;">
+                        <div class="d-flex flex-wrap align-items-center justify-content-center" style="gap: 16px;">
+
+                            <!-- 1. Chọn hình dáng -->
+                            <div class="d-inline-flex align-items-center bg-white border rounded px-3 shadow-sm"
+                                style="height: 31px; gap: 10px;">
+                                <span class="text-secondary font-weight-bold"
+                                    style="font-size: 13px; line-height: 1; white-space: nowrap;">Hình dáng:</span>
+
+                                <!-- Option Vuông -->
+                                <label class="d-inline-flex align-items-center mb-0 font-weight-bold text-dark"
+                                    style="font-size: 13px; cursor: pointer; user-select: none; line-height: 1;">
+                                    <input type="radio" id="shape-square" name="padShape" value="square" checked
+                                        style="cursor: pointer; margin: 0 4px 0 0;">
+                                    <span>Vuông</span>
+                                </label>
+
+                                <!-- Option Tròn -->
+                                <label class="d-inline-flex align-items-center mb-0 font-weight-bold text-dark"
+                                    style="font-size: 13px; cursor: pointer; user-select: none; line-height: 1;">
+                                    <input type="radio" id="shape-circle" name="padShape" value="circle"
+                                        style="cursor: pointer; margin: 0 4px 0 0;">
+                                    <span>Tròn</span>
+                                </label>
+
+                                <!-- Option Điểm -->
+                                <label class="d-inline-flex align-items-center mb-0 font-weight-bold text-dark"
+                                    style="font-size: 13px; cursor: pointer; user-select: none; line-height: 1;">
+                                    <input type="radio" id="shape-point" name="padShape" value="point"
+                                        style="cursor: pointer; margin: 0 4px 0 0;">
+                                    <span>Điểm</span>
+                                </label>
+                            </div>
+
+                            <!-- 2. Kích thước Pad -->
+                            <div id="pad-size-container" class="d-inline-flex align-items-center" style="height: 31px;">
+                                <label for="pad-size-mil" class="mb-0 font-weight-bold mr-2 text-secondary text-nowrap"
+                                    style="font-size: 13px; line-height: 1;">
+                                    <i class="fa fa-arrows-alt mr-1"></i>Kích thước (Mil):
+                                </label>
+                                <input type="number" id="pad-size-mil"
+                                    class="form-control form-control-sm font-weight-bold text-center" value="1"
+                                    min="0.01" step="0.1" style="width: 70px; height: 31px;">
+                            </div>
+
                         </div>
                     </div>
 
-                    <!-- Hàng 2: Ghi chú & Chừa chỗ cho tính năng mới + Nút Xuất DXF -->
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-                        <div class="d-flex align-items-center">
-                            <small class="text-muted mr-3"><i class="fa fa-info-circle mr-2"></i>Dán (Ctrl+V) từ
-                                Excel</small>
+                    <!-- Hàng 2: Hướng dẫn bên trái & Thao tác (Làm sạch, Xuất DXF) bên phải -->
+                    <div class="d-flex flex-wrap align-items-center justify-content-between" style="gap: 8px;">
+                        <small class="text-muted"><i class="fa fa-info-circle mr-1"></i>Dán (Ctrl+V) dữ liệu từ
+                            Excel</small>
 
-                            <!-- VỊ TRÍ CHỪA SẴN CHO TÍNH NĂNG MỚI SẮP RA MẮT -->
-                            <!-- 
-                    <button class="btn btn-sm btn-outline-primary font-weight-bold" id="btn-new-feature">
-                        <i class="fa fa-star mr-1"></i>Tính Năng Mới
-                    </button> 
-                    -->
+                        <div class="d-inline-flex align-items-center ml-auto" style="gap: 8px;">
+                            <button class="btn btn-sm btn-outline-danger font-weight-bold text-nowrap"
+                                id="btn-clear-table" style="height: 31px;">
+                                <i class="fa fa-trash mr-1"></i>Làm sạch
+                            </button>
+
+                            <button class="btn btn-sm btn-success font-weight-bold px-3 text-nowrap" id="btn-export-dxf"
+                                style="height: 31px;">
+                                <i class="fa fa-download mr-1"></i>Xuất DXF
+                            </button>
                         </div>
-
-                        <button class="btn btn-sm btn-success font-weight-bold ml-auto" id="btn-export-dxf">
-                            <i class="fa fa-download mr-1"></i>Xuất DXF
-                        </button>
                     </div>
                 </div>
 

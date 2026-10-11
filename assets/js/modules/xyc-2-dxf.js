@@ -19,15 +19,43 @@ let startColIdx = -1;
 document.addEventListener("DOMContentLoaded", function () {
     createRows(15);
 
-    document.getElementById("btn-add-row")?.addEventListener("click", () => createRows(1));
+    // Nút Refresh trên Pad Layout chủ động reset lại góc nhìn về giữa
+    document.getElementById("btn-draw-preview")?.addEventListener("click", () => drawPreview(true));
     document.getElementById("btn-clear-table")?.addEventListener("click", clearTable);
-    document.getElementById("btn-draw-preview")?.addEventListener("click", drawPreview);
     document.getElementById("btn-export-dxf")?.addEventListener("click", generateDXF);
 
     initCanvasEvents();
     initTableSelection();
+    initShapeEvents();
 });
 
+
+// ==========================================
+// BẮT SỰ KIỆN CHỌN HÌNH DÁNG (CỐ ĐỊNH VI TRÍ UI)
+// ==========================================
+function initShapeEvents() {
+    const shapeRadios = document.querySelectorAll('input[name="padShape"]');
+    const padSizeContainer = document.getElementById("pad-size-container");
+    const padSizeInput = document.getElementById("pad-size-mil");
+
+    shapeRadios.forEach(radio => {
+        radio.addEventListener("change", function () {
+            if (!padSizeContainer || !padSizeInput) return;
+
+            if (this.value === "point") {
+                // Làm mờ và khóa không cho nhập
+                padSizeContainer.style.opacity = "0.35";
+                padSizeContainer.style.pointerEvents = "none";
+                padSizeInput.disabled = true;
+            } else {
+                // Mở lại bình thường
+                padSizeContainer.style.opacity = "1";
+                padSizeContainer.style.pointerEvents = "auto";
+                padSizeInput.disabled = false;
+            }
+        });
+    });
+}
 // ==========================================
 // TƯƠNG TÁC CANVAS (ZOOM, PAN & CLICK CHỌN PAD)
 // ==========================================
@@ -278,7 +306,7 @@ function clearTable() {
     tbody.innerHTML = "";
     activeRowIndex = null;
     createRows(15);
-    drawPreview();
+    drawPreview(true); // Reset lại góc nhìn
 }
 
 function handlePaste(e) {
@@ -316,16 +344,15 @@ function handlePaste(e) {
 }
 
 // ==========================================
-// XUẤT FILE DXF CHUẨN INCH (3 CỘT BASE)
+// XUẤT FILE DXF CHUẨN INCH (VUÔNG / TRÒN / ĐIỂM)
 // ==========================================
 function generateDXF() {
     const scale = 1 / 25400; // µm -> Inch
+    const padShape = document.querySelector('input[name="padShape"]:checked')?.value || "square";
+
     const padSizeInput = parseFloat(document.getElementById("pad-size-mil")?.value);
     const padSizeMil = (!isNaN(padSizeInput) && padSizeInput > 0) ? padSizeInput : 1;
-
-    const padSizeUm = padSizeMil * 25.4;
-    const padSizeInch = padSizeUm * scale;
-    const textHeightInch = (padSizeInch / 2);
+    const padSizeInch = (padSizeMil * 25.4) * scale;
 
     let dxfEntities = [];
     const rows = document.getElementById("tableBody").querySelectorAll("tr");
@@ -343,29 +370,61 @@ function generateDXF() {
         let cxInch = cx * scale;
         let cyInch = cy * scale;
 
-        let xMin = (cxInch - padSizeInch / 2).toFixed(8);
-        let xMax = (cxInch + padSizeInch / 2).toFixed(8);
-        let yMin = (cyInch - padSizeInch / 2).toFixed(8);
-        let yMax = (cyInch + padSizeInch / 2).toFixed(8);
+        let textHeightInch;
+        let yTextInch;
 
-        // KHỐI PAD (SOLID)
-        dxfEntities.push(
-            "  0\nSOLID\n  8\nPAD\n" +
-            ` 10\n${xMin}\n 20\n${yMin}\n 30\n0.0\n` +
-            ` 11\n${xMax}\n 21\n${yMin}\n 31\n0.0\n` +
-            ` 12\n${xMin}\n 22\n${yMax}\n 32\n0.0\n` +
-            ` 13\n${xMax}\n 23\n${yMax}\n 33\n0.0`
-        );
+        // 1. TẠO HÌNH DÁNG & TÍNH VỊ TRÍ TEXT
+        if (padShape === "square") {
+            // PAD VUÔNG
+            let xMin = (cxInch - padSizeInch / 2).toFixed(8);
+            let xMax = (cxInch + padSizeInch / 2).toFixed(8);
+            let yMin = (cyInch - padSizeInch / 2).toFixed(8);
+            let yMax = (cyInch + padSizeInch / 2).toFixed(8);
 
-        // KHỐI CHỮ PAD (TEXT - CANH GIỮA TÂM)
+            dxfEntities.push(
+                "  0\nSOLID\n  8\nPAD\n" +
+                ` 10\n${xMin}\n 20\n${yMin}\n 30\n0.0\n` +
+                ` 11\n${xMax}\n 21\n${yMin}\n 31\n0.0\n` +
+                ` 12\n${xMin}\n 22\n${yMax}\n 32\n0.0\n` +
+                ` 13\n${xMax}\n 23\n${yMax}\n 33\n0.0`
+            );
+
+            textHeightInch = padSizeInch / 2;
+            yTextInch = cyInch + (padSizeInch / 2) + (textHeightInch * 0.2);
+
+        } else if (padShape === "circle") {
+            // PAD TRÒN
+            let radius = (padSizeInch / 2).toFixed(8);
+            dxfEntities.push(
+                "  0\nCIRCLE\n  8\nPAD\n" +
+                ` 10\n${cxInch.toFixed(8)}\n 20\n${cyInch.toFixed(8)}\n 30\n0.0\n` +
+                ` 40\n${radius}`
+            );
+
+            textHeightInch = padSizeInch / 2;
+            yTextInch = cyInch + (padSizeInch / 2) + (textHeightInch * 0.2);
+
+        } else if (padShape === "point") {
+            // ĐIỂM (POINT)
+            dxfEntities.push(
+                "  0\nPOINT\n  8\nPAD\n" +
+                ` 10\n${cxInch.toFixed(8)}\n 20\n${cyInch.toFixed(8)}\n 30\n0.0`
+            );
+
+            // Chiều cao chữ cố định cho điểm (0.5 Mil) và đặt nhãn sát ngay trên điểm
+            textHeightInch = (0.5 * 25.4) * scale;
+            yTextInch = cyInch + (textHeightInch * 0.4);
+        }
+
+        // 2. TẠO ĐỐI TƯỢNG TEXT
         dxfEntities.push(
             "  0\nTEXT\n  8\nTEXT\n" +
-            ` 10\n${cxInch.toFixed(8)}\n 20\n${cyInch.toFixed(8)}\n 30\n0.0\n` +
+            ` 10\n${cxInch.toFixed(8)}\n 20\n${yTextInch.toFixed(8)}\n 30\n0.0\n` +
             ` 40\n${textHeightInch.toFixed(8)}\n` +
             `  1\n${id}\n` +
-            ` 72\n1\n` +
-            ` 11\n${cxInch.toFixed(8)}\n 21\n${cyInch.toFixed(8)}\n 31\n0.0\n` +
-            ` 73\n2`
+            ` 72\n1\n` +  /* Center */
+            ` 11\n${cxInch.toFixed(8)}\n 21\n${yTextInch.toFixed(8)}\n 31\n0.0\n` +
+            ` 73\n1`    /* Bottom */
         );
     }
 
@@ -391,7 +450,7 @@ function generateDXF() {
 // ==========================================
 // MÔ PHỎNG VẼ CANVAS RADAR
 // ==========================================
-function drawPreview() {
+function drawPreview(resetView = false) {
     const canvas = document.getElementById("layoutCanvas");
     if (!canvas) return;
     canvas.width = canvas.clientWidth;
@@ -417,22 +476,26 @@ function drawPreview() {
     });
 
     if (canvasPoints.length === 0) {
+        window.baseScale = null; // Reset lại base khi không còn điểm nào
         renderCanvas();
         return;
     }
 
-    let dx = maxX - minX, dy = maxY - minY;
-    if (dx === 0) dx = 100;
-    if (dy === 0) dy = 100;
+    // Nếu chưa có tọa độ gốc HOẶC người dùng chủ động bấm Refresh (resetView = true)
+    if (resetView || !window.baseScale) {
+        let dx = maxX - minX, dy = maxY - minY;
+        if (dx === 0) dx = 100;
+        if (dy === 0) dy = 100;
 
-    const padding = 50;
-    window.baseScale = Math.min((canvas.width - padding * 2) / dx, (canvas.height - padding * 2) / dy);
-    window.baseMinX = minX;
-    window.baseMaxY = maxY;
+        const padding = 50;
+        window.baseScale = Math.min((canvas.width - padding * 2) / dx, (canvas.height - padding * 2) / dy);
+        window.baseMinX = minX;
+        window.baseMaxY = maxY;
 
-    viewScale = 1;
-    viewOffsetX = (canvas.width - (dx * window.baseScale)) / 2;
-    viewOffsetY = (canvas.height - (dy * window.baseScale)) / 2;
+        viewScale = 1;
+        viewOffsetX = (canvas.width - (dx * window.baseScale)) / 2;
+        viewOffsetY = (canvas.height - (dy * window.baseScale)) / 2;
+    }
 
     renderCanvas();
 }

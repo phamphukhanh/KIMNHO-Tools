@@ -39,31 +39,35 @@
             </div>
             <div class="card-body bg-light text-dark p-3" style="font-size: 13px;">
                 <div class="row">
+                    <!-- CÁCH 1: LOAD NHANH KÉO THẢ -->
                     <div class="col-md-6 border-right">
                         <p class="mb-2 font-weight-bold text-primary">
-                            <i class="fa fa-terminal mr-1"></i>Cách 1: Tự động khởi chạy (Khuyên dùng)
+                            <i class="fa fa-magic mr-1"></i>Cách 1: Load nhanh kéo thả
+                        </p>
+                        <!-- Chuyển ul thành ol để đánh số thứ tự -->
+                        <ol class="mb-0 pl-3 text-muted">
+                            <li class="mb-1">Lưu các file <code>.VLX</code> / <code>.ARX</code> đã tải vào một thư mục
+                                cố định trên máy.</li>
+                            <li><strong>Kéo thả trực tiếp:</strong> Click giữ file từ thư mục vừa lưu và kéo thả trực
+                                tiếp vào không gian bản vẽ AutoCAD đang mở để sử dụng ngay.</li>
+                        </ol>
+                    </div>
+
+                    <!-- CÁCH 2: TỰ ĐỘNG KHỞI CHẠY -->
+                    <div class="col-md-6 pl-md-4 mt-3 mt-md-0">
+                        <p class="mb-2 font-weight-bold text-success">
+                            <i class="fa fa-terminal mr-1"></i>Cách 2: Tự động khởi chạy (Khuyên dùng)
                         </p>
                         <ol class="mb-0 pl-3 text-muted">
                             <li>Lưu các file <code>.VLX</code> / <code>.ARX</code> đã tải vào một thư mục cố định trên
                                 máy.</li>
-                            <li>Trong AutoCAD, gõ lệnh <strong>APPLOAD</strong> (hoặc gõ tắt <strong>AP</strong>) và
+                            <li>Trong AutoCAD, gõ lệnh <strong>APPLOAD</strong> (hoặc gõ tắt <strong>AP</strong>)
                                 nhấn <kbd>Enter</kbd>.</li>
                             <li>Nhấn nút <strong>Contents...</strong> ở mục <em>Startup Suite</em> (Biểu tượng chiếc
                                 cặp).</li>
                             <li>Nhấn <strong>Add...</strong>, chọn các file plugin và lưu lại. Công cụ sẽ tự động load
                                 mỗi khi mở AutoCAD.</li>
                         </ol>
-                    </div>
-                    <div class="col-md-6 pl-md-4 mt-3 mt-md-0">
-                        <p class="mb-2 font-weight-bold text-success">
-                            <i class="fa fa-magic mr-1"></i>Cách 2: Load nhanh kéo thả
-                        </p>
-                        <ul class="mb-0 pl-3 text-muted" style="list-style-type: square;">
-                            <li class="mb-1"><strong>Dùng lệnh AP:</strong> Nhập <code>APPLOAD</code>, chọn file và nhấn
-                                nút <strong>Load</strong>.</li>
-                            <li><strong>Kéo thả trực tiếp:</strong> Click giữ file <code>.VLX</code> từ thư mục máy tính
-                                và kéo thả trực tiếp vào không gian bản vẽ AutoCAD đang mở để sử dụng ngay.</li>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -98,12 +102,11 @@
                                 <input type="checkbox" id="check-all-tools"
                                     style="cursor: pointer; width: 15px; height: 15px;">
                             </th>
-                            <th class="align-middle text-left" style="width: 220px;">Tên File Công Cụ</th>
-                            <th class="align-middle text-left">Mô Tả Chức Năng</th>
-                            <th class="align-middle text-center" style="width: 130px;">
-                                <i class="fa fa-keyboard-o mr-1 text-warning"></i>Lệnh CAD
-                            </th>
-                            <th class="align-middle text-center" style="width: 110px;">Thao Tác</th>
+                            <th class="align-middle text-left" style="width: 180px;">Tên File Công Cụ</th>
+                            <th class="align-middle text-left" style="width: 25%;">Mô Tả Chức Năng</th>
+                            <th class="align-middle text-left">Hướng Dẫn Sử Dụng</th>
+                            <th class="align-middle text-center" style="width: 110px;">Lệnh CAD</th>
+                            <th class="align-middle text-center" style="width: 90px;">Thao Tác</th>
                         </tr>
                     </thead>
 
@@ -123,7 +126,7 @@
     <!-- Script xử lý trang -->
     <script src="../assets/js/modules/autocad-tools.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

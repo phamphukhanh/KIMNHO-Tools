@@ -6,18 +6,22 @@ document.addEventListener("DOMContentLoaded", function () {
     // DATA: DANH SÁCH CÔNG CỤ 
     // (Bổ sung thông tin mô tả chi tiết tại đây)
     // ==========================================
+    // ==========================================
+    // DATA: DANH SÁCH CÔNG CỤ 
+    // Thêm trường "usage" để hướng dẫn cách dùng
+    // ==========================================
     const CAD_TOOLS = [
-        { file: "C2Q.VLX", desc: "Chức năng thay thế của lệnh C2Q", cmd: "C2Q" },
-        { file: "CINT.VLX", desc: "Chức năng thay thế của lệnh CINT", cmd: "CINT" },
-        { file: "FILES TAB AUTOCAD 2007.arx", desc: "Tạo thanh Tab duyệt file (File Tabs) tương tự bản AutoCAD đời mới dành cho AutoCAD 2007. Load bằng lệnh APPLOAD.", cmd: "APPLOAD" },
-        { file: "JJ.VLX", desc: "Chức năng thay thế của lệnh JJ", cmd: "JJ" },
-        { file: "MP.VLX", desc: "Chức năng thay thế của lệnh MP", cmd: "MP" },
-        { file: "P2C - C2P.VLX", desc: "Chuyển đổi linh hoạt qua lại giữa đường đa tuyến (Polyline) và đường cong (Circle).", cmd: "P2C" },
-        { file: "PC.VLX", desc: "Chức năng thay thế của lệnh PC", cmd: "PC" },
-        { file: "PD.VLX", desc: "Chức năng thay thế của lệnh PD", cmd: "PD" },
-        { file: "PDA.VLX", desc: "Chức năng thay thế của lệnh PDA", cmd: "PDA" },
-        { file: "SD.VLX", desc: "Chức năng thay thế của lệnh SD", cmd: "SD" },
-        { file: "SDA.VLX", desc: "Chức năng thay thế của lệnh SDA", cmd: "SDA" }
+        { file: "C2Q.VLX", desc: "Chuyển đường tròn thành 4 góc phần tư (Để cắt CNC).", usage: "Nhập lệnh, chọn đối tượng cần xử lý và nhấn Enter.", cmd: "C2Q" },
+        { file: "CINT.VLX", desc: "Vẽ đường tròn tại giao điểm các đường (Vẽ định vị nhanh).", usage: "Gõ lệnh, nhập kích thước hình tròn và quét chọn các đường giao nhau.", cmd: "CINT" },
+        { file: "FILES TAB AUTOCAD 2007.arx", desc: "Tạo thanh Tab duyệt file (File Tabs) tương tự bản AutoCAD đời mới dành cho AutoCAD 2007.", usage: "Kéo thả file vào AutoCAD hoặc dùng lệnh APPLOAD để load.", cmd: "" },
+        { file: "JJ.VLX", desc: "Nối các đường Line/Polyline thành một đường liên tục.", usage: "Nhập lệnh, chọn các đường Line/Polyline cần nối và nhấn Enter.", cmd: "JJ" },
+        { file: "MP.VLX", desc: "Tạo điểm ở các điểm đặc biệt của đường (Tạo vòng ngoài Mylar nhanh).", usage: "Nhập lệnh, chọn các đường và nhấn Enter.", cmd: "MP" },
+        { file: "P2C - C2P.VLX", desc: "Chuyển điểm thành đường tròn (P2C) và đường tròn thành điểm (C2P) (Làm định vị CNC nhanh).", usage: "Nhập lệnh, chọn điểm hoặc đường tròn và nhấn Enter.", cmd: "P2C hoặc C2P" },
+        { file: "PC.VLX", desc: "Tìm điểm giữa của một nhóm đối tượng (Lấy điểm giữa các Pad/Mylar).", usage: "Nhập lệnh, chọn các đối tượng và nhấn Enter.", cmd: "PC" },
+        { file: "PD.VLX", desc: "Thay đổi số lượng số thập phân của các Dimension riêng lẻ.", usage: "Nhập lệnh, gõ số lượng số thập phân, chọn Dim cần thay đổi và nhấn Enter.", cmd: "PD" },
+        { file: "PDA.VLX", desc: "Thay đổi số lượng số thập phân của Dimension trong toàn bộ bản vẽ.", usage: "Nhập lệnh, gõ số lượng số thập phân và nhấn Enter.", cmd: "PDA" },
+        { file: "SD.VLX", desc: "Thay đổi kích thước của các Dimension riêng lẻ.", usage: "Nhập lệnh, gõ kích thước, chọn Dim cần thay đổi và nhấn Enter.", cmd: "SD" },
+        { file: "SDA.VLX", desc: "Thay đổi kích thước của Dimension trong toàn bộ bản vẽ.", usage: "Nhập lệnh, gõ kích thước mới và nhấn Enter.", cmd: "SDA" }
     ];
 
     // ==========================================
@@ -32,35 +36,46 @@ document.addEventListener("DOMContentLoaded", function () {
             const iconClass = isArx ? "fa-cogs text-danger" : "fa-file-code-o text-primary";
             const nameClass = isArx ? "text-danger" : "text-primary";
 
-            // Badge hiển thị câu lệnh
+            // Badge hiển thị câu lệnh to, rõ
             const cmdBadge = tool.cmd
-                ? `<span class="badge badge-light border text-dark font-weight-bold px-2 py-1" style="font-size: 12px;"><code>${tool.cmd}</code></span>`
+                ? `<span class="badge border px-2 py-1" style="font-size: 14px; letter-spacing: 0.5px; background-color: #f8f9fa; color: #d63384;"><code>${tool.cmd}</code></span>`
                 : `<span class="text-muted">&mdash;</span>`;
 
+            // Xử lý text hướng dẫn (nếu để trống thì hiển thị Đang cập nhật)
+            const usageText = tool.usage
+                ? tool.usage
+                : `<span class="text-muted font-italic" style="font-size: 12px;">Đang cập nhật...</span>`;
+
             return `
-            <tr>
-                <td class="text-center align-middle">
-                    <div class="custom-control custom-checkbox ml-2">
-                        <input type="checkbox" class="custom-control-input tool-checkbox" id="tool-cb-${index}" data-filename="${tool.file}">
-                        <label class="custom-control-label" for="tool-cb-${index}"></label>
-                    </div>
-                </td>
-                <td class="align-middle font-weight-bold ${nameClass}">
-                    <i class="fa ${iconClass} mr-2"></i>${tool.file}
-                </td>
-                <td class="align-middle text-muted">
-                    ${tool.desc}
-                </td>
-                <td class="text-center align-middle">
-                    ${cmdBadge}
-                </td>
-                <td class="text-center align-middle">
-                    <a href="${TOOLS_BASE_PATH}${tool.file}" download class="btn btn-sm btn-outline-primary font-weight-bold">
-                        <i class="fa fa-download mr-1"></i>Tải
-                    </a>
-                </td>
-            </tr>
-        `;
+        <tr>
+            <td class="text-center align-middle">
+                <div class="custom-control custom-checkbox ml-2">
+                    <input type="checkbox" class="custom-control-input tool-checkbox" id="tool-cb-${index}" data-filename="${tool.file}">
+                    <label class="custom-control-label" for="tool-cb-${index}"></label>
+                </div>
+            </td>
+            <!-- Thêm px-3 để có khoảng cách lề hai bên, chữ to hơn một chút cho tên tool -->
+            <td class="align-middle font-weight-bold px-3 ${nameClass}" style="font-size: 14.5px;">
+                <i class="fa ${iconClass} mr-2"></i>${tool.file}
+            </td>
+            <!-- Đồng bộ font-size 14px, thêm px-3 để không sát lề -->
+            <td class="align-middle text-muted px-3" style="font-size: 14px;">
+                ${tool.desc}
+            </td>
+            <!-- Đồng bộ font-size 14px, thêm px-3 để không sát lề -->
+            <td class="align-middle text-dark px-3" style="font-size: 14px;">
+                ${usageText}
+            </td>
+            <td class="text-center align-middle">
+                ${cmdBadge}
+            </td>
+            <td class="text-center align-middle">
+                <a href="${TOOLS_BASE_PATH}${tool.file}" download class="btn btn-sm btn-outline-primary font-weight-bold">
+                    <i class="fa fa-download"></i> Tải
+                </a>
+            </td>
+        </tr>
+    `;
         }).join("");
 
         initCheckboxEvents();

@@ -95,3 +95,43 @@ html {
     min-height: auto;
     height: 100%;
 }
+
+
+/* Thu hẹp khoảng cách giữa chấm radio và chữ tương ứng */
+.compact-radio-group {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px !important;
+    /* Khoảng cách giữa các khối nút thoáng hơn */
+    flex-wrap: nowrap !important;
+}
+
+/* Đẩy chữ nhích sang trái (gần radio hơn) - Đã cập nhật theo ý bạn lúc nãy */
+.compact-radio-group .custom-control {
+    padding-left: 1.15rem !important;
+    /* Thu hẹp khoảng cách chữ và radio */
+    margin-right: 0 !important;
+}
+
+.compact-radio-group .custom-control-label {
+    font-size: 0.9rem !important;
+    font-weight: 400 !important;
+    white-space: nowrap !important;
+    cursor: pointer;
+    /* THÊM DÒNG NÀY: Ép chiều cao dòng để tính toán tâm chuẩn xác */
+    line-height: 1.5 !important;
+}
+
+/* ========================================================
+   SỬA LỖI LỆCH TÂM: Cân bằng nút Radio và Chữ trên 1 đường thẳng
+   ======================================================== */
+.compact-radio-group .custom-control-label::before,
+.compact-radio-group .custom-control-label::after {
+    /* Điều chỉnh top xuống 0.2rem để nút radio nằm ngay chính giữa chữ */
+    top: 0.2rem !important;
+
+    /* Giữ nguyên kích thước nút radio */
+    width: 0.9rem !important;
+    height: 0.9rem !important;
+}

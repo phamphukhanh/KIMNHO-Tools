@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     if (pageIcon) {
         const iconEl = document.getElementById("header-page-icon");
-        if (iconEl) iconEl.className = `fa ${pageIcon} mr-2 header-icon`;
+        if (iconEl) iconEl.className = `fa ${pageIcon} fa-fw header-icon`;
     }
 
     // Khởi chạy đồng hồ và Dark Mode

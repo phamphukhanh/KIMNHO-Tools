@@ -15,11 +15,16 @@
     align-items: center;
 }
 
+/* Căn chỉnh chuẩn cho Icon trên tiêu đề Header */
+/* Chuẩn hóa khoảng cách Icon với Tiêu đề Header */
 .header-icon {
-    font-size: 1.1rem;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
+    width: 1.25em !important;
+    /* Cố định chiều rộng khung icon */
+    text-align: center !important;
+    /* Căn giữa icon trong khung */
+    display: inline-block;
+    margin-right: 4px !important;
+    /* Thay cho mr-2 để khoảng cách vừa vặn mắt người nhìn */
 }
 
 .custom-version-badge {

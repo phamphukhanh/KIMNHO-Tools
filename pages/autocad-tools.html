@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon-16x16.png">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css">
+
+    <!-- CSS Hệ thống -->
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/header.css">
+    <link rel="stylesheet" href="../assets/css/darkmode.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="stylesheet" href="../assets/css/autocad-tools.css">
+
+    <!-- Script dùng chung -->
+    <script src="../assets/js/utils/load-components.js"></script>
+    <script src="../assets/js/utils/clock.js"></script>
+    <script src="../assets/js/utils/darkmode.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <title>Bộ Công Cụ AutoCAD - KIMNHO</title>
+</head>
+
+<body data-page-title="Bộ Công Cụ AutoCAD" data-page-icon="fa-puzzle-piece">
+    <!-- Bơm Header tự động -->
+    <div id="header-placeholder"></div>
+
+    <div class="container-fluid px-md-4 mt-3">
+
+        <!-- SECTION 1: HƯỚNG DẪN CÀI ĐẶT -->
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-header bg-primary text-white d-flex align-items-center py-2">
+                <i class="fa fa-info-circle mr-2 fa-lg"></i>
+                <h6 class="m-0 font-weight-bold">Hướng Dẫn Cài Đặt Công Cụ Vào AutoCAD</h6>
+            </div>
+            <div class="card-body bg-light text-dark p-3" style="font-size: 13px;">
+                <div class="row">
+                    <div class="col-md-6 border-right">
+                        <p class="mb-2 font-weight-bold text-primary">
+                            <i class="fa fa-terminal mr-1"></i>Cách 1: Tự động khởi chạy (Khuyên dùng)
+                        </p>
+                        <ol class="mb-0 pl-3 text-muted">
+                            <li>Lưu các file <code>.VLX</code> / <code>.ARX</code> đã tải vào một thư mục cố định trên
+                                máy.</li>
+                            <li>Trong AutoCAD, gõ lệnh <strong>APPLOAD</strong> (hoặc gõ tắt <strong>AP</strong>) và
+                                nhấn <kbd>Enter</kbd>.</li>
+                            <li>Nhấn nút <strong>Contents...</strong> ở mục <em>Startup Suite</em> (Biểu tượng chiếc
+                                cặp).</li>
+                            <li>Nhấn <strong>Add...</strong>, chọn các file plugin và lưu lại. Công cụ sẽ tự động load
+                                mỗi khi mở AutoCAD.</li>
+                        </ol>
+                    </div>
+                    <div class="col-md-6 pl-md-4 mt-3 mt-md-0">
+                        <p class="mb-2 font-weight-bold text-success">
+                            <i class="fa fa-magic mr-1"></i>Cách 2: Load nhanh kéo thả
+                        </p>
+                        <ul class="mb-0 pl-3 text-muted" style="list-style-type: square;">
+                            <li class="mb-1"><strong>Dùng lệnh AP:</strong> Nhập <code>APPLOAD</code>, chọn file và nhấn
+                                nút <strong>Load</strong>.</li>
+                            <li><strong>Kéo thả trực tiếp:</strong> Click giữ file <code>.VLX</code> từ thư mục máy tính
+                                và kéo thả trực tiếp vào không gian bản vẽ AutoCAD đang mở để sử dụng ngay.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: BẢNG QUẢN LÝ & TẢI BỘ CÔNG CỤ -->
+        <div class="card shadow-sm border rounded mb-4">
+
+            <!-- TOOLBAR CỦA BẢNG -->
+            <div class="card-header bg-light d-flex flex-wrap align-items-center justify-content-between p-3"
+                style="gap: 8px;">
+                <div class="d-flex align-items-center">
+                    <i class="fa fa-list mr-2 text-secondary"></i>
+                    <h6 class="m-0 font-weight-bold text-dark">Danh Sách Plugin & AutoLisp</h6>
+                </div>
+
+                <!-- NÚT TẢI HÀNG LOẠT -->
+                <button class="btn btn-sm btn-secondary font-weight-bold px-3 text-nowrap" id="btn-download-selected"
+                    disabled style="height: 31px;">
+                    <i class="fa fa-download mr-1"></i>Tải các mục đã chọn
+                    <span id="selected-count-badge" class="badge badge-light text-dark ml-1"
+                        style="font-size: 11px;">0</span>
+                </button>
+            </div>
+
+            <!-- BẢNG CÔNG CỤ RENDERING ĐỘNG -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm mb-0">
+                    <thead class="thead-dark text-center">
+                        <tr>
+                            <th class="align-middle" style="width: 50px;">
+                                <input type="checkbox" id="check-all-tools"
+                                    style="cursor: pointer; width: 15px; height: 15px;">
+                            </th>
+                            <th class="align-middle text-left" style="width: 220px;">Tên File Công Cụ</th>
+                            <th class="align-middle text-left">Mô Tả Chức Năng</th>
+                            <th class="align-middle text-center" style="width: 130px;">
+                                <i class="fa fa-keyboard-o mr-1 text-warning"></i>Lệnh CAD
+                            </th>
+                            <th class="align-middle text-center" style="width: 110px;">Thao Tác</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tools-table-body"></tbody>
+
+                </table>
+            </div>
+        </div>
+
+        <!-- Bơm Footer tự động -->
+        <div id="footer-placeholder"></div>
+    </div>
+
+    <!-- Script xử lý trang -->
+    <script src="../assets/js/modules/autocad-tools.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

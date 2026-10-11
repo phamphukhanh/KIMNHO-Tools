@@ -8,14 +8,20 @@ async function loadComponent(elementId, filePath) {
 
         let html = await response.text();
 
-        // Nếu ở trong thư mục pages/, tự động sửa lại toàn bộ đường dẫn ảnh và liên kết trong Header
+        // Tự động điều chỉnh đường dẫn linh hoạt khi nằm trong thư mục /pages/
         if (isSubfolder) {
-            html = html.replace(/src="assets\//g, 'src="../assets/');
-            html = html.replace(/href="index.html"/g, 'href="../index.html"');
-            html = html.replace(/href="pages\//g, 'href="../pages/');
+            html = html.replace(/src=(["'])assets\//g, 'src=$1../assets/');
+            html = html.replace(/href=(["'])index.html/g, 'href=$1../index.html');
+            html = html.replace(/href=(["'])pages\//g, 'href=$1../pages/');
         }
 
-        document.getElementById(elementId).innerHTML = html;
+        // Bắt lỗi an toàn: Chỉ gán HTML khi tìm thấy ID trên DOM
+        const targetEl = document.getElementById(elementId);
+        if (targetEl) {
+            targetEl.innerHTML = html;
+        } else {
+            console.warn(`Cảnh báo: Không tìm thấy phần tử #${elementId} trên trang hiện tại.`);
+        }
     } catch (error) {
         console.error("Lỗi tải component:", error);
     }
@@ -39,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (iconEl) iconEl.className = `fa ${pageIcon} mr-2 header-icon`;
     }
 
-    // Khởi chạy các tiện ích Header
+    // Khởi chạy đồng hồ và Dark Mode
     if (typeof updateClock === "function") {
         setInterval(updateClock, 1000);
         updateClock();

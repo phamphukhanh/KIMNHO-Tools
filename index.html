@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css"
         integrity="sha512-DQ8AYRNJzvNabl2m6fcjEtXqhT7LoW4NsmYF31qUaavTFJfFHAs8zFuCpxOwWmn8rqrXpANVDZgvjO9bnAmLDw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <!-- CSS Tùy chỉnh theo từng phân đoạn -->
     <link rel="stylesheet" href="assets/css/base.css">
     <link rel="stylesheet" href="assets/css/header.css">
@@ -35,12 +36,15 @@
     <!-- Script Chính -->
     <script src="assets/js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <title>Bộ Xử Lý G-Code CNC</title>
+    <title>Bộ Xử Lý G-Code CNC - KIMNHO's Tools</title>
 </head>
 
 <body data-page-title="Bộ Xử Lý G-Code CNC" data-page-icon="fa-cogs">
+    <!-- Nơi load thanh Header (Navbar) -->
     <div id="header-placeholder"></div>
+
     <div class="container mt-3">
+        <!-- Tiêu đề và hướng dẫn công cụ -->
         <h3 class="text-center font-weight-bold">
             <div class="btn-group">
                 <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" data-display="static"
@@ -63,181 +67,284 @@
                 <i class="fa fa-info-circle"></i>
             </span>
         </h3>
+
+        <!-- KHUNG CHÍNH CHỨA EDITOR & OPTIONS -->
         <div class="border p-3 rounded shadow-sm">
             <div class="row">
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label class="font-weight-bold mb-0">G-code CNC</label>
-                                <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" id="keep-options">
-                                    <label class="custom-control-label font-weight-bold mb-0" for="keep-options">Giữ lựa
-                                        chọn</label>
-                                </div>
-                            </div>
-                            <textarea id="inputCNC" class="form-control mt-2" rows="10" required>
-</textarea>
+                <!-- =============== CỘT TRÁI: TEXTAREA G-CODE =============== -->
+                <div class="col-lg-6 mb-3 mb-lg-0 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="font-weight-bold mb-0">G-code CNC</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="keep-options">
+                            <label class="custom-control-label font-weight-bold mb-0" for="keep-options">Giữ lựa
+                                chọn</label>
                         </div>
                     </div>
+                    <!-- flex-grow-1 giúp textarea tự căn chiều cao bằng đúng nút "Xem kết quả" bên phải -->
+                    <textarea id="inputCNC" class="form-control flex-grow-1"
+                        style="min-height: 220px; resize: vertical;" required></textarea>
                 </div>
-                <div class="col-md-6 border-left pl-3">
-                    <div class="row">
-                        <div id="form-section" class="col-md-6">
-                            <!-- Form Cắt mặc định -->
-                            <div id="form-cut">
-                                <label class="font-weight-bold" for="mil-down">Số Mil cần xuống:</label>
-                                <input type="number" min="0" class="form-control" id="mil-down" required>
-                                <label class="font-weight-bold mt-2">Số Mil mỗi lần xuống:</label>
-                                <div>
-                                    <label class="mr-2">
-                                        <input type="radio" name="cut-depth" value="5" checked> 5 Mils
-                                    </label>
-                                    <label class="mr-2">
-                                        <input type="radio" name="cut-depth" value="20"> 20 Mils
-                                    </label>
-                                    <label class="mr-2">
-                                        <input type="radio" name="cut-depth" value="custom"> Số khác
-                                    </label>
-                                </div>
-                                <div id="custom-cut-depth" class="mt-1 mb-1" style="display: none;">
-                                    <input id="customCutDepthValue" type="number" min="0" class="form-control">
-                                </div>
-                                <label class="font-weight-bold"><ins>Từ tâm đi ra (X0.000 Y0.000)?</ins></label>
-                                <div>
-                                    <label class="mr-3">
-                                        <input type="radio" name="center" value="yes"> Có
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="center" value="no" checked> Không
-                                    </label>
-                                </div>
-                            </div>
 
-                            <!-- Form Đục lỗ: ẩn lúc đầu -->
-                            <div id="form-drill" style="display: none;">
-                                <label class="font-weight-bold">Chọn độ sâu:</label>
-                                <div>
-                                    <label class="mr-3">
-                                        <input type="radio" name="drill-depth" value="5" checked> 5 Mils
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="drill-depth" value="custom"> Số khác
-                                    </label>
-                                </div>
-                                <div id="custom-drill-depth" class="mt-2" style="display: none;">
-                                    <label class="font-weight-bold">Số Mil cần xuống:</label>
-                                    <input id="customDrillDepthValue" type="number" min="0" class="form-control">
-                                    <label class="font-weight-bold">Số Mil mỗi lần xuống:</label>
-                                    <input id="customDrillEachValue" type="number" min="0" class="form-control">
-                                </div>
-                            </div>
+                <!-- =============== CỘT PHẢI: KHUNG CẤU HÌNH =============== -->
+                <div class="col-lg-6 d-flex flex-column">
+                    <!-- Card dùng flex-grow-1 để tự co giãn vừa vặn -->
+                    <div class="card shadow-sm border-0 bg-light rounded flex-grow-1">
+                        <div class="card-body p-3">
+                            <div class="row">
 
+                                <!-- Cột Tùy Chọn Tính Năng -->
+                                <div id="form-section" class="col-md-6 border-md-right pb-3 pb-md-0 mb-3 mb-md-0">
+                                    <!-- Form Cắt -->
+                                    <div id="form-cut">
+                                        <div class="form-group mb-3">
+                                            <label class="font-weight-bold text-secondary small text-uppercase mb-1"
+                                                for="mil-down">Số Mil cần xuống:</label>
+                                            <input type="number" min="0" class="form-control form-control-sm"
+                                                id="mil-down" required>
+                                        </div>
 
-                            <!-- Form Chạy độ ring: ẩn lúc đầu -->
-                            <div id="form-ring-angle" style="display: none;">
-                                <label class="font-weight-bold" for="ceramic-thickness">Bề dày phôi sứ:</label>
-                                <select class="form-control" id="ceramic-thickness">
-                                    <option value="125">125</option>
-                                    <option value="187">187</option>
-                                    <option value="250">250</option>
-                                    <option value="375">375</option>
-                                </select>
-                                <label class="font-weight-bold mt-2" for="ring-angles">Độ ring:</label>
-                                <div>
-                                    <select class="form-control" id="ring-angles">
-                                        <option value="5">5°</option>
-                                        <option value="6">6°</option>
-                                        <option value="7" selected>7°</option>
-                                        <option value="8">8°</option>
-                                        <option value="9">9°</option>
-                                        <option value="10">10°</option>
-                                        <option value="11">11°</option>
-                                        <option value="12">12°</option>
-                                        <option value="13">13°</option>
-                                        <option value="14">14°</option>
-                                        <option value="15">15°</option>
-                                        <option value="16">16°</option>
-                                        <option value="17">17°</option>
-                                        <option value="18">18°</option>
-                                        <option value="19">19°</option>
-                                        <option value="20">20°</option>
-                                    </select>
+                                        <div class="form-group mb-3">
+                                            <label class="font-weight-bold text-secondary small text-uppercase mb-2">Số
+                                                Mil mỗi lần xuống:</label>
+                                            <div class="d-flex flex-wrap" style="gap: 12px;">
+                                                <div class="custom-control custom-radio custom-control-inline mr-0">
+                                                    <input type="radio" id="cut-5" name="cut-depth" value="5"
+                                                        class="custom-control-input" checked>
+                                                    <label class="custom-control-label" for="cut-5">5 Mils</label>
+                                                </div>
+                                                <div class="custom-control custom-radio custom-control-inline mr-0">
+                                                    <input type="radio" id="cut-20" name="cut-depth" value="20"
+                                                        class="custom-control-input">
+                                                    <label class="custom-control-label" for="cut-20">20 Mils</label>
+                                                </div>
+                                                <div class="custom-control custom-radio custom-control-inline mr-0">
+                                                    <input type="radio" id="cut-custom" name="cut-depth" value="custom"
+                                                        class="custom-control-input">
+                                                    <label class="custom-control-label" for="cut-custom">Số khác</label>
+                                                </div>
+                                            </div>
+                                            <div id="custom-cut-depth" class="mt-2" style="display: none;">
+                                                <input id="customCutDepthValue" type="number" min="0"
+                                                    class="form-control form-control-sm" placeholder="Nhập số mil">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group mb-0">
+                                            <label
+                                                class="font-weight-bold text-secondary small text-uppercase mb-2 text-decoration-underline">Từ
+                                                tâm đi ra (X0.0 Y0.0)?</label>
+                                            <div class="d-flex" style="gap: 15px;">
+                                                <div class="custom-control custom-radio custom-control-inline mr-0">
+                                                    <input type="radio" id="center-yes" name="center" value="yes"
+                                                        class="custom-control-input">
+                                                    <label class="custom-control-label" for="center-yes">Có</label>
+                                                </div>
+                                                <div class="custom-control custom-radio custom-control-inline mr-0">
+                                                    <input type="radio" id="center-no" name="center" value="no"
+                                                        class="custom-control-input" checked>
+                                                    <label class="custom-control-label" for="center-no">Không</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Form Đục Lỗ -->
+                                    <div id="form-drill" style="display: none;">
+                                        <div class="form-group mb-3">
+                                            <label
+                                                class="font-weight-bold text-secondary small text-uppercase mb-2">Chọn
+                                                độ sâu:</label>
+                                            <div class="d-flex flex-wrap" style="gap: 12px;">
+                                                <div class="custom-control custom-radio custom-control-inline mr-0">
+                                                    <input type="radio" id="drill-5" name="drill-depth" value="5"
+                                                        class="custom-control-input" checked>
+                                                    <label class="custom-control-label" for="drill-5">5 Mils</label>
+                                                </div>
+                                                <div class="custom-control custom-radio custom-control-inline mr-0">
+                                                    <input type="radio" id="drill-custom" name="drill-depth"
+                                                        value="custom" class="custom-control-input">
+                                                    <label class="custom-control-label" for="drill-custom">Số
+                                                        khác</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="custom-drill-depth" class="mt-2" style="display: none;">
+                                            <div class="form-group mb-2">
+                                                <label class="font-weight-bold text-secondary small mb-1">Số Mil cần
+                                                    xuống:</label>
+                                                <input id="customDrillDepthValue" type="number" min="0"
+                                                    class="form-control form-control-sm">
+                                            </div>
+                                            <div class="form-group mb-0">
+                                                <label class="font-weight-bold text-secondary small mb-1">Số Mil mỗi lần
+                                                    xuống:</label>
+                                                <input id="customDrillEachValue" type="number" min="0"
+                                                    class="form-control form-control-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Form Chạy Độ Ring -->
+                                    <div id="form-ring-angle" style="display: none;">
+                                        <div class="form-group mb-2">
+                                            <label class="font-weight-bold text-secondary small text-uppercase mb-1"
+                                                for="ceramic-thickness">Bề dày phôi sứ:</label>
+                                            <select class="form-control form-control-sm" id="ceramic-thickness">
+                                                <option value="125">125</option>
+                                                <option value="187">187</option>
+                                                <option value="250">250</option>
+                                                <option value="375">375</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label class="font-weight-bold text-secondary small text-uppercase mb-1"
+                                                for="ring-angles">Độ ring:</label>
+                                            <select class="form-control form-control-sm" id="ring-angles">
+                                                <option value="5">5°</option>
+                                                <option value="6">6°</option>
+                                                <option value="7" selected>7°</option>
+                                                <option value="8">8°</option>
+                                                <option value="9">9°</option>
+                                                <option value="10">10°</option>
+                                                <option value="11">11°</option>
+                                                <option value="12">12°</option>
+                                                <option value="13">13°</option>
+                                                <option value="14">14°</option>
+                                                <option value="15">15°</option>
+                                                <option value="16">16°</option>
+                                                <option value="17">17°</option>
+                                                <option value="18">18°</option>
+                                                <option value="19">19°</option>
+                                                <option value="20">20°</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mb-0">
+                                            <label
+                                                class="font-weight-bold text-secondary small mb-1 text-decoration-underline"
+                                                for="ring-bottom-thickness">Bề dày đít ring (tính cả recess):</label>
+                                            <input type="number" min="60" max="250" class="form-control form-control-sm"
+                                                id="ring-bottom-thickness" placeholder="Tối thiểu 60 mils" required>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="font-weight-bold mt-2" for="ring-bottom-thickness">Bề dày đít ring
-                                        <u>(tính luôn recess nếu
-                                            có):</u></label>
-                                    <input type="number" min="60" max="250" class="form-control"
-                                        id="ring-bottom-thickness" placeholder="Tối thiểu 60 mils" required>
+
+                                <!-- Cột Cấu Hình Format Đầu Ra -->
+                                <div class="col-md-6 pl-md-4">
+                                    <div class="form-group mb-3">
+                                        <label class="font-weight-bold text-secondary small text-uppercase mb-2">Thêm
+                                            Program Start, End?</label>
+                                        <div class="d-flex" style="gap: 15px;">
+                                            <div class="custom-control custom-radio custom-control-inline mr-0">
+                                                <input type="radio" id="start-yes" name="start-end" value="yes"
+                                                    class="custom-control-input">
+                                                <label class="custom-control-label" for="start-yes">Có</label>
+                                            </div>
+                                            <div class="custom-control custom-radio custom-control-inline mr-0">
+                                                <input type="radio" id="start-no" name="start-end" value="no"
+                                                    class="custom-control-input" checked>
+                                                <label class="custom-control-label" for="start-no">Không</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label class="font-weight-bold text-secondary small text-uppercase mb-2">Cách
+                                            dòng?</label>
+                                        <div class="d-flex" style="gap: 15px;">
+                                            <div class="custom-control custom-radio custom-control-inline mr-0">
+                                                <input type="radio" id="space-yes" name="spacing" value="yes"
+                                                    class="custom-control-input">
+                                                <label class="custom-control-label" for="space-yes">Có</label>
+                                            </div>
+                                            <div class="custom-control custom-radio custom-control-inline mr-0">
+                                                <input type="radio" id="space-no" name="spacing" value="no"
+                                                    class="custom-control-input" checked>
+                                                <label class="custom-control-label" for="space-no">Không</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-0">
+                                        <label class="font-weight-bold text-secondary small text-uppercase mb-2">Thêm
+                                            chú thích?</label>
+                                        <div class="d-flex" style="gap: 15px;">
+                                            <div class="custom-control custom-radio custom-control-inline mr-0">
+                                                <input type="radio" id="cmt-yes" name="comment" value="yes"
+                                                    class="custom-control-input">
+                                                <label class="custom-control-label" for="cmt-yes">Có</label>
+                                            </div>
+                                            <div class="custom-control custom-radio custom-control-inline mr-0">
+                                                <input type="radio" id="cmt-no" name="comment" value="no"
+                                                    class="custom-control-input" checked>
+                                                <label class="custom-control-label" for="cmt-no">Không</label>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="border-left pl-3 col-md-6 ">
-                            <label class="font-weight-bold">Thêm Program Start, Program End?</label>
-                            <div>
-                                <label class="mr-3"><input type="radio" name="start-end" value="yes"> Có</label>
-                                <label><input type="radio" name="start-end" value="no" checked> Không</label>
-                            </div>
-                            <label class="font-weight-bold mt-2">Cách dòng?</label>
-                            <div>
-                                <label class="mr-3"><input type="radio" name="spacing" value="yes"> Có</label>
-                                <label><input type="radio" name="spacing" value="no" checked> Không</label>
-                            </div>
-                            <label class="font-weight-bold mt-2">Thêm chú thích?</label>
-                            <div>
-                                <label class="mr-3"><input type="radio" name="comment" value="yes"> Có</label>
-                                <label><input type="radio" name="comment" value="no" checked> Không</label>
+
                             </div>
                         </div>
                     </div>
-                    <div class="row mt-2">
-                        <div class="col-md-12">
-                            <button class="btn btn-primary btn-block font-weight-bold">Xem kết quả</button>
-                        </div>
-                    </div>
+
+                    <!-- Nút Xem Kết Quả đứng gọn gàng ở đáy cột phải -->
+                    <button class="btn btn-primary btn-block font-weight-bold shadow-sm py-2 mt-3">
+                        <i class="fa fa-play mr-2"></i> Xem kết quả
+                    </button>
                 </div>
             </div>
-            <!-- Đoạn hiển thị Kết quả & Dãy nút bên phải -->
-            <div class="row mt-3">
+
+            <!-- =============== KHU VỰC KẾT QUẢ ĐẦU RA =============== -->
+            <div class="row mt-4">
                 <div class="col-12 mb-2">
-                    <label class="h5 font-weight-bold mb-0" id="result-label">Kết quả</label>
+                    <label
+                        class="h5 font-weight-bold mb-0 text-primary border-bottom border-primary pb-1 d-inline-block"
+                        id="result-label">
+                        <i class="fa fa-file-code-o mr-1"></i> Kết quả xuất G-Code
+                    </label>
                 </div>
 
-                <!-- Cột trái: Tự động chiếm trọn phần không gian còn lại (flex-grow) -->
+                <!-- Cột trái: Trình biên tập Output -->
                 <div class="col">
-                    <div class="gcode-editor-container border rounded d-flex overflow-hidden">
+                    <div class="gcode-editor-container border rounded d-flex overflow-hidden shadow-sm">
                         <div id="line-numbers" class="line-numbers">1</div>
-                        <textarea id="result" class="form-control border-0 rounded-0 flex-grow-1" rows="5" readonly
+                        <textarea id="result" class="form-control border-0 rounded-0 flex-grow-1" rows="7" readonly
                             wrap="off"></textarea>
                     </div>
                 </div>
 
-                <!-- Cột phải: Chỉ ôm vừa đủ chiều rộng của cụm nút (col-auto), bỏ padding trái (pl-0) -->
+                <!-- Cột phải: Dãy Nút Thao Tác Output -->
                 <div class="col-auto pl-0">
                     <div class="action-buttons-sticky">
-                        <button class="btn btn-danger btn-block font-weight-bold mb-2">
+                        <button class="btn btn-danger btn-block font-weight-bold mb-2 shadow-sm">
                             <i class="fa fa-trash-o"></i> Xoá
                         </button>
-                        <button class="btn btn-outline-secondary btn-block font-weight-bold mb-2" id="edit-button">
-                            <i class="fa fa-pencil-square-o"></i> <span class="btn-text">Chỉnh sửa</span>
+                        <button class="btn btn-outline-secondary btn-block font-weight-bold mb-2 shadow-sm bg-white"
+                            id="edit-button">
+                            <i class="fa fa-pencil-square-o"></i> <span class="btn-text">Sửa tay</span>
                         </button>
-                        <button id="copy-button" class="btn btn-secondary btn-block font-weight-bold mb-2">
+                        <button id="copy-button" class="btn btn-secondary btn-block font-weight-bold mb-2 shadow-sm">
                             <i class="fa fa-copy"></i> Copy
                         </button>
-                        <button class="btn btn-success btn-block font-weight-bold mb-2">
+                        <button class="btn btn-success btn-block font-weight-bold mb-2 shadow-sm">
                             <i class="fa fa-floppy-o"></i> Lưu file
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Nơi load Footer -->
         <div id="footer-placeholder"></div>
     </div>
-    <button id="scrollTopBtn" class="btn btn-info font-weight-bold"
-        style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-        ▲
+
+    <!-- Nút Cuộn Lên Đầu Trang -->
+    <button id="scrollTopBtn" class="btn btn-info font-weight-bold rounded-circle shadow"
+        style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; width: 45px; height: 45px; display: none;">
+        <i class="fa fa-arrow-up"></i>
     </button>
+
+    <!-- Thư viện Bootstrap & jQuery -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>

@@ -14,11 +14,14 @@ html {
 }
 
 #form-section {
-    height: 253px;
+    /* min-height: 253px; */
+    /* Chỉ cần thêm chữ min- vào trước */
+    height: auto;
+    /* Đảm bảo nó tự động co giãn theo nội dung */
 }
 
 #inputCNC {
-    height: 220px;
+    /* height: 220px; */
     resize: vertical;
 }
 
@@ -60,4 +63,35 @@ html {
     font-size: 1.5rem;
     font-weight: 700;
     color: #000;
+}
+
+/* ==========================================
+   VIỀN THÔNG MINH CHO FORM RESPONSIVE
+   ========================================== */
+/* Mặc định trên Mobile: Thêm viền dưới, xóa viền phải */
+.border-md-right {
+    border-bottom: 1px dashed #dee2e6;
+    /* Đường đứt nét nhẹ nhàng phân cách 2 phần */
+    border-right: none;
+}
+
+/* Trên Desktop (>=768px): Thêm viền phải, xóa viền dưới */
+@media (min-width: 768px) {
+    .border-md-right {
+        border-right: 1px solid #dee2e6 !important;
+        border-bottom: none !important;
+    }
+}
+
+/* Style nhẹ cho các tiêu đề trong Form để trông giống SaaS hơn */
+.text-secondary.small {
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    color: #6c757d !important;
+}
+
+/* Đảm bảo khung tự giãn chiều cao */
+#form-section {
+    min-height: auto;
+    height: 100%;
 }

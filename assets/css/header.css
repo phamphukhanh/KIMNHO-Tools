@@ -27,10 +27,13 @@
     /* Thay cho mr-2 để khoảng cách vừa vặn mắt người nhìn */
 }
 
-/* Giữ chiều cao tối thiểu cho Header khi chưa kịp load xong */
+/* Giữ sẵn khoảng trống cho Header trong lúc chờ Javascript bơm vào */
 #header-placeholder {
     min-height: 56px;
+    background-color: #5c936f;
+    /* Màu xanh lá Kim Nhỏ */
     display: block;
+    width: 100%;
 }
 
 .custom-version-badge {

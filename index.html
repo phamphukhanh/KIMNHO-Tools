@@ -2,6 +2,13 @@
 <html lang="vi">
 
 <head>
+    <!-- Script chặn chớp sáng (Chỉ 4 dòng code) -->
+    <script>
+        if (localStorage.getItem("theme") === "dark" || localStorage.getItem("darkMode") === "enabled") {
+            document.documentElement.classList.add("dark-mode");
+        }
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href=".assets/images/favicon-16x16.png?">
@@ -15,6 +22,7 @@
     <link rel="stylesheet" href="assets/css/editor.css">
     <link rel="stylesheet" href="assets/css/darkmode.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
+
     <!-- Utility JS -->
     <script src="assets/js/utils/load-components.js"></script>
     <script src="assets/js/utils/clock.js"></script>

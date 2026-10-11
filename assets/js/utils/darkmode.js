@@ -1,31 +1,36 @@
-// Xử lý bật/tắt & lưu trạng thái Chế độ tối (Dark Mode)
 function initDarkMode() {
-    const darkModeBtn = document.getElementById("toggle-dark-mode");
-    if (!darkModeBtn) return;
+    const toggleBtn = document.getElementById("toggle-dark-mode");
+    const isDark = localStorage.getItem("theme") === "dark" || localStorage.getItem("darkMode") === "enabled";
 
-    function setDarkMode(isDark) {
-        if (isDark) {
-            document.body.classList.add("dark-mode");
-            darkModeBtn.innerHTML = '<i class="fa fa-sun-o text-warning mr-1"></i> Sáng';
-            darkModeBtn.classList.remove("btn-dark");
-            darkModeBtn.classList.add("btn-outline-light");
-            localStorage.setItem("theme", "dark");
-        } else {
+    // Đồng bộ class ngay khi Header vừa bơm xong
+    if (isDark) {
+        document.documentElement.classList.add("dark-mode");
+        document.body.classList.add("dark-mode");
+        if (toggleBtn) toggleBtn.innerHTML = `<i class="fa fa-sun-o mr-1"></i> Sáng`;
+    } else {
+        document.documentElement.classList.remove("dark-mode");
+        document.body.classList.remove("dark-mode");
+        if (toggleBtn) toggleBtn.innerHTML = `<i class="fa fa-moon-o mr-1"></i> Tối`;
+    }
+
+    if (!toggleBtn) return;
+
+    // Xử lý click chuyển đổi
+    toggleBtn.onclick = function () {
+        const hasDark = document.documentElement.classList.contains("dark-mode");
+
+        if (hasDark) {
+            document.documentElement.classList.remove("dark-mode");
             document.body.classList.remove("dark-mode");
-            darkModeBtn.innerHTML = '<i class="fa fa-moon-o mr-1"></i> Tối';
-            darkModeBtn.classList.remove("btn-outline-light");
-            darkModeBtn.classList.add("btn-dark");
             localStorage.setItem("theme", "light");
+            localStorage.setItem("darkMode", "disabled");
+            toggleBtn.innerHTML = `<i class="fa fa-moon-o mr-1"></i> Tối`;
+        } else {
+            document.documentElement.classList.add("dark-mode");
+            document.body.classList.add("dark-mode");
+            localStorage.setItem("theme", "dark");
+            localStorage.setItem("darkMode", "enabled");
+            toggleBtn.innerHTML = `<i class="fa fa-sun-o mr-1"></i> Sáng`;
         }
-    }
-
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-        setDarkMode(true);
-    }
-
-    darkModeBtn.addEventListener("click", function () {
-        const isDark = !document.body.classList.contains("dark-mode");
-        setDarkMode(isDark);
-    });
+    };
 }

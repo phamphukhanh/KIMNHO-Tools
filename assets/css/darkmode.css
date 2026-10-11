@@ -1,72 +1,174 @@
 /* ==========================================
-   GIAO DIỆN TỐI (DARK MODE)
+   GIAO DIỆN TỐI (DARK MODE) - TỔNG HỢP & TỐI ƯU
    ========================================== */
-body.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
+
+/* 1. NỀN & MÀU CHỮ CƠ BẢN CỦA TOÀN TRANG */
+html.dark-mode,
+html.dark-mode body {
+    background-color: #121212 !important;
+    color: #e0e0e0 !important;
 }
 
-body.dark-mode .border {
-    border-color: #383838 !important;
+/* 2. GHI ĐÈ MÀU SẮC BOOTSTRAP (Nền sáng, Chữ tối) */
+html.dark-mode .bg-light,
+html.dark-mode .card-body.bg-light,
+html.dark-mode .card-header.bg-light {
+    background-color: #242424 !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
 }
 
-body.dark-mode .shadow-sm {
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5) !important;
+html.dark-mode .text-dark {
+    color: #f1f1f1 !important;
 }
 
-body.dark-mode .form-control,
-body.dark-mode select.form-control {
-    background-color: #242424;
-    color: #f1f1f1;
-    border-color: #444;
+html.dark-mode .text-muted,
+html.dark-mode .text-black-50 {
+    color: #a0a0a0 !important;
 }
 
-body.dark-mode .form-control:focus,
-body.dark-mode select.form-control:focus {
-    background-color: #2d2d2d;
-    color: #ffffff;
-    border-color: #666;
-}
-
-body.dark-mode .gcode-editor-container {
+/* 3. CARD, BORDER & SHADOW */
+html.dark-mode .card {
     background-color: #1e1e1e !important;
     border-color: #444 !important;
 }
 
-body.dark-mode .line-numbers {
+html.dark-mode .border,
+html.dark-mode .border-right {
+    border-color: #383838 !important;
+}
+
+html.dark-mode .shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5) !important;
+}
+
+/* 4. TABLE (BẢNG CÔNG CỤ) */
+html.dark-mode .table {
+    color: #e0e0e0 !important;
+}
+
+html.dark-mode .table-bordered,
+html.dark-mode .table-bordered td,
+html.dark-mode .table-bordered th {
+    border-color: #444 !important;
+}
+
+html.dark-mode .table-hover tbody tr:hover {
+    background-color: #2d2d2d !important;
+}
+
+html.dark-mode .table .thead-dark th {
+    background-color: #1a1a1a !important;
+    border-color: #444 !important;
+}
+
+/* 5. FORM CONTROLS (Ô nhập liệu, Input, Select) */
+html.dark-mode .form-control,
+html.dark-mode select.form-control {
+    background-color: #242424 !important;
+    color: #f1f1f1 !important;
+    border-color: #444 !important;
+}
+
+html.dark-mode .form-control:focus,
+html.dark-mode select.form-control:focus {
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
+    border-color: #666 !important;
+}
+
+/* 6. DROPDOWN MENU (Hệ thống công cụ) */
+html.dark-mode .dropdown-menu {
+    background-color: #2b2b2b !important;
+    border-color: #444 !important;
+}
+
+html.dark-mode .dropdown-item {
+    color: #e0e0e0 !important;
+}
+
+html.dark-mode .dropdown-item:hover {
+    background-color: #3a3a3a !important;
+    color: #fff !important;
+}
+
+/* 7. THÀNH PHẦN RIÊNG: BỘ XỬ LÝ G-CODE */
+html.dark-mode .gcode-editor-container {
+    background-color: #1e1e1e !important;
+    border-color: #444 !important;
+}
+
+html.dark-mode .line-numbers {
     background-color: #252526 !important;
     color: #858585 !important;
     border-right-color: #3c3c3c !important;
 }
 
-body.dark-mode #result[readonly] {
+html.dark-mode #result[readonly] {
     background-color: #1e1e1e !important;
     color: #d4d4d4 !important;
 }
 
-body.dark-mode #result:not([readonly]) {
+html.dark-mode #result:not([readonly]) {
     background-color: #2d2d2d !important;
     color: #ffffff !important;
 }
 
-body.dark-mode .text-black-50 {
-    color: #a0a0a0 !important;
+/* 8. THÀNH PHẦN RIÊNG: AUTOCAD TOOLS */
+html.dark-mode .badge-light {
+    background-color: #333 !important;
+    color: #d63384 !important; /* Màu hồng text lệnh CAD */
+    border-color: #555 !important;
 }
 
-body.dark-mode .dropdown-menu {
-    background-color: #2b2b2b;
-    border-color: #444;
+html.dark-mode code {
+    color: #ff6b81 !important;
+    background-color: transparent !important;
 }
 
-body.dark-mode .dropdown-item {
-    color: #e0e0e0;
-}
-
-body.dark-mode .dropdown-item:hover {
-    background-color: #3a3a3a;
-    color: #fff;
-}
-
-body.dark-mode .map-container iframe {
+/* 9. BẢN ĐỒ (IFRAME) */
+html.dark-mode .map-container iframe {
     filter: invert(90%) hue-rotate(180deg) contrast(100%);
+}
+
+/* ==========================================
+   10. THÀNH PHẦN RIÊNG: CHUYỂN TỌA ĐỘ (XYC -> DXF)
+   ========================================== */
+html.dark-mode .table-container {
+    background-color: #1e1e1e !important;
+    border-color: #444 !important;
+}
+
+/* Các ô nhập liệu tọa độ */
+html.dark-mode input.cell-data {
+    background-color: #242424 !important;
+    color: #f1f1f1 !important;
+    border: 1px solid #444 !important;
+}
+
+html.dark-mode input.cell-data:focus {
+    background-color: #2d2d2d !important;
+    border-color: #666 !important;
+    color: #ffffff !important;
+    outline: none !important;
+}
+
+/* Cột số thứ tự (1, 2, 3...) */
+html.dark-mode .idx-col {
+    background-color: #1a1a1a !important;
+    color: #a0a0a0 !important;
+    border-color: #444 !important;
+}
+
+/* Dòng đang được click (Active Row) */
+html.dark-mode .active-row td,
+html.dark-mode .active-row input.cell-data {
+    background-color: #2a2d2e !important;
+}
+
+/* Hiệu ứng bôi đen nhiều ô giống Excel */
+html.dark-mode .selected-cell,
+html.dark-mode .selected-cell input.cell-data {
+    background-color: #094771 !important; /* Màu xanh bôi đen dịu mắt */
+    color: #ffffff !important;
 }

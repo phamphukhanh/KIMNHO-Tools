@@ -2,6 +2,12 @@
 <html lang="vi">
 
 <head>
+    <!-- Script chặn chớp sáng (Chỉ 4 dòng code) -->
+    <script>
+        if (localStorage.getItem("theme") === "dark" || localStorage.getItem("darkMode") === "enabled") {
+            document.documentElement.classList.add("dark-mode");
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon-16x16.png">
@@ -21,7 +27,6 @@
     <script src="../assets/js/utils/clock.js"></script>
     <script src="../assets/js/utils/darkmode.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <title>Tạo Layout DXF Từ Tọa Độ PAD - KIMNHO</title>
 </head>
 

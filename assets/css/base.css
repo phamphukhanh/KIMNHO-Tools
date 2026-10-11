@@ -1,5 +1,5 @@
 /* ==========================================
-   CẤU TRÚC NỀN TẢNG & KHUNG TRANG
+   1. CẤU TRÚC NỀN TẢNG & KHUNG TRANG
    ========================================== */
 html {
     scroll-behavior: smooth;
@@ -13,24 +13,134 @@ html {
     background-color: #78bb7b;
 }
 
-#form-section {
-    /* min-height: 253px; */
-    /* Chỉ cần thêm chữ min- vào trước */
-    height: auto;
-    /* Đảm bảo nó tự động co giãn theo nội dung */
-}
-
-#inputCNC {
-    /* height: 220px; */
-    resize: vertical;
-}
-
 .text-reset {
     text-decoration: underline;
 }
 
+.text-secondary.small {
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    color: #6c757d !important;
+}
+
 /* ==========================================
-   BẢN ĐỒ & THÔNG BÁO (MAP, TOOLTIP & SWAL)
+   2. KHUNG FORM & RESPONSIVE BORDERS
+   ========================================== */
+#form-section {
+    height: 100%;
+    min-height: auto;
+}
+
+#inputCNC {
+    resize: vertical;
+}
+
+/* Viền đứt nét phân cách Form: Mobile (dưới), Desktop (phải) */
+.border-md-right {
+    border-bottom: 1px dashed #dee2e6;
+    border-right: none;
+}
+
+@media (min-width: 768px) {
+    .border-md-right {
+        border-right: 1px solid #dee2e6 !important;
+        border-bottom: none !important;
+    }
+}
+
+/* ==========================================
+   3. CHUẨN HÓA COMPACT RADIO (TOÀN BỘ BẢNG CẤU HÌNH)
+   ========================================== */
+/* Khung chứa các nút Radio nằm hàng ngang */
+.compact-radio-group {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px !important;
+    flex-wrap: nowrap !important;
+    margin-left: -2px !important;
+    /* Căn thẳng lề thị giác với chữ phía trên */
+}
+
+/* Tối ưu vùng Click & Triệt tiêu con trỏ bôi đen chữ (I-beam) */
+.card .custom-control.custom-radio {
+    padding-left: 0 !important;
+    margin-right: 0 !important;
+    user-select: none !important;
+}
+
+/* Label phủ 100% diện tích, kéo chữ sát chấm tròn */
+.card .custom-control-label {
+    padding-left: 1.25rem !important;
+    font-size: 0.95rem !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+    cursor: pointer !important;
+    display: inline-block;
+    white-space: nowrap !important;
+}
+
+/* Định vị chấm tròn lọt thỏm bên trong Label */
+.card .custom-control-label::before,
+.card .custom-control-label::after {
+    left: 0 !important;
+    top: 0.2rem !important;
+    width: 0.95rem !important;
+    height: 0.95rem !important;
+}
+
+/* ==========================================
+   4. TÙY CHỈNH DROPDOWN MENU CHÍNH
+   ========================================== */
+.custom-dropdown-menu {
+    border: none;
+    border-radius: 10px;
+    padding: 8px 0;
+    min-width: 200px;
+}
+
+.custom-dropdown-menu .dropdown-item {
+    padding: 10px 20px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    color: #495057;
+}
+
+.custom-dropdown-menu .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #17a2b8;
+    transform: translateX(4px);
+}
+
+.custom-dropdown-menu .dropdown-item.active {
+    background-color: #e8f4fd;
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+}
+
+/* Dark Mode cho Dropdown Menu */
+body.dark-mode .custom-dropdown-menu {
+    background-color: #2b2b2b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.dark-mode .custom-dropdown-menu .dropdown-item {
+    color: #e0e0e0;
+}
+
+body.dark-mode .custom-dropdown-menu .dropdown-item:hover {
+    background-color: #3a3a3a;
+    color: #4dd0e1;
+}
+
+body.dark-mode .custom-dropdown-menu .dropdown-item.active {
+    background-color: #1a3a42;
+    color: #63e6fa;
+    border-left-color: #63e6fa;
+}
+
+/* ==========================================
+   5. BẢN ĐỒ, TOOLTIP & SWEETALERT2
    ========================================== */
 .map-container {
     position: relative;
@@ -63,167 +173,4 @@ html {
     font-size: 1.5rem;
     font-weight: 700;
     color: #000;
-}
-
-/* ==========================================
-   VIỀN THÔNG MINH CHO FORM RESPONSIVE
-   ========================================== */
-/* Mặc định trên Mobile: Thêm viền dưới, xóa viền phải */
-.border-md-right {
-    border-bottom: 1px dashed #dee2e6;
-    /* Đường đứt nét nhẹ nhàng phân cách 2 phần */
-    border-right: none;
-}
-
-/* Trên Desktop (>=768px): Thêm viền phải, xóa viền dưới */
-@media (min-width: 768px) {
-    .border-md-right {
-        border-right: 1px solid #dee2e6 !important;
-        border-bottom: none !important;
-    }
-}
-
-/* Style nhẹ cho các tiêu đề trong Form để trông giống SaaS hơn */
-.text-secondary.small {
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
-    color: #6c757d !important;
-}
-
-/* Đảm bảo khung tự giãn chiều cao */
-#form-section {
-    min-height: auto;
-    height: 100%;
-}
-
-
-/* 1. Khung chứa: Kéo nhẹ toàn bộ sang trái để thẳng hàng thị giác với chữ S */
-.compact-radio-group {
-    display: flex !important;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 14px !important;
-    flex-wrap: nowrap !important;
-    margin-left: -2px !important;
-    /* Bí quyết kéo toàn bộ group sang trái */
-}
-
-/* 2. Xóa bỏ điểm mù của khung bọc ngoài */
-.compact-radio-group .custom-control {
-    padding-left: 0 !important;
-    /* Xóa khoảng trống thừa của div */
-    margin-right: 0 !important;
-}
-
-/* 3. Bóp khoảng cách giữa chữ và radio, mở rộng vùng click */
-.compact-radio-group .custom-control-label {
-    /* Giảm padding-left xuống 1.5rem (hoặc 24px) để chữ sát radio hơn */
-    padding-left: 1.5rem !important;
-    font-size: 0.95rem !important;
-    font-weight: 400 !important;
-    white-space: nowrap !important;
-    cursor: pointer;
-    line-height: 1.5 !important;
-    display: inline-block;
-    width: 100%;
-}
-
-/* 4. Định vị nút tròn sát lề trái, đảm bảo nằm trong vùng click của label */
-.compact-radio-group .custom-control-label::before,
-.compact-radio-group .custom-control-label::after {
-    /* Dịch nút radio sang phải một chút để tạo vùng đệm bên trái có thể click */
-    left: 0.15rem !important;
-    top: 0.22rem !important;
-    width: 1rem !important;
-    height: 1rem !important;
-}
-
-/* ==========================================
-   TÙY CHỈNH DROPDOWN MENU CHÍNH
-   ========================================== */
-.custom-dropdown-menu {
-    border: none;
-    border-radius: 10px;
-    padding: 8px 0;
-    min-width: 200px;
-}
-
-.custom-dropdown-menu .dropdown-item {
-    padding: 10px 20px;
-    font-size: 1rem;
-    transition: all 0.2s ease;
-    color: #495057;
-}
-
-/* Hiệu ứng khi lướt chuột qua */
-.custom-dropdown-menu .dropdown-item:hover {
-    background-color: #f8f9fa;
-    color: #17a2b8;
-    transform: translateX(4px);
-    /* Nhích nhẹ chữ sang phải tạo cảm giác tương tác */
-}
-
-/* Nổi bật mục đang được chọn (Active) */
-.custom-dropdown-menu .dropdown-item.active {
-    background-color: #e8f4fd;
-    /* Nền xanh nhạt dịu mắt */
-    color: #0c5460;
-    border-left: 4px solid #17a2b8;
-    /* Vạch đánh dấu bên trái */
-}
-
-/* Dark Mode cho Dropdown */
-body.dark-mode .custom-dropdown-menu {
-    background-color: #2b2b2b;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
-}
-
-body.dark-mode .custom-dropdown-menu .dropdown-item {
-    color: #e0e0e0;
-}
-
-body.dark-mode .custom-dropdown-menu .dropdown-item:hover {
-    background-color: #3a3a3a;
-    color: #4dd0e1;
-}
-
-body.dark-mode .custom-dropdown-menu .dropdown-item.active {
-    background-color: #1a3a42;
-    color: #63e6fa;
-    border-left-color: #63e6fa;
-}
-
-/* ========================================================
-   CHUẨN HÓA COMPACT RADIO CHO TOÀN BỘ BẢNG CẤU HÌNH (INDEX.HTML)
-   ======================================================== */
-
-/* 1. Xóa margin thừa & Chống hiện con trỏ bôi đen chữ khi click lỡ tay */
-.card .custom-control.custom-radio {
-    padding-left: 0 !important;
-    margin-right: 0 !important;
-    user-select: none !important;
-    /* Triệt tiêu hoàn toàn con trỏ bôi đen I-beam */
-}
-
-/* 2. Thẻ Label làm vùng nhận click duy nhất: Kéo chữ sát vào radio & phủ 100% diện tích */
-.card .custom-control-label {
-    padding-left: 1.25rem !important;
-    /* Kéo chữ sát về phía chấm tròn (rất gần) */
-    font-size: 0.95rem !important;
-    font-weight: 400 !important;
-    line-height: 1.5 !important;
-    cursor: pointer !important;
-    display: inline-block;
-    white-space: nowrap !important;
-}
-
-/* 3. Đặt nút radio lọt thỏm vào đúng mép trái Label (Không còn khoảng trống chết) */
-.card .custom-control-label::before,
-.card .custom-control-label::after {
-    left: 0 !important;
-    /* Nút bám chặt lề trái label */
-    top: 0.2rem !important;
-    /* Cân bằng tâm chính xác theo chiều dọc */
-    width: 0.95rem !important;
-    height: 0.95rem !important;
 }

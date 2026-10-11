@@ -66,6 +66,10 @@ function initCanvasEvents() {
     // Zoom bằng con lăn chuột
     canvas.addEventListener("wheel", function (e) {
         e.preventDefault();
+
+        // CHẶN: Không cho phép thay đổi ViewScale nếu chưa có tọa độ
+        if (canvasPoints.length === 0) return;
+
         const rect = canvas.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
@@ -504,13 +508,28 @@ function renderCanvas() {
     const canvas = document.getElementById("layoutCanvas");
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // KIỂM TRA MẢNG TRỐNG TRƯỚC KHI VẼ
     if (canvasPoints.length === 0) {
-        ctx.fillStyle = "#666"; ctx.font = "16px Arial"; ctx.textAlign = "center";
+        ctx.save();
+        // Reset hệ tọa độ để chữ không bị méo theo viewScale/viewOffsetX
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Vẽ chữ thông báo đẹp và tinh tế (không méo, không nhòe)
+        ctx.fillStyle = "#8d96a0";
+        ctx.font = "14px 'Segoe UI', Roboto, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
         ctx.fillText("Chưa có dữ liệu tọa độ", canvas.width / 2, canvas.height / 2);
+
+        ctx.restore();
         return;
     }
+
+    // NẾU CÓ DỮ LIỆU: Bắt đầu xóa nền và vẽ Layout
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (let p of canvasPoints) {
         let screenX = viewOffsetX + ((p.cx - window.baseMinX) * window.baseScale * viewScale);

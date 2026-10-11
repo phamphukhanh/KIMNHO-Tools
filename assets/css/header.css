@@ -2,10 +2,36 @@
    HEADER, NAVBAR & CÁC BADGE
    ========================================== */
 .brand-title {
-    font-size: 0.9rem;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+/* Sửa lại .brand-highlight */
+.brand-highlight {
+    background-color: #ffffff;
+    color: #2596be;
+    font-weight: 800;
+    padding: 3px 5px;
+    /* 3px đứng cho dấu hỏi rộng chỗ, 5px ngang để không bị bè */
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     letter-spacing: 0.5px;
-    opacity: 0.95;
+    line-height: 1.2;
+    /* Tăng lên 1.2 để font chữ tính đủ chiều cao cho dấu tiếng Việt */
+    display: inline-block;
+    /* Giúp khung trắng ôm trọn theo đúng chiều cao hiển thị của chữ */
+}
+
+/* Phong cách Tech / Coder - Màu Trắng Sắc Nét */
+.brand-suffix {
+    color: #ffffff; /* Đổi về màu trắng tinh */
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-weight: 700;
+    margin-left: 4px; 
+    letter-spacing: 0.5px;
+    /* Tăng độ đậm của bóng để viền chữ sắc hơn */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); 
 }
 
 .app-title {
@@ -44,7 +70,7 @@
     align-items: center;
     border-radius: 4px;
     margin-bottom: 0;
-    transform: translateY(-1px);
+    /* transform: translateY(-1px); */
 }
 
 /* Đồng hồ dạng Badge LED kỹ thuật */

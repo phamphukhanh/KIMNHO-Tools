@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
         { file: "C2Q.VLX", desc: "Chuyển đường tròn thành 4 góc phần tư (Để cắt CNC).", usage: "Nhập lệnh, chọn đối tượng cần xử lý và nhấn Enter.", cmd: "C2Q" },
         { file: "CINT.VLX", desc: "Vẽ đường tròn tại giao điểm các đường (Vẽ định vị nhanh).", usage: "Gõ lệnh, nhập kích thước hình tròn và quét chọn các đường giao nhau.", cmd: "CINT" },
         { file: "FILES TAB AUTOCAD 2007.arx", desc: "Tạo thanh Tab duyệt file (File Tabs) tương tự bản AutoCAD đời mới dành cho AutoCAD 2007.", usage: "Kéo thả file vào AutoCAD hoặc dùng lệnh APPLOAD để load.", cmd: "" },
-        { file: "JJ.VLX", desc: "Nối các đường Line/Polyline thành một đường liên tục.", usage: "Nhập lệnh, chọn các đường Line/Polyline cần nối và nhấn Enter.", cmd: "JJ" },
+        { file: "JJ.VLX", desc: "Nối các đường Line/Polyline thành một đường liên tục (Giống lệnh PE nhưng gọn hơn.", usage: "Nhập lệnh, chọn các đường Line/Polyline cần nối và nhấn Enter.", cmd: "JJ" },
         { file: "MP.VLX", desc: "Tạo điểm ở các điểm đặc biệt của đường (Tạo vòng ngoài Mylar nhanh).", usage: "Nhập lệnh, chọn các đường và nhấn Enter.", cmd: "MP" },
         { file: "P2C - C2P.VLX", desc: "Chuyển điểm thành đường tròn (P2C) và đường tròn thành điểm (C2P) (Làm định vị CNC nhanh).", usage: "Nhập lệnh, chọn điểm hoặc đường tròn và nhấn Enter.", cmd: "P2C hoặc C2P" },
         { file: "PC.VLX", desc: "Tìm điểm giữa của một nhóm đối tượng (Lấy điểm giữa các Pad/Mylar).", usage: "Nhập lệnh, chọn các đối tượng và nhấn Enter.", cmd: "PC" },

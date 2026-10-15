@@ -212,3 +212,17 @@ body.dark-mode .toolbar-card #pad-size-mil {
     color: #ffffff !important;
     border-color: #444444 !important;
 }
+
+/* ==========================================
+   KHẮC PHỤC CANVAS XẸP CHIỀU CAO TRÊN MOBILE
+   ========================================== */
+@media (max-width: 991px) {
+    .preview-section {
+        min-height: 420px;
+    }
+
+    canvas#layoutCanvas {
+        min-height: 380px !important;
+        height: 380px !important;
+    }
+}

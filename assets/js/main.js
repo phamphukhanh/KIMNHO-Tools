@@ -89,8 +89,14 @@ document.addEventListener("DOMContentLoaded", function () {
     let tooltipTimer = null;
     let isAutoShowing = false; // Biến cờ khóa an toàn
 
+    // Hàm xác định hướng bung Tooltip theo kích thước màn hình
+    function getResponsivePlacement() {
+        // Nếu màn hình nhỏ hơn 768px (Điện thoại), bung xuống dưới (bottom)
+        // Nếu màn hình lớn (Máy tính), bung sang phải (right)
+        return window.innerWidth < 768 ? 'bottom' : 'right';
+    }
+
     if (tooltipElement) {
-        // CHẶN BOOTSTRAP TỰ ẨN: Khi đang trong 2.5s tự chiếu, cấm mouseleave tắt tooltip
         $(tooltipElement).on('hide.bs.tooltip', function (e) {
             if (isAutoShowing) {
                 e.preventDefault();
@@ -99,9 +105,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
         setTimeout(() => {
             isAutoShowing = true;
+            const placement = getResponsivePlacement();
+
+            // 1. Xóa sạch mọi thuộc tính vị trí cũ trên DOM và bộ nhớ jQuery
+            $(tooltipElement).removeAttr('data-placement').removeData('placement');
+
+            // 2. Hủy thể hiện cũ để Bootstrap không dùng lại cấu hình 'bottom'
+            $(tooltipElement).tooltip('dispose');
+
+            // 3. Khởi tạo mới tinh với hướng chuẩn theo màn hình (right trên PC, bottom trên Mobile)
             $(tooltipElement).tooltip({
                 boundary: 'window',
-                placement: 'right'
+                placement: placement
             }).tooltip("show");
 
             tooltipTimer = setTimeout(() => {
@@ -109,6 +124,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 $(tooltipElement).tooltip("hide");
             }, 2500);
         }, 300);
+
+        // Lắng nghe sự kiện xoay màn hình điện thoại hoặc thu phóng cửa sổ máy tính
+        window.addEventListener('resize', function () {
+            // Cập nhật lại hướng nếu người dùng xoay điện thoại ngang/dọc
+            const currentPlacement = $(tooltipElement).attr('x-placement');
+            const newPlacement = getResponsivePlacement();
+
+            if (currentPlacement !== newPlacement) {
+                // Hủy tooltip cũ và cài đặt lại tooltip mới
+                $(tooltipElement).tooltip('dispose');
+                $(tooltipElement).tooltip({
+                    boundary: 'window',
+                    placement: getResponsivePlacement
+                });
+            }
+        });
     }
 
     function updateTooltipContent(option) {
@@ -138,6 +169,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (tooltipElement) {
+            // Cập nhật lại hướng trước khi hiển thị
+            $(tooltipElement).data('bs.tooltip').config.placement = getResponsivePlacement();
+
+            tooltipElement.setAttribute("data-original-title", content);
             tooltipElement.setAttribute("data-original-title", content);
 
             // Cập nhật ngay nội dung nếu tooltip đang hiển thị trên màn hình

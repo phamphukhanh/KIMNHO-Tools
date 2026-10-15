@@ -180,27 +180,39 @@ body.dark-mode .custom-dropdown-menu .dropdown-item.active {
     color: #000;
 }
 
+/* Cho phép click / chạm xuyên qua Tooltip mà không bị chặn thao tác */
+.tooltip {
+    pointer-events: none !important;
+}
+
 
 /* ==========================================
    4. THANH GẠT CHẾ ĐỘ (SEGMENTED CONTROL)
    ========================================== */
 .custom-segmented-control {
     background-color: #f1f3f5 !important;
-    width: 380px;            /* Cố định độ rộng để chia đều 3 khoang */
-    max-width: 100%;         /* Tự co giãn linh hoạt trên màn hình điện thoại */
+    width: 380px;
+    /* Cố định độ rộng để chia đều 3 khoang */
+    max-width: 100%;
+    /* Tự co giãn linh hoạt trên màn hình điện thoại */
 }
 
 .segment-btn {
-    flex: 1 1 0 !important;  /* Ép cả 3 nút chia đều 1:1:1 bằng nhau chằn chặn */
-    min-width: 0 !important; /* Chống vỡ layout trên mobile */
-    font-size: 0.95rem;      /* Kích thước chữ vừa vặn */
-    padding: 8px 4px !important; /* Giảm padding ngang để chữ "Chạy độ ring" không bị tràn */
+    flex: 1 1 0 !important;
+    /* Ép cả 3 nút chia đều 1:1:1 bằng nhau chằn chặn */
+    min-width: 0 !important;
+    /* Chống vỡ layout trên mobile */
+    font-size: 0.95rem;
+    /* Kích thước chữ vừa vặn */
+    padding: 8px 4px !important;
+    /* Giảm padding ngang để chữ "Chạy độ ring" không bị tràn */
     color: #6c757d;
     border: none;
     background: transparent;
     border-radius: 8px;
     transition: all 0.2s ease-in-out;
-    white-space: nowrap;     /* Giữ chữ luôn trên 1 dòng */
+    white-space: nowrap;
+    /* Giữ chữ luôn trên 1 dòng */
     text-align: center;
 }
 
@@ -212,7 +224,7 @@ body.dark-mode .custom-dropdown-menu .dropdown-item.active {
 .segment-btn.active {
     background-color: #17a2b8 !important;
     color: #fff !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 /* Dark mode cho thanh gạt */

@@ -85,7 +85,8 @@ canvas#layoutCanvas {
 
 #dataTable td input {
     width: 100%;
-    padding: 9px 10px; /* Tăng từ 6px lên 9px để 10 dòng có độ cao chuẩn đẹp */
+    padding: 9px 10px;
+    /* Tăng từ 6px lên 9px để 10 dòng có độ cao chuẩn đẹp */
     border: none;
     box-sizing: border-box;
     font-family: 'Consolas', 'Courier New', monospace;

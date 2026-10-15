@@ -117,7 +117,8 @@ html.dark-mode #result:not([readonly]) {
 /* 8. THÀNH PHẦN RIÊNG: AUTOCAD TOOLS */
 html.dark-mode .badge-light {
     background-color: #333 !important;
-    color: #d63384 !important; /* Màu hồng text lệnh CAD */
+    color: #d63384 !important;
+    /* Màu hồng text lệnh CAD */
     border-color: #555 !important;
 }
 
@@ -169,7 +170,8 @@ html.dark-mode .active-row input.cell-data {
 /* Hiệu ứng bôi đen nhiều ô giống Excel */
 html.dark-mode .selected-cell,
 html.dark-mode .selected-cell input.cell-data {
-    background-color: #094771 !important; /* Màu xanh bôi đen dịu mắt */
+    background-color: #094771 !important;
+    /* Màu xanh bôi đen dịu mắt */
     color: #ffffff !important;
 }
 
@@ -193,4 +195,18 @@ html.dark-mode .bg-white {
     background-color: #2d2d2d !important;
     border-color: #444 !important;
     color: #e0e0e0 !important;
+}
+
+/* ==========================================
+   TÙY CHỈNH TIÊU ĐỀ BẢNG TRONG DARK MODE
+   ========================================== */
+body.dark-mode .table thead.thead-dark th {
+    background-color: #3b4248 !important;
+    /* Màu xám xanh thép nổi bật hơn nền đen */
+    color: #e0e0e0 !important;
+    /* Chữ trắng sáng */
+    border-color: #555 !important;
+    /* Viền sáng hơn để phân tách */
+    border-bottom: 2px solid #17a2b8 !important;
+    /* Thêm đường viền xanh mỏng ở dưới đáy để làm điểm nhấn */
 }

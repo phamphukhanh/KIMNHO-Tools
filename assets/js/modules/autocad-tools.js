@@ -36,10 +36,21 @@ document.addEventListener("DOMContentLoaded", function () {
             const iconClass = isArx ? "fa-cogs text-danger" : "fa-file-code-o text-primary";
             const nameClass = isArx ? "text-danger" : "text-primary";
 
-            // Badge hiển thị câu lệnh to, rõ
-            const cmdBadge = tool.cmd
-                ? `<span class="badge border px-2 py-1" style="font-size: 14px; letter-spacing: 0.5px; background-color: #f8f9fa; color: #d63384;"><code>${tool.cmd}</code></span>`
-                : `<span class="text-muted">&mdash;</span>`;
+            // Xử lý Badge lệnh CAD (nếu có từ "hoặc", tách thành 2 badge riêng biệt)
+            let cmdBadge = `<span class="text-muted">&mdash;</span>`;
+            if (tool.cmd) {
+                if (tool.cmd.includes(" hoặc ")) {
+                    const parts = tool.cmd.split(" hoặc ");
+                    cmdBadge = `
+                        <div class="d-inline-flex align-items-center justify-content-center flex-wrap" style="gap: 4px;">
+                            <span class="badge border px-2 py-1" style="font-size: 13px; background-color: #f8f9fa; color: #d63384;"><code>${parts[0]}</code></span>
+                            <small class="text-muted font-italic">hoặc</small>
+                            <span class="badge border px-2 py-1" style="font-size: 13px; background-color: #f8f9fa; color: #d63384;"><code>${parts[1]}</code></span>
+                        </div>`;
+                } else {
+                    cmdBadge = `<span class="badge border px-2 py-1" style="font-size: 13px; letter-spacing: 0.5px; background-color: #f8f9fa; color: #d63384;"><code>${tool.cmd}</code></span>`;
+                }
+            }
 
             // Xử lý text hướng dẫn (nếu để trống thì hiển thị Đang cập nhật)
             const usageText = tool.usage
@@ -48,11 +59,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             return `
         <tr>
-            <td class="text-center align-middle">
-                <div class="custom-control custom-checkbox ml-2">
-                    <input type="checkbox" class="custom-control-input tool-checkbox" id="tool-cb-${index}" data-filename="${tool.file}">
-                    <label class="custom-control-label" for="tool-cb-${index}"></label>
-                </div>
+            <tr>
+            <td class="text-center align-middle" style="width: 50px;">
+                <input type="checkbox" class="tool-checkbox" id="tool-cb-${index}" data-filename="${tool.file}"
+                    style="cursor: pointer; width: 18px; height: 18px;">
             </td>
             <!-- Thêm px-3 để có khoảng cách lề hai bên, chữ to hơn một chút cho tên tool -->
             <td class="align-middle font-weight-bold px-3 ${nameClass}" style="font-size: 14.5px;">
@@ -66,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <td class="align-middle text-dark px-3" style="font-size: 14px;">
                 ${usageText}
             </td>
-            <td class="text-center align-middle">
+            <td class="text-center align-middle px-2">
                 ${cmdBadge}
             </td>
             <td class="text-center align-middle">

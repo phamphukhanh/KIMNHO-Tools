@@ -139,22 +139,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // XỬ LÝ CLICK DROPDOWN MENU (THUẦN TEXT)
-    dropdownItems.forEach(item => {
-        item.addEventListener("click", function () {
-            // 1. Quản lý vạch highlight active
-            dropdownItems.forEach(btn => btn.classList.remove("active"));
+    // XỬ LÝ CLICK THANH GẠT (SEGMENTED CONTROL)
+    const segmentBtns = document.querySelectorAll('.segment-btn');
+
+    segmentBtns.forEach(btn => {
+        btn.addEventListener("click", function () {
+            // 1. Quản lý hiệu ứng nút active
+            segmentBtns.forEach(b => b.classList.remove("active"));
             this.classList.add("active");
 
-            // 2. Lấy tên mục vừa click
-            const selectedText = this.textContent.trim();
+            // 2. Lấy tên chức năng vừa click
+            const selectedText = this.getAttribute("data-action");
 
-            // 3. Cập nhật Tiêu đề nút chính
-            if (dropdownLabel) {
-                dropdownLabel.textContent = selectedText;
-            }
-
-            // 4. Đổi giao diện Form và nội dung Tooltip
+            // 3. Đổi Form tương ứng và cập nhật Tooltip
             if (selectedText === "Đục lỗ") {
                 if (formCut) formCut.style.display = "none";
                 if (formRingAngle) formRingAngle.style.display = "none";
@@ -172,6 +169,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 updateTooltipContent("Cắt");
             }
 
+            // 4. Reset thông số nếu không check "Giữ tùy chọn"
             if (!keepOptionFlag) {
                 resetValues();
             }
@@ -348,3 +346,5 @@ document.addEventListener("DOMContentLoaded", function () {
             "color: red; font-size: 20px; font-weight: bold; text-align: center;");
     });
 });
+
+

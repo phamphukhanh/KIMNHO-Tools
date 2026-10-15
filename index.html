@@ -45,31 +45,27 @@
 
     <div class="container mt-3">
         <!-- Tiêu đề và hướng dẫn công cụ -->
-        <h3 class="text-center font-weight-bold">
-            <div class="btn-group custom-header-dropdown">
-                <button type="button"
-                    class="btn btn-info dropdown-toggle shadow-sm d-inline-flex justify-content-between align-items-center"
-                    data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false"
-                    style="border-radius: 8px;">
-                    <span class="h4 font-weight-bold mb-0 text-center flex-grow-1" id="dropdown-title-text">Cắt</span>
-                </button>
-
-                <div class="dropdown-menu shadow custom-dropdown-menu">
-                    <button class="dropdown-item active font-weight-bold" type="button">Cắt</button>
-                    <button class="dropdown-item font-weight-bold" type="button">Đục lỗ</button>
-                    <button class="dropdown-item font-weight-bold" type="button">Chạy độ ring</button>
-                </div>
+        <!-- Tiêu đề và hướng dẫn công cụ (Dạng Thanh Gạt - Segmented Control) -->
+        <div class="text-center mb-4 d-flex justify-content-center align-items-center">
+            <!-- Thanh gạt -->
+            <div class="d-inline-flex bg-light border p-1 shadow-sm custom-segmented-control"
+                style="border-radius: 12px;">
+                <button class="btn font-weight-bold segment-btn active" data-action="Cắt">Cắt</button>
+                <button class="btn font-weight-bold segment-btn" data-action="Đục lỗ">Đục lỗ</button>
+                <button class="btn font-weight-bold segment-btn" data-action="Chạy độ ring">Chạy độ ring</button>
             </div>
+
+            <!-- Icon Tooltip -->
             <span data-toggle="tooltip" data-placement="right" data-html="true" title="
                 <div style='text-align: justify; max-width: 250px;'>
                 <b>Cắt đường thẳng, đường cong, khắc chữ block.</b><br><br>
                 1. Chạy BobCad 1 vòng.<br>
                 2. Copy G-code vào, không cần xoá Z0.<br><br>
                 <b class='text-danger'><u>Lưu ý:</u></b> Nhiều vòng khác nhau phải <u>để ý mũi</u>
-            </div>" class="ml-1 small-tooltip">
-                <i class="fa fa-info-circle"></i>
+            </div>" class="ml-2 small-tooltip" style="cursor: help;">
+                <i class="fa fa-info-circle fa-lg text-info"></i>
             </span>
-        </h3>
+        </div>
 
         <!-- KHUNG CHÍNH CHỨA EDITOR & OPTIONS -->
         <div class="border p-3 rounded shadow-sm">

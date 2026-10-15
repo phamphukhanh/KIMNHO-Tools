@@ -17,7 +17,7 @@ let startRowIdx = -1;
 let startColIdx = -1;
 
 document.addEventListener("DOMContentLoaded", function () {
-    createRows(15);
+    createRows(10);
 
     // Nút Refresh trên Pad Layout chủ động reset lại góc nhìn về giữa
     document.getElementById("btn-draw-preview")?.addEventListener("click", () => drawPreview(true));
@@ -309,7 +309,7 @@ function clearTable() {
     if (!tbody) return;
     tbody.innerHTML = "";
     activeRowIndex = null;
-    createRows(15);
+    createRows(10);
     drawPreview(true); // Reset lại góc nhìn
 }
 
@@ -509,28 +509,13 @@ function renderCanvas() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
 
-    // KIỂM TRA MẢNG TRỐNG TRƯỚC KHI VẼ
-    if (canvasPoints.length === 0) {
-        ctx.save();
-        // Reset hệ tọa độ để chữ không bị méo theo viewScale/viewOffsetX
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Vẽ chữ thông báo đẹp và tinh tế (không méo, không nhòe)
-        ctx.fillStyle = "#8d96a0";
-        ctx.font = "14px 'Segoe UI', Roboto, sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("Chưa có dữ liệu tọa độ", canvas.width / 2, canvas.height / 2);
-
-        ctx.restore();
-        return;
-    }
-
-    // NẾU CÓ DỮ LIỆU: Bắt đầu xóa nền và vẽ Layout
+    // Xóa sạch canvas về màu đen nền mặc định của CSS
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Nếu chưa có tọa độ: dừng lại ngay lập tức mà không cần vẽ gì thêm
+    if (canvasPoints.length === 0) return;
+
+    // NẾU CÓ DỮ LIỆU: Bắt đầu vẽ Layout Pad
     for (let p of canvasPoints) {
         let screenX = viewOffsetX + ((p.cx - window.baseMinX) * window.baseScale * viewScale);
         let screenY = viewOffsetY + ((window.baseMaxY - p.cy) * window.baseScale * viewScale);

@@ -72,8 +72,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     const tooltipElement = document.querySelector('.small-tooltip');
-    const dropdownItems = document.querySelectorAll('.dropdown-item');
-    const dropdownLabel = document.querySelector('.dropdown-toggle span');
     const formCut = document.getElementById("form-cut");
     const formDrill = document.getElementById("form-drill");
     const formRingAngle = document.getElementById("form-ring-angle");
@@ -88,16 +86,26 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    let tooltipTimer = null;
+    let isAutoShowing = false; // Biến cờ khóa an toàn
+
     if (tooltipElement) {
-        // Đợi 300ms cho Header động load xong và layout ổn định mới tính toán vị trí tooltip
+        // CHẶN BOOTSTRAP TỰ ẨN: Khi đang trong 2.5s tự chiếu, cấm mouseleave tắt tooltip
+        $(tooltipElement).on('hide.bs.tooltip', function (e) {
+            if (isAutoShowing) {
+                e.preventDefault();
+            }
+        });
+
         setTimeout(() => {
+            isAutoShowing = true;
             $(tooltipElement).tooltip({
-                boundary: 'window',      // Giữ tooltip không bị tràn khung
-                placement: 'right'       // Đảm bảo luôn hiện bên phải icon
+                boundary: 'window',
+                placement: 'right'
             }).tooltip("show");
 
-            // Sau khi hiện 2.5 giây thì tự động ẩn
-            setTimeout(() => {
+            tooltipTimer = setTimeout(() => {
+                isAutoShowing = false;
                 $(tooltipElement).tooltip("hide");
             }, 2500);
         }, 300);
@@ -131,9 +139,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (tooltipElement) {
             tooltipElement.setAttribute("data-original-title", content);
-            $(tooltipElement).tooltip("hide").tooltip("show");
 
-            setTimeout(() => {
+            // Cập nhật ngay nội dung nếu tooltip đang hiển thị trên màn hình
+            const activeTooltipInner = document.querySelector('.tooltip.show .tooltip-inner');
+            if (activeTooltipInner) {
+                activeTooltipInner.innerHTML = content;
+            }
+
+            // Xóa bộ đếm giờ cũ nếu người dùng click liên tục
+            if (tooltipTimer) {
+                clearTimeout(tooltipTimer);
+            }
+
+            // Bật khóa an toàn và hiển thị
+            isAutoShowing = true;
+            $(tooltipElement).tooltip("show");
+
+            // Sau đúng 2.5s mới mở khóa và ẩn đi
+            tooltipTimer = setTimeout(() => {
+                isAutoShowing = false;
                 $(tooltipElement).tooltip("hide");
             }, 2500);
         }

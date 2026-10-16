@@ -1,12 +1,19 @@
+// ==========================================
+// THUẬT TOÁN TẠO CÁC TẦNG Z ÂM
+// ==========================================
 function milAddingUp(input, milDownValue, milEachValue) {
-    const spacing = document.querySelector("input[name='spacing']:checked").value;
-    const center = document.querySelector("input[name='center']:checked").value;
-    const comment = document.querySelector("input[name='comment']:checked").value;
+    const spacingEl = document.querySelector("input[name='spacing']:checked");
+    const centerEl = document.querySelector("input[name='center']:checked");
+    const commentEl = document.querySelector("input[name='comment']:checked");
+
+    const spacing = spacingEl ? spacingEl.value : "no";
+    const center = centerEl ? centerEl.value : "no";
+    const comment = commentEl ? commentEl.value : "no";
     
-    // ĐỌC TRỰC TIẾP BIẾN TOÀN CỤC
+    // Đọc trực tiếp từ biến toàn cục
     const selectedMode = window.selectedMode || "Cắt";
     
-    // BẮT BUỘC KHAI BÁO CỤC BỘ ĐỂ KHÔNG BỊ CỘNG DỒN G-CODE
+    // Khai báo cục bộ để tránh bị cộng dồn kết quả
     let result = "";
     
     input = input.split("\n");
@@ -82,13 +89,17 @@ function milAddingUp(input, milDownValue, milEachValue) {
     return result;
 }
 
-// Thuật toán phân tách khối và xử lý tham số Mil
+// ==========================================
+// THUẬT TOÁN PHÂN TÁCH KHỐI VÀ XỬ LÝ MIL
+// ==========================================
 function putMilInBlocks(input) {
-    // ĐỌC TRỰC TIẾP BIẾN TOÀN CỤC
-    const selectedMode = window.selectedMode || "Cắt"
+    const selectedMode = window.selectedMode || "Cắt";
     
-    const startEnd = document.querySelector("input[name='start-end']:checked").value;
-    const spacing = document.querySelector("input[name='spacing']:checked").value;
+    const startEndEl = document.querySelector("input[name='start-end']:checked");
+    const spacingEl = document.querySelector("input[name='spacing']:checked");
+
+    const startEnd = startEndEl ? startEndEl.value : "no";
+    const spacing = spacingEl ? spacingEl.value : "no";
 
     let startText = "N10 G01 Z0.050 F4\nN20 G01 Z0.050\nM03\n";
     let endText = "\nG00 X0.000 Y0.000\nM04\nM30";
@@ -104,10 +115,11 @@ function putMilInBlocks(input) {
     let rawBlocks = [];
 
     if (selectedMode === "Chạy độ ring") {
-        rawBlocks = input.split(/(?=G00)/);
-        const ceramicThickness = parseFloat(document.querySelector("select#ceramic-thickness").value);
-        const ringAngle = parseFloat(document.querySelector("select#ring-angles").value);
-        const ringBottom = parseFloat(document.querySelector("input#ring-bottom-thickness").value);
+        // Lọc bỏ các khối rỗng
+        rawBlocks = input.split(/(?=G00)/).filter(b => b.trim() !== "");
+        const ceramicThickness = parseFloat(document.querySelector("select#ceramic-thickness")?.value || 125);
+        const ringAngle = parseFloat(document.querySelector("select#ring-angles")?.value || 7);
+        const ringBottom = parseFloat(document.querySelector("input#ring-bottom-thickness")?.value || 60);
         milEachValue = 20;
 
         let currentMil = ceramicThickness - ringBottom;
@@ -125,20 +137,30 @@ function putMilInBlocks(input) {
             currentMil -= (ringAngle - 1);
         });
     } else if (selectedMode === "Cắt") {
-        rawBlocks = input.split(/(?=G00)/);
-        const milDown = document.querySelectorAll("input[type='number']")[0].value;
-        const milEach = document.querySelector("input[name='cut-depth']:checked").value;
-        milEachValue = milEach === "custom" ? document.getElementById("customCutDepthValue").value : milEach;
+        // Lọc bỏ các khối rỗng
+        rawBlocks = input.split(/(?=G00)/).filter(b => b.trim() !== "");
+        
+        // Lấy đúng ID ô mil-down
+        const milDownInput = document.getElementById("mil-down");
+        const milDown = milDownInput ? milDownInput.value : 0;
+        
+        const cutRadio = document.querySelector("input[name='cut-depth']:checked");
+        const milEach = cutRadio ? cutRadio.value : "5";
+        milEachValue = milEach === "custom" ? (document.getElementById("customCutDepthValue")?.value || 0) : milEach;
 
         milDownValue = parseFloat(milDown);
         milEachValue = parseFloat(milEachValue);
         milBlocks = rawBlocks.map(block => ({ block, milDown: milDownValue }));
     } else if (selectedMode === "Đục lỗ") {
-        rawBlocks = input.split("\n");
-        const milEach = document.querySelector("input[name='drill-depth']:checked").value;
+        // Lọc bỏ các dòng rỗng
+        rawBlocks = input.split("\n").filter(b => b.trim() !== "");
+        
+        const drillRadio = document.querySelector("input[name='drill-depth']:checked");
+        const milEach = drillRadio ? drillRadio.value : "5";
+        
         if (milEach === "custom") {
-            const milDown = document.querySelectorAll("input[type='number']")[2].value;
-            milEachValue = document.getElementById("customDrillEachValue").value;
+            const milDown = document.getElementById("customDrillDepthValue")?.value || 0;
+            milEachValue = document.getElementById("customDrillEachValue")?.value || 0;
             milDownValue = parseFloat(milDown);
         } else {
             milDownValue = milEachValue = parseFloat(milEach);
@@ -173,22 +195,40 @@ function putMilInBlocks(input) {
     let output = startEnd === "yes" ? startText : "";
 
     milBlocks.forEach(({ block, milDown }, i) => {
-        let result = milAddingUp(block, milDown, milEachValue);
-        if (spacing === "yes" && i !== milBlocks.length - 1) result += "\n";
-        output += result;
+        let blockResult = milAddingUp(block, milDown, milEachValue);
+        if (spacing === "yes" && i !== milBlocks.length - 1) blockResult += "\n";
+        output += blockResult;
     });
 
     if (startEnd === "yes") {
-        output = output.trim() + endText;
+        output = output.trim() + (spacing === "yes" ? "\n\n\n" : "\n") + endText.trim();
     }
 
+    // Ghi đè kết quả mới
     const resultTextarea = document.querySelector("#result");
-    resultTextarea.value = output.trim();
-    updateLineNumbers();
-    resultTextarea.style.height = "auto";
-    resultTextarea.style.height = resultTextarea.scrollHeight + "px";
-    if (!keepOptionFlag) {
-        document.getElementById("inputCNC").value = "";
-        resetValues();
+    if (resultTextarea) {
+        resultTextarea.value = output.trim();
+        resultTextarea.style.height = "auto";
+        resultTextarea.style.height = resultTextarea.scrollHeight + "px";
+    }
+    
+    if (typeof updateLineNumbers === "function") {
+        updateLineNumbers();
+    }
+
+    // Đọc trực tiếp từ checkbox để xác định có giữ tùy chọn hay không
+    const keepOptions = document.getElementById("keep-options");
+    const isKeep = keepOptions ? keepOptions.checked : false;
+
+    if (!isKeep) {
+        const inputArea = document.getElementById("inputCNC");
+        if (inputArea) inputArea.value = "";
+        if (typeof resetValues === "function") {
+            resetValues();
+        }
     }
 }
+
+// Gắn trực tiếp lên window để tránh lỗi ReferenceError
+window.milAddingUp = milAddingUp;
+window.putMilInBlocks = putMilInBlocks;

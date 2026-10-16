@@ -1,234 +1,225 @@
-// ==========================================
-// THUẬT TOÁN TẠO CÁC TẦNG Z ÂM
-// ==========================================
-function milAddingUp(input, milDownValue, milEachValue) {
-    const spacingEl = document.querySelector("input[name='spacing']:checked");
-    const centerEl = document.querySelector("input[name='center']:checked");
-    const commentEl = document.querySelector("input[name='comment']:checked");
+document.addEventListener("DOMContentLoaded", function () {
+    // Thư mục gốc chứa các file VLX/ARX thực tế
+    const TOOLS_BASE_PATH = "../assets/tools/";
 
-    const spacing = spacingEl ? spacingEl.value : "no";
-    const center = centerEl ? centerEl.value : "no";
-    const comment = commentEl ? commentEl.value : "no";
-    
-    // Đọc trực tiếp từ biến toàn cục
-    const selectedMode = window.selectedMode || "Cắt";
-    
-    // Khai báo cục bộ để tránh bị cộng dồn kết quả
-    let result = "";
-    
-    input = input.split("\n");
+    // ==========================================
+    // DATA: DANH SÁCH CÔNG CỤ 
+    // (Bổ sung thông tin mô tả chi tiết tại đây)
+    // ==========================================
+    // ==========================================
+    // DATA: DANH SÁCH CÔNG CỤ 
+    // Thêm trường "usage" để hướng dẫn cách dùng
+    // ==========================================
+    const CAD_TOOLS = [
+        { file: "C2Q.VLX", desc: "Chuyển đường tròn thành 4 góc phần tư (Để cắt CNC).", usage: "Nhập lệnh, chọn đối tượng cần xử lý và nhấn Enter.", cmd: "C2Q" },
+        { file: "CINT.VLX", desc: "Vẽ đường tròn tại giao điểm các đường (Vẽ định vị nhanh).", usage: "Gõ lệnh, nhập kích thước hình tròn và quét chọn các đường giao nhau.", cmd: "CINT" },
+        { file: "FILES TAB AUTOCAD 2007.arx", desc: "Tạo thanh Tab duyệt file (File Tabs) tương tự bản AutoCAD đời mới dành cho AutoCAD 2007.", usage: "Kéo thả file vào AutoCAD hoặc dùng lệnh APPLOAD để load.", cmd: "" },
+        { file: "JJ.VLX", desc: "Nối các đường Line/Polyline thành một đường liên tục (Giống lệnh PE nhưng gọn hơn).", usage: "Nhập lệnh, chọn các đường Line/Polyline cần nối và nhấn Enter.", cmd: "JJ" },
+        { file: "MP.VLX", desc: "Tạo điểm ở các điểm đặc biệt của đường (Tạo vòng ngoài Mylar nhanh).", usage: "Nhập lệnh, chọn các đường và nhấn Enter.", cmd: "MP" },
+        { file: "P2C - C2P.VLX", desc: "Chuyển điểm thành đường tròn (P2C) và đường tròn thành điểm (C2P) (Làm định vị CNC nhanh).", usage: "Nhập lệnh, chọn điểm hoặc đường tròn và nhấn Enter.", cmd: "P2C hoặc C2P" },
+        { file: "PC.VLX", desc: "Tìm điểm giữa của một nhóm đối tượng (Lấy điểm giữa các Pad/Mylar).", usage: "Nhập lệnh, chọn các đối tượng và nhấn Enter.", cmd: "PC" },
+        { file: "PD.VLX", desc: "Thay đổi số lượng số thập phân của các Dimension riêng lẻ.", usage: "Nhập lệnh, gõ số lượng số thập phân, chọn Dim cần thay đổi và nhấn Enter.", cmd: "PD" },
+        { file: "PDA.VLX", desc: "Thay đổi số lượng số thập phân của Dimension trong toàn bộ bản vẽ.", usage: "Nhập lệnh, gõ số lượng số thập phân và nhấn Enter.", cmd: "PDA" },
+        { file: "SD.VLX", desc: "Thay đổi kích thước của các Dimension riêng lẻ.", usage: "Nhập lệnh, gõ kích thước, chọn Dim cần thay đổi và nhấn Enter.", cmd: "SD" },
+        { file: "SDA.VLX", desc: "Thay đổi kích thước của Dimension trong toàn bộ bản vẽ.", usage: "Nhập lệnh, gõ kích thước mới và nhấn Enter.", cmd: "SDA" }
+    ];
 
-    if (comment === 'yes' && input[0].trim() !== ";") {
-        result += "; \n";
-    }
+    // ==========================================
+    // 1. RENDER BẢNG GIAO DIỆN TỪ DATA
+    // ==========================================
+    function renderToolsTable() {
+        const tbody = document.getElementById("tools-table-body");
+        if (!tbody) return;
 
-    if (!input[0].includes("G00") && !input[0].includes("G01")) {
-        input[0] = "G00 " + input[0];
-    } else if (input[0].includes("G01") && !input[0].includes("G00")) {
-        input[0] = input[0].replace("G01", "G00");
-    }
+        tbody.innerHTML = CAD_TOOLS.map((tool, index) => {
+            const isArx = tool.file.toLowerCase().endsWith(".arx");
+            const iconClass = isArx ? "fa-cogs text-danger" : "fa-file-code-o text-primary";
+            const nameClass = isArx ? "text-danger" : "text-primary";
 
-    let head = input[0].trim();
-    let rest = input.length > 1 ? input.slice(1).join("\n").trim() : "";
-
-    let addBlock;
-
-    if (center === "yes" && selectedMode === "Cắt") {
-        let headerModified = head.includes("G00") ? head.replace(/G00/g, "G01") : head;
-        let firstLine = rest.split("\n")[0].trim();
-        let headCoords = headerModified.replace(/G[0-9]+/g, "").trim();
-        let firstCoords = firstLine.replace(/G[0-9]+/g, "").trim();
-
-        addBlock = function (currentVal) {
-            let formattedValue = currentVal / 1000;
-            let zString = formattedValue.toFixed(4).replace(/(\.\d{3})0$/, "$1");
-            let block = "G00 X0.000 Y0.000\n" + `G01 Z-${zString}\n`;
-
-            if (headCoords !== firstCoords) {
-                block += headerModified + "\n";
+            // Xử lý Badge lệnh CAD (nếu có từ "hoặc", tách thành 2 badge riêng biệt)
+            let cmdBadge = `<span class="text-muted">&mdash;</span>`;
+            if (tool.cmd) {
+                if (tool.cmd.includes(" hoặc ")) {
+                    const parts = tool.cmd.split(" hoặc ");
+                    cmdBadge = `
+                        <div class="d-inline-flex align-items-center justify-content-center flex-wrap" style="gap: 4px;">
+                            <span class="badge border px-2 py-1" style="font-size: 13px; background-color: #f8f9fa; color: #d63384;"><code>${parts[0]}</code></span>
+                            <small class="text-muted font-italic">hoặc</small>
+                            <span class="badge border px-2 py-1" style="font-size: 13px; background-color: #f8f9fa; color: #d63384;"><code>${parts[1]}</code></span>
+                        </div>`;
+                } else {
+                    cmdBadge = `<span class="badge border px-2 py-1" style="font-size: 13px; letter-spacing: 0.5px; background-color: #f8f9fa; color: #d63384;"><code>${tool.cmd}</code></span>`;
+                }
             }
 
-            if (rest !== "") {
-                block += rest + "\n";
-            }
-            block += "G01 Z0.050\n";
-            if (spacing === "yes") block += "\n";
-            return block;
-        };
-    } else {
-        addBlock = function (currentVal) {
-            let formattedValue = currentVal / 1000;
-            let zString = formattedValue.toFixed(4).replace(/(\.\d{3})0$/, "$1");
-            let block = head + "\n" + `G01 Z-${zString}\n`;
-            if (rest !== "") {
-                block += rest + "\n";
-            }
-            block += "G01 Z0.050\n";
-            if (spacing === "yes") block += "\n";
-            return block;
-        };
+            // Xử lý text hướng dẫn (nếu để trống thì hiển thị Đang cập nhật)
+            const usageText = tool.usage
+                ? tool.usage
+                : `<span class="text-muted font-italic" style="font-size: 12px;">Đang cập nhật...</span>`;
+
+            return `
+        <tr>
+            <tr>
+            <td class="text-center align-middle" style="width: 50px;">
+                <input type="checkbox" class="tool-checkbox" id="tool-cb-${index}" data-filename="${tool.file}"
+                    style="cursor: pointer; width: 18px; height: 18px;">
+            </td>
+            <!-- Thêm px-3 để có khoảng cách lề hai bên, chữ to hơn một chút cho tên tool -->
+            <td class="align-middle font-weight-bold px-3 ${nameClass}" style="font-size: 14.5px;">
+                <i class="fa ${iconClass} mr-2"></i>${tool.file}
+            </td>
+            <!-- Đồng bộ font-size 14px, thêm px-3 để không sát lề -->
+            <td class="align-middle text-muted px-3" style="font-size: 14px;">
+                ${tool.desc}
+            </td>
+            <!-- Đồng bộ font-size 14px, thêm px-3 để không sát lề -->
+            <td class="align-middle text-dark px-3" style="font-size: 14px;">
+                ${usageText}
+            </td>
+            <td class="text-center align-middle px-2">
+                ${cmdBadge}
+            </td>
+            <td class="text-center align-middle">
+                <a href="${TOOLS_BASE_PATH}${tool.file}" download class="btn btn-sm btn-outline-primary font-weight-bold">
+                    <i class="fa fa-download"></i> Tải
+                </a>
+            </td>
+        </tr>
+    `;
+        }).join("");
+
+        initCheckboxEvents();
     }
 
-    let current = parseFloat(milEachValue);
-    let target = parseFloat(milDownValue);
-    let step = parseFloat(milEachValue);
-    const EPSILON = 0.00001;
+    // ==========================================
+    // 2. XỬ LÝ SỰ KIỆN CHECKBOX VÀ TẢI FILE / NÉN ZIP
+    // ==========================================
+    function initCheckboxEvents() {
+        const checkAllBox = document.getElementById("check-all-tools");
+        const toolCheckboxes = document.querySelectorAll(".tool-checkbox");
+        const downloadBtn = document.getElementById("btn-download-selected");
+        const countBadge = document.getElementById("selected-count-badge");
 
-    if (target === 0 || step === 0 || isNaN(target) || isNaN(step)) {
-        result += addBlock(0);
-    } else {
-        while (current < target - EPSILON) {
-            result += addBlock(current);
-            current = Math.round((current + step) * 10000) / 10000;
-        }
-        if (target >= 0) {
-            result += addBlock(target);
-        }
-    }
+        // Cập nhật trạng thái nút bấm và badge đếm số lượng
+        function updateDownloadState() {
+            const selected = document.querySelectorAll(".tool-checkbox:checked");
+            const count = selected.length;
 
-    return result;
-}
+            if (countBadge) countBadge.textContent = count;
 
-// ==========================================
-// THUẬT TOÁN PHÂN TÁCH KHỐI VÀ XỬ LÝ MIL
-// ==========================================
-function putMilInBlocks(input) {
-    const selectedMode = window.selectedMode || "Cắt";
-    
-    const startEndEl = document.querySelector("input[name='start-end']:checked");
-    const spacingEl = document.querySelector("input[name='spacing']:checked");
-
-    const startEnd = startEndEl ? startEndEl.value : "no";
-    const spacing = spacingEl ? spacingEl.value : "no";
-
-    let startText = "N10 G01 Z0.050 F4\nN20 G01 Z0.050\nM03\n";
-    let endText = "\nG00 X0.000 Y0.000\nM04\nM30";
-
-    if (spacing === "yes") {
-        startText = startText.replace("M03\n", "M03\n\n\n");
-        endText = endText.replace("\nG00", "\n\n\nG00");
-    }
-
-    let milDownValue = 0;
-    let milEachValue = 0;
-    let milBlocks = [];
-    let rawBlocks = [];
-
-    if (selectedMode === "Chạy độ ring") {
-        // Lọc bỏ các khối rỗng
-        rawBlocks = input.split(/(?=G00)/).filter(b => b.trim() !== "");
-        const ceramicThickness = parseFloat(document.querySelector("select#ceramic-thickness")?.value || 125);
-        const ringAngle = parseFloat(document.querySelector("select#ring-angles")?.value || 7);
-        const ringBottom = parseFloat(document.querySelector("input#ring-bottom-thickness")?.value || 60);
-        milEachValue = 20;
-
-        let currentMil = ceramicThickness - ringBottom;
-
-        rawBlocks.forEach(block => {
-            if (currentMil < 0) {
-                Swal.fire({
-                    title: "Có gì đó sai sai!",
-                    text: "Kiểm tra lại độ, số vòng, bề dày phôi sứ và bề dày đít ring.",
-                    icon: "warning",
-                });
-                return;
+            if (downloadBtn) {
+                downloadBtn.disabled = count === 0;
+                if (count > 0) {
+                    downloadBtn.classList.replace("btn-secondary", "btn-success");
+                    countBadge.classList.replace("text-dark", "text-success");
+                    countBadge.style.backgroundColor = "white";
+                } else {
+                    downloadBtn.classList.replace("btn-success", "btn-secondary");
+                    countBadge.classList.replace("text-success", "text-dark");
+                    countBadge.style.backgroundColor = "";
+                }
             }
-            milBlocks.push({ block, milDown: currentMil });
-            currentMil -= (ringAngle - 1);
-        });
-    } else if (selectedMode === "Cắt") {
-        // Lọc bỏ các khối rỗng
-        rawBlocks = input.split(/(?=G00)/).filter(b => b.trim() !== "");
-        
-        // Lấy đúng ID ô mil-down
-        const milDownInput = document.getElementById("mil-down");
-        const milDown = milDownInput ? milDownInput.value : 0;
-        
-        const cutRadio = document.querySelector("input[name='cut-depth']:checked");
-        const milEach = cutRadio ? cutRadio.value : "5";
-        milEachValue = milEach === "custom" ? (document.getElementById("customCutDepthValue")?.value || 0) : milEach;
-
-        milDownValue = parseFloat(milDown);
-        milEachValue = parseFloat(milEachValue);
-        milBlocks = rawBlocks.map(block => ({ block, milDown: milDownValue }));
-    } else if (selectedMode === "Đục lỗ") {
-        // Lọc bỏ các dòng rỗng
-        rawBlocks = input.split("\n").filter(b => b.trim() !== "");
-        
-        const drillRadio = document.querySelector("input[name='drill-depth']:checked");
-        const milEach = drillRadio ? drillRadio.value : "5";
-        
-        if (milEach === "custom") {
-            const milDown = document.getElementById("customDrillDepthValue")?.value || 0;
-            milEachValue = document.getElementById("customDrillEachValue")?.value || 0;
-            milDownValue = parseFloat(milDown);
-        } else {
-            milDownValue = milEachValue = parseFloat(milEach);
         }
 
-        milBlocks = rawBlocks.map(block => ({ block, milDown: milDownValue }));
-    }
-
-    if (selectedMode !== "Chạy độ ring") {
-        milDownValue = parseFloat(milDownValue);
-        milEachValue = parseFloat(milEachValue);
-
-        const isInvalidInput =
-            isNaN(milDownValue) || isNaN(milEachValue) ||
-            milDownValue < 0 || milEachValue < 0 ||
-            (milDownValue === 0 && milEachValue !== 0) ||
-            (milDownValue !== 0 && milEachValue === 0) ||
-            (milDownValue < milEachValue && milDownValue !== 0 && milEachValue !== 0);
-
-        if (isInvalidInput) {
-            Swal.fire({
-                title: "Thông số Mil không hợp lệ hoặc bị bỏ trống!",
-                text: "Tự động đặt về 0 (Z-0.000).",
-                icon: "warning"
+        // Chọn tất cả
+        if (checkAllBox) {
+            checkAllBox.addEventListener("change", function () {
+                toolCheckboxes.forEach(cb => cb.checked = this.checked);
+                updateDownloadState();
             });
-            milDownValue = 0;
-            milEachValue = 0;
-            milBlocks = rawBlocks.map(block => ({ block, milDown: 0 }));
+        }
+
+        // Chọn lẻ từng item
+        toolCheckboxes.forEach(cb => {
+            cb.addEventListener("change", function () {
+                if (!this.checked && checkAllBox) {
+                    checkAllBox.checked = false;
+                } else if (checkAllBox) {
+                    checkAllBox.checked = Array.from(toolCheckboxes).every(c => c.checked);
+                }
+                updateDownloadState();
+            });
+        });
+
+        // TẢI FILE (1 FILE ĐỘC LẬP HOẶC TỰ ĐỘNG NÉN .ZIP KHI CHỌN NHIỀU FILE)
+        if (downloadBtn) {
+            downloadBtn.addEventListener("click", async function () {
+                const selected = document.querySelectorAll(".tool-checkbox:checked");
+                if (selected.length === 0) return;
+
+                // TH1: CHỌN DÚNG 1 FILE -> TẢI TRỰC TIẾP FILE ĐÓ
+                if (selected.length === 1) {
+                    const filename = selected[0].getAttribute("data-filename");
+                    const link = document.createElement("a");
+                    link.href = TOOLS_BASE_PATH + filename;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    return;
+                }
+
+                // TH2: CHỌN TỪ 2 FILE TRỞ LÊN -> NÉN THÀNH 1 FILE .ZIP
+                if (typeof JSZip === "undefined") {
+                    Swal.fire({
+                        title: "Thiếu thư viện!",
+                        text: "Chưa tải được thư viện JSZip. Vui lòng kiểm tra lại kết nối mạng.",
+                        icon: "error"
+                    });
+                    return;
+                }
+
+                // Đổi giao diện nút bấm sang trạng thái đang nén
+                const originalHtml = downloadBtn.innerHTML;
+                downloadBtn.disabled = true;
+                downloadBtn.innerHTML = `<i class="fa fa-spinner fa-spin mr-1"></i>Đang đóng gói ZIP...`;
+
+                try {
+                    const zip = new JSZip();
+
+                    // Lấy toàn bộ dữ liệu file bằng fetch()
+                    const fetchPromises = Array.from(selected).map(async (cb) => {
+                        const filename = cb.getAttribute("data-filename");
+                        const fileUrl = TOOLS_BASE_PATH + filename;
+                        const response = await fetch(fileUrl);
+                        if (!response.ok) throw new Error(`Không thể lấy dữ liệu file: ${filename}`);
+                        const blob = await response.blob();
+                        zip.file(filename, blob);
+                    });
+
+                    await Promise.all(fetchPromises);
+
+                    // Tạo file .zip trong bộ nhớ
+                    const zipBlob = await zip.generateAsync({ type: "blob" });
+
+                    // Kích hoạt tải file ZIP về máy
+                    const link = document.createElement("a");
+                    const blobUrl = URL.createObjectURL(zipBlob);
+                    link.href = blobUrl;
+                    link.download = "CAD_Tools_KIMNHO.zip";
+                    document.body.appendChild(link);
+                    link.click();
+
+                    // Dọn dẹp tài nguyên
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(blobUrl);
+
+                } catch (error) {
+                    console.error("Lỗi đóng gói file ZIP:", error);
+                    Swal.fire({
+                        title: "Lỗi tải file!",
+                        text: "Không thể gom file vào ZIP. Vui lòng kiểm tra lại đường dẫn lưu trữ file.",
+                        icon: "error"
+                    });
+                } finally {
+                    // Phục hồi lại trạng thái nút ban đầu
+                    downloadBtn.disabled = false;
+                    downloadBtn.innerHTML = originalHtml;
+                }
+            });
         }
     }
 
-    let output = startEnd === "yes" ? startText : "";
-
-    milBlocks.forEach(({ block, milDown }, i) => {
-        let blockResult = milAddingUp(block, milDown, milEachValue);
-        if (spacing === "yes" && i !== milBlocks.length - 1) blockResult += "\n";
-        output += blockResult;
-    });
-
-    if (startEnd === "yes") {
-        output = output.trim() + (spacing === "yes" ? "\n\n\n" : "\n") + endText.trim();
-    }
-
-    // Ghi đè kết quả mới
-    const resultTextarea = document.querySelector("#result");
-    if (resultTextarea) {
-        resultTextarea.value = output.trim();
-        resultTextarea.style.height = "auto";
-        resultTextarea.style.height = resultTextarea.scrollHeight + "px";
-    }
-    
-    if (typeof updateLineNumbers === "function") {
-        updateLineNumbers();
-    }
-
-    // Đọc trực tiếp từ checkbox để xác định có giữ tùy chọn hay không
-    const keepOptions = document.getElementById("keep-options");
-    const isKeep = keepOptions ? keepOptions.checked : false;
-
-    if (!isKeep) {
-        const inputArea = document.getElementById("inputCNC");
-        if (inputArea) inputArea.value = "";
-        if (typeof resetValues === "function") {
-            resetValues();
-        }
-    }
-}
-
-// Gắn trực tiếp lên window để tránh lỗi ReferenceError
-window.milAddingUp = milAddingUp;
-window.putMilInBlocks = putMilInBlocks;
+    // Khởi chạy render bảng
+    renderToolsTable();
+});

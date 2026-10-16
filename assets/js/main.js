@@ -1,4 +1,5 @@
 let keepOptionFlag = false;
+window.selectedMode = "Cắt";
 
 function resetValues() {
     const customCutDepth = document.getElementById("custom-cut-depth");
@@ -207,8 +208,9 @@ document.addEventListener("DOMContentLoaded", function () {
             segmentBtns.forEach(b => b.classList.remove("active"));
             this.classList.add("active");
 
-            // 2. Lấy tên chức năng vừa click
-            const selectedText = this.getAttribute("data-action");
+            // 2. LƯU TRỰC TIẾP VÀO BIẾN TOÀN CỤC (Không phụ thuộc DOM)
+            const selectedText = this.getAttribute("data-action") || this.textContent.trim();
+            window.selectedMode = selectedText;
 
             // 3. Đổi Form tương ứng và cập nhật Tooltip
             if (selectedText === "Đục lỗ") {
@@ -229,7 +231,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // 4. Reset thông số nếu không check "Giữ tùy chọn"
-            if (!keepOptionFlag) {
+            const keepOptions = document.getElementById("keep-options");
+            if (!keepOptions || !keepOptions.checked) {
                 resetValues();
             }
 

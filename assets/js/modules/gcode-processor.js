@@ -1,12 +1,14 @@
-// Thuật toán tạo các tầng Z âm
+const tạo các tầng Z âm
 function milAddingUp(input, milDownValue, milEachValue) {
     const spacing = document.querySelector("input[name='spacing']:checked").value;
     const center = document.querySelector("input[name='center']:checked").value;
     const comment = document.querySelector("input[name='comment']:checked").value;
     
-    const activeBtn = document.querySelector(".segment-btn.active");  
-    console.log(activeBtn.textContent.trim())
-    const selectedMode = activeBtn ? activeBtn.textContent.trim();
+    // ĐỌC TRỰC TIẾP BIẾN TOÀN CỤC
+    const selectedMode = window.selectedMode || "Cắt";
+    
+    // BẮT BUỘC KHAI BÁO CỤC BỘ ĐỂ KHÔNG BỊ CỘNG DỒN G-CODE
+    let result = "";
     
     input = input.split("\n");
 
@@ -83,9 +85,8 @@ function milAddingUp(input, milDownValue, milEachValue) {
 
 // Thuật toán phân tách khối và xử lý tham số Mil
 function putMilInBlocks(input) {
-    const activeBtn = document.querySelector(".segment-btn.active");
-    console.log(activeBtn.textContent.trim())
-    const selectedMode = activeBtn ? activeBtn.textContent.trim();
+    // ĐỌC TRỰC TIẾP BIẾN TOÀN CỤC
+    const selectedMode = window.selectedMode || "Cắt"
     
     const startEnd = document.querySelector("input[name='start-end']:checked").value;
     const spacing = document.querySelector("input[name='spacing']:checked").value;

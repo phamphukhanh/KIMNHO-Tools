@@ -3,8 +3,11 @@ function milAddingUp(input, milDownValue, milEachValue) {
     const spacing = document.querySelector("input[name='spacing']:checked").value;
     const center = document.querySelector("input[name='center']:checked").value;
     const comment = document.querySelector("input[name='comment']:checked").value;
-    const activeBtn = document.querySelector(".segment-btn.active");
-    const selectedMode = activeBtn ? (activeBtn.dataset.action || activeBtn.textContent.trim()) : "Cắt";
+    
+    const activeBtn = document.querySelector(".segment-btn.active");  
+    console.log(activeBtn.textContent.trim())
+    const selectedMode = activeBtn ? activeBtn.textContent.trim();
+    
     input = input.split("\n");
 
     if (comment === 'yes' && input[0].trim() !== ";") {
@@ -81,7 +84,9 @@ function milAddingUp(input, milDownValue, milEachValue) {
 // Thuật toán phân tách khối và xử lý tham số Mil
 function putMilInBlocks(input) {
     const activeBtn = document.querySelector(".segment-btn.active");
-    const selectedMode = activeBtn ? (activeBtn.dataset.action || activeBtn.textContent.trim()) : "Cắt";
+    console.log(activeBtn.textContent.trim())
+    const selectedMode = activeBtn ? activeBtn.textContent.trim();
+    
     const startEnd = document.querySelector("input[name='start-end']:checked").value;
     const spacing = document.querySelector("input[name='spacing']:checked").value;
 

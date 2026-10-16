@@ -48,12 +48,12 @@
         <!-- Tiêu đề và hướng dẫn công cụ (Dạng Thanh Gạt - Segmented Control) -->
         <div class="text-center mb-4 d-flex justify-content-center align-items-center">
             <!-- Thanh gạt -->
-            <div class="d-inline-flex bg-light border p-1 shadow-sm custom-segmented-control"
-                style="border-radius: 12px;">
-                <button class="btn font-weight-bold segment-btn active" data-action="Cắt">Cắt</button>
-                <button class="btn font-weight-bold segment-btn" data-action="Đục lỗ">Đục lỗ</button>
-                <button class="btn font-weight-bold segment-btn" data-action="Chạy độ ring">Chạy độ ring</button>
-            </div>
+            <!-- Dòng 48: Thêm type="button" cho 3 nút thanh gạt -->
+<div class="d-inline-flex bg-light border p-1 shadow-sm custom-segmented-control" style="border-radius: 12px;">
+    <button type="button" class="btn font-weight-bold segment-btn active" data-action="Cắt">Cắt</button>
+    <button type="button" class="btn font-weight-bold segment-btn" data-action="Đục lỗ">Đục lỗ</button>
+    <button type="button" class="btn font-weight-bold segment-btn" data-action="Chạy độ ring">Chạy độ ring</button>
+</div>
 
             <!-- Icon Tooltip -->
             <span data-toggle="tooltip" data-html="true" title="
@@ -291,9 +291,10 @@
                     </div>
 
                     <!-- Nút Xem Kết Quả đứng gọn gàng ở đáy cột phải -->
-                    <button class="btn btn-primary btn-block font-weight-bold shadow-sm py-2 mt-3">
-                        <i class="fa fa-play mr-2"></i> Xem kết quả
-                    </button>
+                    <!-- Dòng 217: Thêm id="btn-process" cho nút Xem kết quả -->
+<button type="button" class="btn btn-primary btn-block font-weight-bold shadow-sm py-2 mt-3" id="btn-process">
+    <i class="fa fa-play mr-2"></i> Xem kết quả
+</button>
                 </div>
             </div>
 

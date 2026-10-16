@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
             content = `
             <div style='text-align: justify; max-width: 250px;'>
                 <b>Chạy độ mặt dưới ring</b><br><br>
-                1. Chạy BobCad hết tất cả vòng<u> từ ngoài vào trong</u>.<br>
+                1. Chạy BobCad hết tất cả vòng <u>từ ngoài vào trong</u>.<br>
                 2. Copy G-code vào, không cần xoá Z0.<br>
             </div>`;
         }

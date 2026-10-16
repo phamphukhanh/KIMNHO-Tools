@@ -1,4 +1,3 @@
-const tạo các tầng Z âm
 function milAddingUp(input, milDownValue, milEachValue) {
     const spacing = document.querySelector("input[name='spacing']:checked").value;
     const center = document.querySelector("input[name='center']:checked").value;

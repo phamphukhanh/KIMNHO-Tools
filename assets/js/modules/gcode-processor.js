@@ -4,8 +4,7 @@ function milAddingUp(input, milDownValue, milEachValue) {
     const center = document.querySelector("input[name='center']:checked").value;
     const comment = document.querySelector("input[name='comment']:checked").value;
     const activeBtn = document.querySelector(".segment-btn.active");
-    const selectedMode = activeBtn ? (activeBtn.dataset.action || activeBtn.textContent.trim()) : "Cắconst   let result = "";
-
+    const selectedMode = activeBtn ? (activeBtn.dataset.action || activeBtn.textContent.trim()) : "Cắt";
     input = input.split("\n");
 
     if (comment === 'yes' && input[0].trim() !== ";") {

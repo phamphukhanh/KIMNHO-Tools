@@ -360,6 +360,55 @@ function populateTableWithData(pastedText, startRowIdx = 0, startColIdx = 1) {
     drawPreview(true);
 }
 
+
+// ==========================================
+// HÀM LÀM SẠCH BẢNG (CÓ CẢNH BÁO XÁC NHẬN)
+// ==========================================
+function clearTable() {
+    Swal.fire({
+        title: "Xóa toàn bộ dữ liệu?",
+        text: "Xóa hết XYC và không thể hoàn tác. Bạn có chắc chắn không?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#dc3545", // Màu đỏ cảnh báo
+        cancelButtonColor: "#6c757d", // Màu xám trung tính
+        confirmButtonText: "<i class='fa fa-trash mr-1'></i> Xóa luôn",
+        cancelButtonText: "Hủy, bấm lộn",
+        reverseButtons: true, // Đảo ngược vị trí 2 nút để tránh bấm nhầm trên di động
+        focusCancel: true // Mặc định focus vào nút Hủy để an toàn
+    }).then((result) => {
+        // Chỉ thực hiện xóa khi người dùng bấm nút Xác nhận
+        if (result.isConfirmed) {
+            const tbody = document.getElementById("tableBody");
+            if (!tbody) return;
+
+            // Xóa sạch nội dung bảng
+            tbody.innerHTML = "";
+            activeRowIndex = null;
+
+            // Tạo lại 10 dòng trống mặc định
+            createRows(10);
+
+            // Reset góc nhìn Canvas
+            drawPreview(true);
+
+            // Hiển thị thông báo nhỏ báo thành công
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true
+            });
+            Toast.fire({
+                icon: 'success',
+                title: 'Đã xóa dữ liệu bảng'
+            });
+        }
+    });
+}
+
+
 // Xử lý khi nhấn phím Ctrl + V trực tiếp trên ô
 function handlePaste(e) {
     e.preventDefault();

@@ -19,10 +19,12 @@ let startColIdx = -1;
 document.addEventListener("DOMContentLoaded", function () {
     createRows(10);
 
-    // Nút Refresh trên Pad Layout chủ động reset lại góc nhìn về giữa
     document.getElementById("btn-draw-preview")?.addEventListener("click", () => drawPreview(true));
     document.getElementById("btn-clear-table")?.addEventListener("click", clearTable);
     document.getElementById("btn-export-dxf")?.addEventListener("click", generateDXF);
+
+    // Bổ sung sự kiện nút Dán nhanh
+    document.getElementById("btn-quick-paste")?.addEventListener("click", handleQuickPasteBtn);
 
     initCanvasEvents();
     initTableSelection();
@@ -313,18 +315,16 @@ function clearTable() {
     drawPreview(true); // Reset lại góc nhìn
 }
 
-function handlePaste(e) {
-    e.preventDefault();
-    const pastedText = (e.clipboardData || window.clipboardData).getData("Text");
-    const rows = pastedText.trim().split("\n");
+// ==========================================
+// HÀM DÙNG CHUNG: PHÂN TÍCH & ĐỔ DỮ LIỆU VÀO BẢNG
+// ==========================================
+function populateTableWithData(pastedText, startRowIdx = 0, startColIdx = 1) {
+    if (!pastedText || !pastedText.trim()) return;
 
-    const currentInput = e.target;
-    const td = currentInput.parentElement;
-    const tr = td.parentElement;
-    const tbody = tr.parentElement;
-
-    const startRowIdx = Array.from(tbody.children).indexOf(tr);
-    const startColIdx = Array.from(tr.children).indexOf(td);
+    // Tách dòng: Hỗ trợ \r\n (Windows) hoặc \n (Mobile)
+    const rows = pastedText.trim().split(/\r?\n/).filter(r => r.trim() !== "");
+    const tbody = document.getElementById("tableBody");
+    if (!tbody) return;
 
     const rowsNeeded = (startRowIdx + rows.length) - tbody.children.length;
     if (rowsNeeded > 0) {
@@ -332,8 +332,21 @@ function handlePaste(e) {
     }
 
     rows.forEach((row, rIdx) => {
-        const columns = row.split(/\t/);
+        // NHẬN DIỆN THÔNG MINH MỌI LOẠI KÝ TỰ NGĂN CÁCH
+        let columns;
+        if (row.includes("\t")) {
+            columns = row.split("\t");
+        } else if (row.includes(",")) {
+            columns = row.split(",");
+        } else if (row.includes(";")) {
+            columns = row.split(";");
+        } else {
+            // Tách bằng khoảng trắng (khi copy từ Google Sheets trên Mobile)
+            columns = row.trim().split(/\s+/);
+        }
+
         const targetRow = tbody.children[startRowIdx + rIdx];
+        if (!targetRow) return;
 
         columns.forEach((colData, cIdx) => {
             const targetCell = targetRow.children[startColIdx + cIdx];
@@ -344,7 +357,50 @@ function handlePaste(e) {
         });
     });
 
-    drawPreview();
+    drawPreview(true);
+}
+
+// Xử lý khi nhấn phím Ctrl + V trực tiếp trên ô
+function handlePaste(e) {
+    e.preventDefault();
+    const pastedText = (e.clipboardData || window.clipboardData).getData("Text");
+    const currentInput = e.target;
+    const td = currentInput.parentElement;
+    const tr = td.parentElement;
+    const tbody = tr.parentElement;
+
+    const startRowIdx = Array.from(tbody.children).indexOf(tr);
+    const startColIdx = Array.from(tr.children).indexOf(td);
+
+    populateTableWithData(pastedText, startRowIdx, startColIdx);
+}
+
+// Xử lý khi nhấn nút "Dán" trên thanh công cụ
+async function handleQuickPasteBtn() {
+    try {
+        const clipboardText = await navigator.clipboard.readText();
+        if (!clipboardText || !clipboardText.trim()) {
+            Swal.fire({ title: "Trống!", text: "Không có dữ liệu trong bộ nhớ tạm.", icon: "warning", timer: 1500, showConfirmButton: false });
+            return;
+        }
+        // Luôn dán từ Hàng 1, Cột Probe ID (startRowIdx = 0, startColIdx = 1)
+        populateTableWithData(clipboardText, 0, 1);
+        Swal.fire({ title: "Thành công!", text: "Đã nạp dữ liệu.", icon: "success", timer: 1200, showConfirmButton: false });
+    } catch (err) {
+        // Fallback: Khi trình duyệt di động chặn đọc bộ nhớ tạm tự động
+        Swal.fire({
+            title: "Dán dữ liệu",
+            input: "textarea",
+            inputPlaceholder: "Chạm giữ và Dán (Paste) dữ liệu bảng vào đây...",
+            showCancelButton: true,
+            confirmButtonText: "Nạp vào bảng",
+            cancelButtonText: "Hủy"
+        }).then((result) => {
+            if (result.isConfirmed && result.value) {
+                populateTableWithData(result.value, 0, 1);
+            }
+        });
+    }
 }
 
 // ==========================================

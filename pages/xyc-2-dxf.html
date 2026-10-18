@@ -96,18 +96,26 @@
                     <div class="toolbar-bottom-row d-flex flex-wrap align-items-center justify-content-between mt-2"
                         style="gap: 12px;">
 
-                        <!-- Dòng chữ ép trên 1 hàng (text-nowrap) -->
+                        <!-- Dòng hướng dẫn phân định rõ PC & Mobile -->
                         <small class="text-muted text-nowrap">
-                            <i class="fa fa-info-circle mr-1"></i>Dán (Ctrl+V) dữ liệu từ Excel
+                            <i class="fa fa-info-circle mr-1"></i>PC: <b>Ctrl+V</b> | Điện thoại: <b>Nút Dán</b>
                         </small>
 
-                        <!-- Khối chứa 2 nút (ml-auto để luôn sát mép phải trên PC) -->
                         <div class="toolbar-action-group d-flex align-items-center ml-auto" style="gap: 8px;">
-                            <button class="btn btn-sm btn-outline-danger font-weight-bold text-nowrap"
-                                id="btn-clear-table" style="height: 34px;">
-                                <i class="fa fa-trash mr-1"></i>Xóa toàn bộ
+                            <!-- NÚT DÁN CHO MOBILE (Kèm icon điện thoại) -->
+                            <button class="btn btn-sm btn-primary font-weight-bold text-nowrap" id="btn-quick-paste"
+                                style="height: 34px;" title="Dán dữ liệu từ bộ nhớ tạm trên điện thoại">
+                                <i class="fa fa-mobile mr-1" style="font-size: 15px; vertical-align: middle;"></i>Dán
+                                (Mobile)
                             </button>
 
+                            <!-- NÚT XÓA -->
+                            <button class="btn btn-sm btn-outline-danger font-weight-bold text-nowrap"
+                                id="btn-clear-table" style="height: 34px;">
+                                <i class="fa fa-trash mr-1"></i>Xóa
+                            </button>
+
+                            <!-- NÚT XUẤT DXF -->
                             <button class="btn btn-sm btn-success font-weight-bold text-nowrap" id="btn-export-dxf"
                                 style="height: 34px;">
                                 <i class="fa fa-download mr-1"></i>Xuất DXF

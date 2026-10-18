@@ -210,3 +210,14 @@ body.dark-mode .table thead.thead-dark th {
     border-bottom: 2px solid #17a2b8 !important;
     /* Thêm đường viền xanh mỏng ở dưới đáy để làm điểm nhấn */
 }
+
+/* TÙY CHỈNH NÚT CHỈNH SỬA (XANH NGỌC) TRONG DARK MODE */
+.dark-mode #edit-button {
+    background-color: transparent !important;
+    border-color: #17a2b8 !important;
+    color: #17a2b8 !important;
+}
+.dark-mode #edit-button:hover {
+    background-color: #17a2b8 !important;
+    color: #ffffff !important;
+}

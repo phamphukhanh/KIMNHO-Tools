@@ -2,52 +2,92 @@
    TRÌNH BIÊN TẬP G-CODE & KẾT QUẢ
    ========================================== */
 .gcode-editor-container {
-    font-family: 'Consolas', 'Courier New', monospace !important;
-    font-size: 14px !important;
-    line-height: 1.5 !important;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
+    border: 1px solid #ced4da !important;
+    border-radius: 6px;
+    display: flex;
+    position: relative;
     min-height: 178px;
+    align-items: stretch;
+    /* Đảm bảo 2 cột bằng chiều cao nhau */
 }
 
+/* Cột số dòng bên trái (Gutter) */
+#line-numbers,
 .line-numbers {
-    font-family: inherit !important;
-    font-size: inherit !important;
-    line-height: inherit !important;
-    background-color: #e9ecef;
-    color: #6c757d;
-    user-select: none;
+    background-color: #f8f9fa !important;
+    /* Xám mát nhạt, tách biệt với code */
+    color: #868e96 !important;
+    /* Màu số xám dịu mắt */
+    border-right: 1px solid #ced4da !important;
+    /* Vạch ngăn cách rõ nét */
+    padding: 10px 8px 10px 6px !important;
     min-width: 48px;
-    padding: 8px 10px !important;
     text-align: right;
-    border-right: 1px solid #ced4da;
+    user-select: none;
+    /* Không cho bôi đen nhầm số dòng khi copy */
+    font-family: 'Consolas', 'Courier New', monospace !important;
+    font-size: 13.5px !important;
+    line-height: 1.5 !important;
+    /* Khóa cứng line-height để số khớp từng hàng chữ */
+    white-space: pre;
     box-sizing: border-box;
 }
 
+/* Vùng hiển thị code bên phải (Trạng thái Readonly) */
 #result {
-    font-family: inherit !important;
-    font-size: inherit !important;
-    line-height: inherit !important;
-    padding: 8px 10px !important;
+    background-color: #e9ecef !important; /* Đổ màu Xám Khói đậm hơn để dễ nhận biết */
+    color: #495057 !important;            /* Đổi chữ G-Code thành màu xám đậm cho dịu mắt */
+    font-family: 'Consolas', 'Courier New', monospace !important;
+    font-size: 13.5px !important;
+    line-height: 1.5 !important;
+    padding: 10px 12px !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
     white-space: pre;
     overflow-x: auto;
     resize: none;
     min-height: 178px;
+    tab-size: 4;
+    cursor: default; /* Con trỏ mặc định báo hiệu không gõ được */
+    transition: all 0.3s ease; /* Chuyển mượt cả màu nền lẫn màu chữ */
 }
 
-#result[readonly] {
-    background-color: #e9ecef !important;
-    color: #495057;
-    cursor: default;
-}
-
+/* Hiệu ứng khi bấm nút "Chỉnh sửa" (Khi thẻ textarea bị gỡ thuộc tính readonly) */
 #result:not([readonly]) {
-    background-color: #ffffff !important;
-    color: #212529;
-    cursor: text;
+    background-color: #ffffff !important; /* Sáng rực lên màu trắng tinh */
+    color: #212529 !important;            /* Chữ đen đậm rõ nét nét như mã code */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.08) !important; /* Bóng đổ chìm rõ hơn tạo cảm giác ô lõm xuống */
+    cursor: text; /* Chuyển con trỏ thành I-beam báo hiệu sẵn sàng nhập liệu */
 }
 
-#result:focus {
-    box-shadow: none;
+/* ==========================================
+   HỖ TRỢ DARK MODE CHO EDITOR
+   ========================================== */
+body.dark-mode .gcode-editor-container {
+    background-color: #1e1e1e !important;
+    border-color: #383838 !important;
+}
+
+body.dark-mode #line-numbers,
+body.dark-mode .line-numbers {
+    background-color: #181818 !important;
+    /* Nền tối hơn vùng code */
+    color: #6c757d !important;
+    border-right-color: #333333 !important;
+}
+
+body.dark-mode #result {
+    background-color: #1e1e1e !important;
+    /* Nền đen xám VS Code */
+    color: #e9ecef !important;
+    /* Chữ sáng rõ nét */
+}
+
+body.dark-mode #result:not([readonly]) {
+    background-color: #1e1e1e !important;
+    color: #4dd0e1 !important;
 }
 
 /* ==========================================
@@ -71,4 +111,35 @@
 
 .action-buttons-sticky .btn i {
     margin-right: 5px !important;
+}
+
+/* ==========================================
+   TÙY CHỈNH NÚT CHỈNH SỬA (TRÁNH TRÙNG MÀU COPY)
+   ========================================== */
+/* 1. Chế độ Sáng (Light Mode) */
+#edit-button {
+    background-color: #ffffff !important;
+    border: 1px solid #ced4da !important;
+    color: #495057 !important;
+    transition: all 0.2s ease-in-out;
+}
+
+#edit-button:hover {
+    background-color: #e9ecef !important;
+    /* Xám khói dịu mắt, tách biệt hoàn toàn với nút Copy */
+    border-color: #adb5bd !important;
+    color: #212529 !important;
+}
+
+/* 2. Chế độ Tối (Dark Mode) */
+body.dark-mode #edit-button {
+    background-color: #2b2b2b !important;
+    border-color: #495057 !important;
+    color: #e9ecef !important;
+}
+
+body.dark-mode #edit-button:hover {
+    background-color: #3d3d3d !important;
+    border-color: #6c757d !important;
+    color: #ffffff !important;
 }

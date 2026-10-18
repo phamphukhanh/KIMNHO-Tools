@@ -383,6 +383,12 @@ async function handleQuickPasteBtn() {
             Swal.fire({ title: "Trống!", text: "Không có dữ liệu trong bộ nhớ tạm.", icon: "warning", timer: 1500, showConfirmButton: false });
             return;
         }
+
+        // TỰ ĐỘNG DỌN SẠCH DỮ LIỆU CŨ TRƯỚC KHI NẠP DỮ LIỆU MỚI
+        const tbody = document.getElementById("tableBody");
+        if (tbody) tbody.innerHTML = "";
+        createRows(10);
+
         // Luôn dán từ Hàng 1, Cột Probe ID (startRowIdx = 0, startColIdx = 1)
         populateTableWithData(clipboardText, 0, 1);
         Swal.fire({ title: "Thành công!", text: "Đã nạp dữ liệu.", icon: "success", timer: 1200, showConfirmButton: false });
@@ -397,6 +403,9 @@ async function handleQuickPasteBtn() {
             cancelButtonText: "Hủy"
         }).then((result) => {
             if (result.isConfirmed && result.value) {
+                const tbody = document.getElementById("tableBody");
+                if (tbody) tbody.innerHTML = "";
+                createRows(10);
                 populateTableWithData(result.value, 0, 1);
             }
         });

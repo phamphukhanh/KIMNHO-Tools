@@ -72,7 +72,6 @@
         <!-- KHUNG CHÍNH CHỨA EDITOR & OPTIONS -->
         <div class="border p-3 rounded shadow-sm">
             <div class="row">
-                <!-- =============== CỘT TRÁI: TEXTAREA G-CODE =============== -->
                 <div class="col-lg-6 mb-3 mb-lg-0 d-flex flex-column">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <label class="font-weight-bold mb-0">G-code CNC</label>
@@ -82,11 +81,15 @@
                                 chọn</label>
                         </div>
                     </div>
-                    <!-- flex-grow-1 giúp textarea tự căn chiều cao bằng đúng nút "Xem kết quả" bên phải -->
-                    <textarea id="inputCNC" class="form-control flex-grow-1"
-                        style="min-height: 220px; resize: vertical;" required></textarea>
-                </div>
 
+                    <!-- KHUNG EDITOR CHO INPUT (ĐỒNG BỘ VỚI OUTPUT) -->
+                    <div class="gcode-editor-container border rounded d-flex overflow-hidden shadow-sm flex-grow-1"
+                        style="min-height: 220px;">
+                        <div id="input-line-numbers" class="line-numbers">1</div>
+                        <textarea id="inputCNC" class="form-control border-0 rounded-0 flex-grow-1" wrap="off"
+                            required></textarea>
+                    </div>
+                </div>
                 <!-- =============== CỘT PHẢI: KHUNG CẤU HÌNH =============== -->
                 <div class="col-lg-6 d-flex flex-column">
                     <!-- Card dùng flex-grow-1 để tự co giãn vừa vặn -->

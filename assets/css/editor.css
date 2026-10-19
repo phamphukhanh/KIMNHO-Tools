@@ -13,25 +13,49 @@
 }
 
 /* Cột số dòng bên trái (Gutter) */
-#line-numbers,
-.line-numbers {
+.line-numbers,
+#line-numbers {
     background-color: #f8f9fa !important;
-    /* Xám mát nhạt, tách biệt với code */
     color: #868e96 !important;
-    /* Màu số xám dịu mắt */
     border-right: 1px solid #ced4da !important;
-    /* Vạch ngăn cách rõ nét */
     padding: 10px 8px 10px 6px !important;
     min-width: 48px;
     text-align: right;
     user-select: none;
-    /* Không cho bôi đen nhầm số dòng khi copy */
     font-family: 'Consolas', 'Courier New', monospace !important;
     font-size: 13.5px !important;
     line-height: 1.5 !important;
-    /* Khóa cứng line-height để số khớp từng hàng chữ */
     white-space: pre;
     box-sizing: border-box;
+    overflow: hidden !important;
+}
+
+/* ========================================================
+   2. CỘT SỐ DÒNG RIÊNG CHO INPUT (DÙNG CHUNG FONT VỚI INPUT)
+   ======================================================== */
+#input-line-numbers {
+    font-family: inherit !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+}
+
+/* ========================================================
+   3. VÙNG NHẬP LIỆU G-CODE CNC (FONT CHỮ MẶC ĐỊNH HỆ THỐNG)
+   ======================================================== */
+#inputCNC {
+    background-color: #ffffff !important;
+    color: #212529 !important;
+    font-family: inherit !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    padding: 10px 12px !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    white-space: pre;
+    overflow-x: auto;
+    resize: none !important;
+    tab-size: 4;
 }
 
 /* Vùng hiển thị code bên phải (Trạng thái Readonly) */
@@ -60,7 +84,7 @@
     background-color: #ffffff !important;
     /* Sáng rực lên màu trắng tinh */
     color: #212529 !important;
-    /* Chữ đen đậm rõ nét nét như mã code */
+    /* Chữ đen đậm rõ nét như mã code */
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08) !important;
     /* Bóng đổ chìm rõ hơn tạo cảm giác ô lõm xuống */
     cursor: text;
@@ -70,27 +94,31 @@
 /* ==========================================
    HỖ TRỢ DARK MODE CHO EDITOR
    ========================================== */
-body.dark-mode .gcode-editor-container {
+.dark-mode .gcode-editor-container {
     background-color: #1e1e1e !important;
     border-color: #383838 !important;
 }
 
-body.dark-mode #line-numbers,
-body.dark-mode .line-numbers {
+/* Bổ sung đầy đủ cả 2 ID để không bị lỗi đè Specificity */
+.dark-mode #line-numbers,
+.dark-mode #input-line-numbers,
+.dark-mode .line-numbers {
     background-color: #181818 !important;
-    /* Nền tối hơn vùng code */
     color: #6c757d !important;
     border-right-color: #333333 !important;
 }
 
-body.dark-mode #result {
+.dark-mode #inputCNC {
     background-color: #1e1e1e !important;
-    /* Nền đen xám VS Code */
     color: #e9ecef !important;
-    /* Chữ sáng rõ nét */
 }
 
-body.dark-mode #result:not([readonly]) {
+.dark-mode #result {
+    background-color: #1e1e1e !important;
+    color: #e9ecef !important;
+}
+
+.dark-mode #result:not([readonly]) {
     background-color: #1e1e1e !important;
     color: #4dd0e1 !important;
 }
@@ -121,42 +149,37 @@ body.dark-mode #result:not([readonly]) {
 /* ==========================================
    TÙY CHỈNH NÚT CHỈNH SỬA (TRÁNH TRÙNG MÀU COPY)
    ========================================== */
-/* 1. Chế độ Sáng (Light Mode) */
+/* 1. Trạng thái bình thường (Nền trắng/xám giữ nguyên trên cả 2 mode) */
 #edit-button,
-body.dark-mode #edit-button {
+.dark-mode #edit-button {
     background-color: #ffffff !important;
     border: 1px solid #ced4da !important;
     color: #495057 !important;
+    transition: all 0.2s ease-in-out;
 }
 
-/* Hover mượt mà ở trạng thái bình thường (Tạo viền xanh biển gợi ý click) */
+/* Hover mượt mà ở trạng thái bình thường (Viền và chữ xanh biển) */
 #edit-button:hover,
-body.dark-mode #edit-button:hover {
+.dark-mode #edit-button:hover {
     background-color: #f8f9fa !important;
     border-color: #007bff !important;
-    /* Đổi viền sang màu xanh biển báo hiệu có thể tương tác */
     color: #007bff !important;
-    /* Đổi chữ sang màu xanh biển */
 }
 
 /* 2. Trạng thái đang chỉnh sửa (Hoàn tất) - Xanh Biển nổi bật (Primary) */
 #edit-button.is-editing,
-body.dark-mode #edit-button.is-editing {
+.dark-mode #edit-button.is-editing {
     background-color: #007bff !important;
-    /* Xanh biển rực rỡ */
     border-color: #007bff !important;
     color: #ffffff !important;
-    /* Chữ trắng tinh */
     box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3) !important;
-    /* Đổ bóng xanh phát sáng nhẹ */
 }
 
 /* Hover khi đang ở trạng thái Hoàn tất */
 #edit-button.is-editing:hover,
-body.dark-mode #edit-button.is-editing:hover {
+.dark-mode #edit-button.is-editing:hover {
     background-color: #0056b3 !important;
-    /* Xanh đậm hơn */
     border-color: #004085 !important;
     color: #ffffff !important;
-    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2) !important; /* Giảm bóng khi ấn nhẹ */
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2) !important;
 }

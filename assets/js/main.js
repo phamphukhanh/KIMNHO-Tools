@@ -32,6 +32,7 @@ function resetEditMode() {
 
     if (!textarea.hasAttribute("readonly")) {
         textarea.setAttribute("readonly", true);
+        button.classList.remove("is-editing"); // Trả nút về lại màu trắng bình thường
         if (icon) icon.className = "fa fa-pencil-square-o";
         if (text) text.textContent = "Chỉnh sửa";
     }
@@ -40,16 +41,20 @@ function resetEditMode() {
 function toggleEditMode(buttonId, textareaId) {
     const button = document.getElementById(buttonId);
     const textarea = document.getElementById(textareaId);
+    if (!button || !textarea) return;
+
     const icon = button.querySelector("i");
     const text = button.querySelector(".btn-text");
 
     if (textarea.hasAttribute("readonly")) {
         textarea.removeAttribute("readonly");
         textarea.focus();
+        button.classList.add("is-editing"); // Đổi sang màu Xanh Biển nổi bật (Hoàn tất)
         if (icon) icon.className = "fa fa-check";
         if (text) text.textContent = "Hoàn tất";
     } else {
         textarea.setAttribute("readonly", true);
+        button.classList.remove("is-editing"); // Gỡ bỏ màu nổi bật, trả về nút trắng
         if (icon) icon.className = "fa fa-pencil-square-o";
         if (text) text.textContent = "Chỉnh sửa";
     }
@@ -304,7 +309,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } else if (typeof putMilInBlocks === "function") {
                 putMilInBlocks(input);
             }
-            
+
             resetEditMode();
         });
     }

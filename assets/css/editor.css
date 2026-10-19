@@ -36,8 +36,10 @@
 
 /* Vùng hiển thị code bên phải (Trạng thái Readonly) */
 #result {
-    background-color: #e9ecef !important; /* Đổ màu Xám Khói đậm hơn để dễ nhận biết */
-    color: #495057 !important;            /* Đổi chữ G-Code thành màu xám đậm cho dịu mắt */
+    background-color: #e9ecef !important;
+    /* Đổ màu Xám Khói đậm hơn để dễ nhận biết */
+    color: #495057 !important;
+    /* Đổi chữ G-Code thành màu xám đậm cho dịu mắt */
     font-family: 'Consolas', 'Courier New', monospace !important;
     font-size: 13.5px !important;
     line-height: 1.5 !important;
@@ -50,16 +52,19 @@
     resize: none;
     min-height: 178px;
     tab-size: 4;
-    cursor: default; /* Con trỏ mặc định báo hiệu không gõ được */
-    transition: all 0.3s ease; /* Chuyển mượt cả màu nền lẫn màu chữ */
+    cursor: default;
 }
 
 /* Hiệu ứng khi bấm nút "Chỉnh sửa" (Khi thẻ textarea bị gỡ thuộc tính readonly) */
 #result:not([readonly]) {
-    background-color: #ffffff !important; /* Sáng rực lên màu trắng tinh */
-    color: #212529 !important;            /* Chữ đen đậm rõ nét nét như mã code */
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.08) !important; /* Bóng đổ chìm rõ hơn tạo cảm giác ô lõm xuống */
-    cursor: text; /* Chuyển con trỏ thành I-beam báo hiệu sẵn sàng nhập liệu */
+    background-color: #ffffff !important;
+    /* Sáng rực lên màu trắng tinh */
+    color: #212529 !important;
+    /* Chữ đen đậm rõ nét nét như mã code */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+    /* Bóng đổ chìm rõ hơn tạo cảm giác ô lõm xuống */
+    cursor: text;
+    /* Chuyển con trỏ thành I-beam báo hiệu sẵn sàng nhập liệu */
 }
 
 /* ==========================================
@@ -117,29 +122,41 @@ body.dark-mode #result:not([readonly]) {
    TÙY CHỈNH NÚT CHỈNH SỬA (TRÁNH TRÙNG MÀU COPY)
    ========================================== */
 /* 1. Chế độ Sáng (Light Mode) */
-#edit-button {
+#edit-button,
+body.dark-mode #edit-button {
     background-color: #ffffff !important;
     border: 1px solid #ced4da !important;
     color: #495057 !important;
-    transition: all 0.2s ease-in-out;
 }
 
-#edit-button:hover {
-    background-color: #e9ecef !important;
-    /* Xám khói dịu mắt, tách biệt hoàn toàn với nút Copy */
-    border-color: #adb5bd !important;
-    color: #212529 !important;
-}
-
-/* 2. Chế độ Tối (Dark Mode) */
-body.dark-mode #edit-button {
-    background-color: #2b2b2b !important;
-    border-color: #495057 !important;
-    color: #e9ecef !important;
-}
-
+/* Hover mượt mà ở trạng thái bình thường (Tạo viền xanh biển gợi ý click) */
+#edit-button:hover,
 body.dark-mode #edit-button:hover {
-    background-color: #3d3d3d !important;
-    border-color: #6c757d !important;
+    background-color: #f8f9fa !important;
+    border-color: #007bff !important;
+    /* Đổi viền sang màu xanh biển báo hiệu có thể tương tác */
+    color: #007bff !important;
+    /* Đổi chữ sang màu xanh biển */
+}
+
+/* 2. Trạng thái đang chỉnh sửa (Hoàn tất) - Xanh Biển nổi bật (Primary) */
+#edit-button.is-editing,
+body.dark-mode #edit-button.is-editing {
+    background-color: #007bff !important;
+    /* Xanh biển rực rỡ */
+    border-color: #007bff !important;
     color: #ffffff !important;
+    /* Chữ trắng tinh */
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3) !important;
+    /* Đổ bóng xanh phát sáng nhẹ */
+}
+
+/* Hover khi đang ở trạng thái Hoàn tất */
+#edit-button.is-editing:hover,
+body.dark-mode #edit-button.is-editing:hover {
+    background-color: #0056b3 !important;
+    /* Xanh đậm hơn */
+    border-color: #004085 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2) !important; /* Giảm bóng khi ấn nhẹ */
 }

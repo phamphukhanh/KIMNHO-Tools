@@ -303,11 +303,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 .replaceAll("G81 ", "")
                 .replaceAll(" R1. F1.", "");
 
+            // 1. RESET BỘ NHỚ CHIỀU CAO CŨ VỀ AUTO TRƯỚC KHI TÍNH TOÁN
+            const resultArea = document.getElementById("result");
+            if (resultArea) {
+                resultArea.style.height = "auto";
+            }
+
             // Gọi hàm xử lý đã gắn trên window
             if (typeof window.putMilInBlocks === "function") {
                 window.putMilInBlocks(input);
             } else if (typeof putMilInBlocks === "function") {
                 putMilInBlocks(input);
+            }
+
+            // 2. ÉP KHUNG CO LẠI ĐÚNG VỚI ĐỘ DÀI THỰC TẾ CỦA G-CODE MỚI
+            if (resultArea) {
+                resultArea.style.height = "auto";
+                resultArea.style.height = resultArea.scrollHeight + "px";
             }
 
             resetEditMode();

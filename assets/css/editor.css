@@ -9,12 +9,15 @@
     position: relative;
     min-height: 178px;
     align-items: stretch;
-    /* Đảm bảo 2 cột bằng chiều cao nhau */
+    resize: vertical;
+    /* Bật nút kéo giãn thủ công ở góc dưới */
+    overflow: hidden;
 }
 
 /* Cột số dòng bên trái (Gutter) */
 .line-numbers,
-#line-numbers {
+#line-numbers,
+#input-line-numbers {
     background-color: #f8f9fa !important;
     color: #868e96 !important;
     border-right: 1px solid #ced4da !important;
@@ -28,6 +31,10 @@
     white-space: pre;
     box-sizing: border-box;
     overflow: hidden !important;
+
+    /* TRIỆT TIÊU KHẢ NĂNG ĐẨY PHÌNH CHIỀU CAO CỦA CỘT SỐ DÒNG */
+    height: 100% !important;
+    min-height: 0 !important;
 }
 
 /* ========================================================
@@ -38,6 +45,14 @@
     font-size: 14px !important;
     line-height: 1.5 !important;
 }
+
+
+/* RIÊNG KHUNG INPUT: Khóa flex-basis bằng height: 0 để chiều cao luôn
+   bám theo đúng chiều cao cột cấu hình bên phải, không bị nội dung bên trong đẩy giãn nở */
+.gcode-editor-container.flex-grow-1 {
+    height: 0;
+}
+
 
 /* ========================================================
    3. VÙNG NHẬP LIỆU G-CODE CNC (FONT CHỮ MẶC ĐỊNH HỆ THỐNG)
@@ -53,9 +68,16 @@
     outline: none !important;
     box-shadow: none !important;
     white-space: pre;
-    overflow-x: auto;
-    resize: none !important;
     tab-size: 4;
+
+    /* BẬT THANH CUỘN NỘI BỘ KHI VƯỢT QUÁ CHIỀU CAO */
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+
+    /* KHÓA CHIỀU CAO ĐỂ HIỆN THANH CUỘN THAY VÌ PHÌNH TO */
+    height: 100% !important;
+    min-height: 0 !important;
+    resize: none !important;
 }
 
 /* Vùng hiển thị code bên phải (Trạng thái Readonly) */

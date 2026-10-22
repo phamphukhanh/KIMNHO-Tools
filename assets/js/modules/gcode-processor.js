@@ -9,13 +9,13 @@ function milAddingUp(input, milDownValue, milEachValue) {
     const spacing = spacingEl ? spacingEl.value : "no";
     const center = centerEl ? centerEl.value : "no";
     const comment = commentEl ? commentEl.value : "no";
-    
+
     // Đọc trực tiếp từ biến toàn cục
     const selectedMode = window.selectedMode || "Cắt";
-    
+
     // Khai báo cục bộ để tránh bị cộng dồn kết quả
     let result = "";
-    
+
     input = input.split("\n");
 
     if (comment === 'yes' && input[0].trim() !== ";") {
@@ -94,7 +94,7 @@ function milAddingUp(input, milDownValue, milEachValue) {
 // ==========================================
 function putMilInBlocks(input) {
     const selectedMode = window.selectedMode || "Cắt";
-    
+
     const startEndEl = document.querySelector("input[name='start-end']:checked");
     const spacingEl = document.querySelector("input[name='spacing']:checked");
 
@@ -139,11 +139,11 @@ function putMilInBlocks(input) {
     } else if (selectedMode === "Cắt") {
         // Lọc bỏ các khối rỗng
         rawBlocks = input.split(/(?=G00)/).filter(b => b.trim() !== "");
-        
+
         // Lấy đúng ID ô mil-down
         const milDownInput = document.getElementById("mil-down");
         const milDown = milDownInput ? milDownInput.value : 0;
-        
+
         const cutRadio = document.querySelector("input[name='cut-depth']:checked");
         const milEach = cutRadio ? cutRadio.value : "5";
         milEachValue = milEach === "custom" ? (document.getElementById("customCutDepthValue")?.value || 0) : milEach;
@@ -154,10 +154,10 @@ function putMilInBlocks(input) {
     } else if (selectedMode === "Đục lỗ") {
         // Lọc bỏ các dòng rỗng
         rawBlocks = input.split("\n").filter(b => b.trim() !== "");
-        
+
         const drillRadio = document.querySelector("input[name='drill-depth']:checked");
         const milEach = drillRadio ? drillRadio.value : "5";
-        
+
         if (milEach === "custom") {
             const milDown = document.getElementById("customDrillDepthValue")?.value || 0;
             milEachValue = document.getElementById("customDrillEachValue")?.value || 0;
@@ -211,7 +211,7 @@ function putMilInBlocks(input) {
         resultTextarea.style.height = "auto";
         resultTextarea.style.height = resultTextarea.scrollHeight + "px";
     }
-    
+
     if (typeof updateLineNumbers === "function") {
         updateLineNumbers();
     }
@@ -222,7 +222,17 @@ function putMilInBlocks(input) {
 
     if (!isKeep) {
         const inputArea = document.getElementById("inputCNC");
-        if (inputArea) inputArea.value = "";
+        if (inputArea) {
+            inputArea.value = "";
+
+            // Đặt lại số dòng của Input về 1 và cuộn lên đầu
+            const inputLines = document.getElementById("input-line-numbers");
+            if (inputLines) {
+                inputLines.innerHTML = "1";
+                inputLines.scrollTop = 0;
+            }
+        }
+
         if (typeof resetValues === "function") {
             resetValues();
         }

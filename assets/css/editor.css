@@ -131,18 +131,21 @@
     border-right-color: #333333 !important;
 }
 
+/* Đổi nền ô Input sang tone xám #2d2d2d (đồng bộ với trạng thái chỉnh sửa của Output) */
 .dark-mode #inputCNC {
-    background-color: #1e1e1e !important;
-    color: #e9ecef !important;
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
 }
 
+/* Ô kết quả khi đang khóa (chỉ đọc): giữ tông trầm #1e1e1e */
 .dark-mode #result {
     background-color: #1e1e1e !important;
     color: #e9ecef !important;
 }
 
+/* Ô kết quả khi mở khóa (bấm Chỉnh sửa): cũng chuyển sang #2d2d2d */
 .dark-mode #result:not([readonly]) {
-    background-color: #1e1e1e !important;
+    background-color: #2d2d2d !important;
     color: #4dd0e1 !important;
 }
 

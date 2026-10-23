@@ -14,7 +14,7 @@
     overflow: hidden;
 }
 
-/* Cột số dòng bên trái (Gutter) */
+/* Cột số dòng bên trái */
 .line-numbers,
 #line-numbers,
 #input-line-numbers {
@@ -32,8 +32,9 @@
     box-sizing: border-box;
     overflow: hidden !important;
 
-    /* TRIỆT TIÊU KHẢ NĂNG ĐẨY PHÌNH CHIỀU CAO CỦA CỘT SỐ DÒNG */
-    height: 100% !important;
+    /* FIX LỖI HỤT NỀN: Ép Flexbox kéo dãn theo chiều cao của ô textarea bên cạnh */
+    align-self: stretch !important;
+    height: auto !important;
     min-height: 0 !important;
 }
 
@@ -177,7 +178,6 @@
     background-color: #ffffff !important;
     border: 1px solid #ced4da !important;
     color: #495057 !important;
-    transition: all 0.2s ease-in-out;
 }
 
 /* Hover mượt mà ở trạng thái bình thường (Viền và chữ xanh biển) */

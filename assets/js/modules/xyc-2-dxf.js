@@ -22,9 +22,16 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("btn-draw-preview")?.addEventListener("click", () => drawPreview(true));
     document.getElementById("btn-clear-table")?.addEventListener("click", clearTable);
     document.getElementById("btn-export-dxf")?.addEventListener("click", generateDXF);
-
-    // Bổ sung sự kiện nút Dán nhanh
     document.getElementById("btn-quick-paste")?.addEventListener("click", handleQuickPasteBtn);
+
+    // Tự động cập nhật canvas mượt mà (chỉ vẽ sau khi ngừng gõ 300ms)
+    let typingTimer = null;
+    document.getElementById("tableBody")?.addEventListener("input", function () {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => {
+            drawPreview();
+        }, 300);
+    });
 
     initCanvasEvents();
     initTableSelection();
@@ -229,8 +236,26 @@ function initTableSelection() {
         isSelecting = false;
     });
 
+    document.addEventListener("mousedown", function (e) {
+        if (!e.target.closest('.table-container') && !e.target.closest('#layoutCanvas')) {
+            clearSelection();
+            activeRowIndex = null;
+            renderCanvas();
+        }
+    });
+
     document.addEventListener("keydown", function (e) {
         if (e.key === 'Delete' || e.key === 'Backspace') {
+            const activeEl = document.activeElement;
+
+            if (
+                activeEl &&
+                (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA') &&
+                !activeEl.closest('.table-container')
+            ) {
+                return;
+            }
+
             const selectedCells = document.querySelectorAll('.selected-cell input');
 
             if (selectedCells.length > 1 || (selectedCells.length === 1 && document.activeElement !== selectedCells[0])) {
@@ -476,13 +501,15 @@ function generateDXF() {
     const rows = document.getElementById("tableBody").querySelectorAll("tr");
     let count = 0;
 
-    for (let tr of rows) {
+    for (let i = 0; i < rows.length; i++) {
+        let tr = rows[i];
         let inputs = tr.querySelectorAll("input");
-        let id = inputs[0].value.trim();
+        let rawId = inputs[0].value.trim();
         let cx = parseFloat(inputs[1].value.trim());
         let cy = parseFloat(inputs[2].value.trim());
 
-        if (!id || isNaN(cx) || isNaN(cy)) continue;
+        if (isNaN(cx) || isNaN(cy)) continue;
+        let id = rawId || String(i + 1); // Lấy số thứ tự dòng nếu Probe ID trống
         count++;
 
         let cxInch = cx * scale;
@@ -571,8 +598,12 @@ function generateDXF() {
 function drawPreview(resetView = false) {
     const canvas = document.getElementById("layoutCanvas");
     if (!canvas) return;
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+
+    // Chỉ cấp phát lại vùng đệm Canvas khi kích thước khung thực sự thay đổi
+    if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+    }
 
     canvasPoints = [];
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
@@ -580,11 +611,13 @@ function drawPreview(resetView = false) {
     const rows = document.getElementById("tableBody").querySelectorAll("tr");
     rows.forEach((tr, index) => {
         let inputs = tr.querySelectorAll("input");
-        let id = inputs[0].value.trim();
+        let rawId = inputs[0].value.trim();
         let cx = parseFloat(inputs[1].value.trim());
         let cy = parseFloat(inputs[2].value.trim());
 
-        if (id && !isNaN(cx) && !isNaN(cy)) {
+        // Chỉ cần đủ 2 tọa độ X và Y là load lên canvas
+        if (!isNaN(cx) && !isNaN(cy)) {
+            let id = rawId || String(index + 1); // Lấy số thứ tự dòng nếu Probe ID trống
             canvasPoints.push({ id, cx, cy, trElement: tr, rowIndex: index });
             if (cx < minX) minX = cx;
             if (cx > maxX) maxX = cx;

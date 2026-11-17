@@ -167,12 +167,42 @@ html.dark-mode .active-row input.cell-data {
     background-color: #2a2d2e !important;
 }
 
-/* Hiệu ứng bôi đen nhiều ô giống Excel */
+/* Hiệu ứng bôi đen nhiều ô giống Excel (Dark Mode - tông trầm dịu mắt) */
 html.dark-mode .selected-cell,
 html.dark-mode .selected-cell input.cell-data {
-    background-color: #094771 !important;
-    /* Màu xanh bôi đen dịu mắt */
-    color: #ffffff !important;
+    background-color: #1b3244 !important;
+    color: #e2e8f0 !important;
+}
+
+/* Ô đang khóa (nhấp 1 lần): Ẩn con trỏ nháy và chặn bôi đen chữ */
+input.cell-data[readonly] {
+    cursor: default !important;
+    caret-color: transparent !important;
+    user-select: none !important;
+}
+
+/* Ô đang mở khóa sửa (nhấp đúp) - Giao diện Sáng */
+#dataTable .selected-cell input.cell-data:not([readonly]),
+input.cell-data:not([readonly]) {
+    background-color: #f0f7ff !important;
+    color: #212529 !important;
+    cursor: text !important;
+    caret-color: #007bff !important;
+    user-select: text !important;
+    border: 1px solid #17a2b8 !important;
+    box-shadow: none !important;
+}
+
+/* Ô đang mở khóa sửa (nhấp đúp) - Giao diện Tối (tiệp tông #1b3244, bỏ viền phát sáng) */
+html.dark-mode #dataTable .selected-cell input.cell-data:not([readonly]),
+html.dark-mode input.cell-data:not([readonly]) {
+    background-color: #213b4f !important;
+    color: #f1f5f9 !important;
+    cursor: text !important;
+    caret-color: #93c5fd !important;
+    user-select: text !important;
+    border: 1px solid #3b6e94 !important;
+    box-shadow: none !important;
 }
 
 

@@ -194,10 +194,25 @@ function initTableSelection() {
     const tbody = document.getElementById("tableBody");
     if (!tbody) return;
 
+    // 1. NHẤP 1 LẦN: Chỉ chọn ô, chặn focus vào <input> để không hiện con trỏ
     tbody.addEventListener("mousedown", function (e) {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TD') {
             const td = e.target.tagName === 'INPUT' ? e.target.parentElement : e.target;
             if (td.classList.contains('idx-col')) return;
+
+            const input = td.querySelector('input.cell-data');
+            // Nếu ô này đang mở khóa sửa thì để trình duyệt di chuyển con trỏ nháy bình thường
+            if (input && !input.hasAttribute('readonly')) {
+                return;
+            }
+
+            // Chặn focus mặc định của trình duyệt -> Tuyệt đối không hiện vạch con trỏ |
+            e.preventDefault();
+
+            // Gỡ focus khỏi ô đang sửa trước đó (nếu có) hoặc ô input bên ngoài
+            if (document.activeElement && document.activeElement !== document.body) {
+                document.activeElement.blur();
+            }
 
             isSelecting = true;
             const tr = td.parentElement;
@@ -210,10 +225,33 @@ function initTableSelection() {
 
             activeRowIndex = startRowIdx;
             renderCanvas();
+        }
+    });
 
-            if (e.target.tagName === 'INPUT') {
-                e.target.focus();
-            }
+    // 2. NHẤP ĐÚP (DOUBLE-CLICK): Mở khóa và đặt con trỏ nháy ở cuối giá trị
+    tbody.addEventListener("dblclick", function (e) {
+        const td = e.target.closest("td");
+        if (!td || td.classList.contains("idx-col")) return;
+
+        const input = td.querySelector("input.cell-data");
+        if (!input) return;
+
+        isSelecting = false;
+        input.dataset.prevValue = input.value;
+        input.removeAttribute("readonly");
+        input.focus();
+
+        // Đặt con trỏ nháy ngay cuối chữ thay vì bôi đen che mất vạch nháy
+        const len = input.value.length;
+        input.setSelectionRange(len, len);
+    });
+
+    // 3. TỰ ĐỘNG KHÓA & ẨN CON TRỎ KHI RỜI KHỎI Ô ĐANG SỬA
+    tbody.addEventListener("focusout", function (e) {
+        const input = e.target;
+        if (input.classList && input.classList.contains("cell-data") && !input.hasAttribute("readonly")) {
+            input.setAttribute("readonly", true);
+            drawPreview();
         }
     });
 
@@ -236,6 +274,7 @@ function initTableSelection() {
         isSelecting = false;
     });
 
+    // Click ra ngoài bảng và canvas thì bỏ chọn ô
     document.addEventListener("mousedown", function (e) {
         if (!e.target.closest('.table-container') && !e.target.closest('#layoutCanvas')) {
             clearSelection();
@@ -244,27 +283,48 @@ function initTableSelection() {
         }
     });
 
+    // 4. PHÍM TẮT: Enter để mở/đóng chế độ sửa, Esc để hủy, chặn Backspace quay lại trang trên Chrome cũ
     document.addEventListener("keydown", function (e) {
-        if (e.key === 'Delete' || e.key === 'Backspace') {
-            const activeEl = document.activeElement;
+        const activeEl = document.activeElement;
 
-            if (
-                activeEl &&
-                (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA') &&
-                !activeEl.closest('.table-container')
-            ) {
-                return;
-            }
+        // Bỏ qua nếu đang nhập ở ô ngoài bảng (VD: ô Kích thước Mil)
+        if (
+            activeEl &&
+            (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA') &&
+            !activeEl.closest('.table-container')
+        ) {
+            return;
+        }
 
-            const selectedCells = document.querySelectorAll('.selected-cell input');
-
-            if (selectedCells.length > 1 || (selectedCells.length === 1 && document.activeElement !== selectedCells[0])) {
+        // Trường hợp đang mở khóa sửa trong bảng (có con trỏ nháy)
+        if (activeEl && activeEl.classList.contains("cell-data") && !activeEl.hasAttribute("readonly")) {
+            if (e.key === "Enter") {
                 e.preventDefault();
-                selectedCells.forEach(input => {
-                    input.value = "";
-                });
-                drawPreview();
+                activeEl.blur(); // Kích hoạt focusout -> khóa ô và ẩn con trỏ nháy
+            } else if (e.key === "Escape") {
+                e.preventDefault();
+                if (activeEl.dataset.prevValue !== undefined) {
+                    activeEl.value = activeEl.dataset.prevValue;
+                }
+                activeEl.blur();
             }
+            return;
+        }
+
+        // Trường hợp đang chọn ô (không có con trỏ nháy)
+        if (e.key === "Enter") {
+            const selectedInput = document.querySelector(".selected-cell input.cell-data");
+            if (selectedInput) {
+                e.preventDefault();
+                selectedInput.dataset.prevValue = selectedInput.value;
+                selectedInput.removeAttribute("readonly");
+                selectedInput.focus();
+                const len = selectedInput.value.length;
+                selectedInput.setSelectionRange(len, len);
+            }
+        } else if (e.key === "Backspace") {
+            // Chặn phím Backspace kích hoạt nút Back của trình duyệt trên Chrome đời cũ
+            e.preventDefault();
         }
     });
 }
@@ -314,13 +374,13 @@ function createRows(count, appendToBody = true) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td class="idx-col">${currentRows}</td>
-            <td><input type="text" class="cell-data"></td>
-            <td><input type="text" class="cell-data"></td>
-            <td><input type="text" class="cell-data"></td>
+            <td><input type="text" class="cell-data" readonly></td>
+            <td><input type="text" class="cell-data" readonly></td>
+            <td><input type="text" class="cell-data" readonly></td>
         `;
 
-        const inputs = tr.querySelectorAll("input");
-        inputs.forEach(input => input.addEventListener("paste", handlePaste));
+        // const inputs = tr.querySelectorAll("input");
+        // inputs.forEach(input => input.addEventListener("paste", handlePaste));
 
         fragment.appendChild(tr);
     }
@@ -434,12 +494,24 @@ function clearTable() {
 }
 
 
-// Xử lý khi nhấn phím Ctrl + V trực tiếp trên ô
-function handlePaste(e) {
+// Xử lý khi nhấn phím Ctrl + V theo ô đang được chọn (.selected-cell)
+// Xử lý khi nhấn phím Ctrl + V theo ô đang được chọn (.selected-cell)
+document.addEventListener("paste", function (e) {
+    const activeEl = document.activeElement;
+
+    // Bỏ qua nếu đang dán vào ô ngoài bảng (VD: Kích thước Mil) hoặc ô đang mở khóa sửa chữ
+    if (activeEl && (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA")) {
+        if (!activeEl.closest(".table-container") || !activeEl.hasAttribute("readonly")) {
+            return;
+        }
+    }
+
+    // Lấy ô đầu tiên đang được bôi chọn trong bảng
+    const td = document.querySelector(".selected-cell");
+    if (!td) return;
+
     e.preventDefault();
     const pastedText = (e.clipboardData || window.clipboardData).getData("Text");
-    const currentInput = e.target;
-    const td = currentInput.parentElement;
     const tr = td.parentElement;
     const tbody = tr.parentElement;
 
@@ -447,7 +519,7 @@ function handlePaste(e) {
     const startColIdx = Array.from(tr.children).indexOf(td);
 
     populateTableWithData(pastedText, startRowIdx, startColIdx);
-}
+});
 
 // Xử lý khi nhấn nút "Dán" trên thanh công cụ
 async function handleQuickPasteBtn() {

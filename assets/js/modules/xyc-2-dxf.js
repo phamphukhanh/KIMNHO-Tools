@@ -283,35 +283,55 @@ function initTableSelection() {
         }
     });
 
-    // 4. PHÍM TẮT: Enter để mở/đóng chế độ sửa, Esc để hủy, chặn Backspace quay lại trang trên Chrome cũ
+    // 4. PHÍM TẮT: Delete xóa ô đang tô, Backspace chỉ dùng khi đang sửa, Enter mở/lưu, Esc hủy
     document.addEventListener("keydown", function (e) {
         const activeEl = document.activeElement;
 
-        // Bỏ qua nếu đang nhập ở ô ngoài bảng (VD: ô Kích thước Mil)
+        // 1. Bỏ qua nếu đang thao tác ở ô nhập liệu bên ngoài bảng (VD: ô Kích thước Mil)
         if (
             activeEl &&
-            (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA') &&
-            !activeEl.closest('.table-container')
+            (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA") &&
+            !activeEl.closest(".table-container")
         ) {
             return;
         }
 
-        // Trường hợp đang mở khóa sửa trong bảng (có con trỏ nháy)
+        // 2. Nếu đang nhấp đúp mở khóa sửa chữ bên trong 1 ô
         if (activeEl && activeEl.classList.contains("cell-data") && !activeEl.hasAttribute("readonly")) {
             if (e.key === "Enter") {
                 e.preventDefault();
-                activeEl.blur(); // Kích hoạt focusout -> khóa ô và ẩn con trỏ nháy
+                activeEl.blur(); // Lưu và khóa lại ô
             } else if (e.key === "Escape") {
                 e.preventDefault();
                 if (activeEl.dataset.prevValue !== undefined) {
-                    activeEl.value = activeEl.dataset.prevValue;
+                    activeEl.value = activeEl.dataset.prevValue; // Hủy thay đổi
                 }
                 activeEl.blur();
+            }
+            // Thoát ra để Backspace và Delete xóa ký tự tại con trỏ bình thường
+            return;
+        }
+
+        // 3. Chế độ chọn ô (readonly): Chỉ phím Delete mới xóa toàn bộ ô đang tô
+        if (e.key === "Delete") {
+            const selectedInputs = document.querySelectorAll(".selected-cell input.cell-data");
+            if (selectedInputs.length > 0) {
+                e.preventDefault();
+                selectedInputs.forEach(input => {
+                    input.value = "";
+                });
+                drawPreview();
             }
             return;
         }
 
-        // Trường hợp đang chọn ô (không có con trỏ nháy)
+        // 4. Chặn phím Backspace khi chưa vào chế độ sửa (tránh lùi trang trên Chrome cũ)
+        if (e.key === "Backspace") {
+            e.preventDefault();
+            return;
+        }
+
+        // 5. Nhấn Enter khi đang chọn ô -> Mở khóa sửa nhanh giống Excel
         if (e.key === "Enter") {
             const selectedInput = document.querySelector(".selected-cell input.cell-data");
             if (selectedInput) {
@@ -322,9 +342,6 @@ function initTableSelection() {
                 const len = selectedInput.value.length;
                 selectedInput.setSelectionRange(len, len);
             }
-        } else if (e.key === "Backspace") {
-            // Chặn phím Backspace kích hoạt nút Back của trình duyệt trên Chrome đời cũ
-            e.preventDefault();
         }
     });
 }
@@ -571,6 +588,37 @@ function generateDXF() {
 
     let dxfEntities = [];
     const rows = document.getElementById("tableBody").querySelectorAll("tr");
+    let incompleteRows = [];
+
+    rows.forEach((tr, index) => {
+        let inputs = tr.querySelectorAll("input");
+        let hasX = !isNaN(parseFloat(inputs[1].value.trim()));
+        let hasY = !isNaN(parseFloat(inputs[2].value.trim()));
+
+        if (hasX !== hasY) {
+            incompleteRows.push(index + 1);
+        }
+    });
+
+    if (incompleteRows.length > 0) {
+        Swal.fire({
+            title: "Thiếu tọa độ X hoặc Y!",
+            html: `Các dòng sau đang bị thiếu 1 trong 2 tọa độ: <b>Dòng ${incompleteRows.join(", ")}</b>.<br>Vui lòng bổ sung hoặc xóa dòng trống trước khi xuất DXF.`,
+            icon: "warning",
+            confirmButtonText: "Kiểm tra lại"
+        });
+
+        // Tự động cuộn bảng đến dòng thiếu đầu tiên
+        const firstBadRow = rows[incompleteRows[0] - 1];
+        const container = document.querySelector(".table-container");
+        if (firstBadRow && container) {
+            container.scrollTo({
+                top: firstBadRow.offsetTop - container.clientHeight / 2,
+                behavior: "smooth"
+            });
+        }
+        return;
+    }
     let count = 0;
 
     for (let i = 0; i < rows.length; i++) {
@@ -687,9 +735,15 @@ function drawPreview(resetView = false) {
         let cx = parseFloat(inputs[1].value.trim());
         let cy = parseFloat(inputs[2].value.trim());
 
-        // Chỉ cần đủ 2 tọa độ X và Y là load lên canvas
-        if (!isNaN(cx) && !isNaN(cy)) {
-            let id = rawId || String(index + 1); // Lấy số thứ tự dòng nếu Probe ID trống
+        const hasX = !isNaN(cx);
+        const hasY = !isNaN(cy);
+
+        // Tô cảnh báo ô bị thiếu nếu có X mà không Y (hoặc ngược lại)
+        inputs[1].classList.toggle("cell-missing", !hasX && hasY);
+        inputs[2].classList.toggle("cell-missing", hasX && !hasY);
+
+        if (hasX && hasY) {
+            let id = rawId || String(index + 1);
             canvasPoints.push({ id, cx, cy, trElement: tr, rowIndex: index });
             if (cx < minX) minX = cx;
             if (cx > maxX) maxX = cx;
